@@ -1,0 +1,4 @@
+User-agent:*
+Allow: /
+
+Sitemap: http://sultry3dprints.com/sitemap.xml
