@@ -12,14 +12,14 @@ export const order = defineType({
       readOnly: true, // Az orderId nem módosítható
       validation: Rule => Rule.required(),
     }),
-    defineField({
+    {
       name: 'user',
       title: 'User',
       type: 'reference',
       to: [{ type: 'user' }],
       validation: Rule => Rule.required(),
-    }),
-    defineField({
+    },
+    {
       name: 'products',
       title: 'Products',
       type: 'array', // Tömb típus
@@ -48,7 +48,7 @@ export const order = defineType({
         },
       ],
       validation: Rule => Rule.required().min(1), // Legalább 1 terméket kell választani
-    }),
+    },
     defineField({
       name: 'orderdate',
       title: 'Order Date',

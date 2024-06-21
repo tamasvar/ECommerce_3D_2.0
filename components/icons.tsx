@@ -5,7 +5,7 @@ import {
   type Icon as LucideIcon,
 } from "lucide-react"
 import React from 'react';
-export type Icon = LucideIcon
+export type Icon = typeof LucideIcon
 
 export const Icons = {
   sun: SunMedium,
