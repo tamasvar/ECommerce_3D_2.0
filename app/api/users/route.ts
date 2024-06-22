@@ -33,16 +33,17 @@ export async function POST(req: Request, res: Response) {
     return new NextResponse('Authentication Required', { status: 500 });
   }
 
-  const { roomId, reviewText, ratingValue} = await req.json();
-
-  if (!roomId || !reviewText || !ratingValue ) {
+  const { productId,orderId, reviewText, ratingValue} = await req.json();
+  console.log(productId);
+  console.log(orderId);
+  if (!productId || !reviewText || !ratingValue ) {
     return new NextResponse('All fields are required', { status: 400 });
   }
 
   const userId = session.user.id;
 
   try {
-    const alreadyExists = await checkReviewExists(userId, roomId);
+    const alreadyExists = await checkReviewExists(userId, productId, orderId);
 
     let data;
 
@@ -55,14 +56,15 @@ export async function POST(req: Request, res: Response) {
       });
     } else {
       data = await createReview({
-        ProductId: roomId,
+        OrderId: orderId,
+        ProductId: productId,
         reviewText,
         userId,
         userRating: ratingValue,
       
       });
     }
-
+    
     return NextResponse.json(data, { status: 200, statusText: 'Successful' });
   } catch (error: any) {
     console.log('Error Updating', error);

@@ -15,3 +15,18 @@
     trackingNumber?: string;
     totalPrice: number;
 };
+export type CreateOrderDto = {
+  id:string;
+  user: string;
+  products: Array<{
+    product: {
+      _id: string;
+      name: string;
+    };
+    style: string;
+    size: string;
+      
+  }>;
+orderdate: string;
+totalPrice: number;
+};

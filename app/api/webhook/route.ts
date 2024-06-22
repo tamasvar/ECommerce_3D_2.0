@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { createOrder } from '../../../lib/apis';
-import { CreateOrderDto} from '../../../models/room'
+import { CreateOrderDto} from '../../../models/order'
 
 const checkout_session_completed = 'checkout.session.completed';
 

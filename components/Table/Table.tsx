@@ -3,15 +3,16 @@ import React from 'react';
 import { Dispatch, FC, SetStateAction } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Order } from '@/models/booking';
+import { Order } from '@/models/order';
 
 type Props = {
-  bookingDetails: Order[];
-  setRoomId: Dispatch<SetStateAction<string | null>>;
+  orderDetails: Order[];
+  setProductId: Dispatch<SetStateAction<string | null>>;
+  setOrderId: Dispatch<SetStateAction<string | null>>;
   toggleRatingModal: () => void;
 };
 
-const Table: FC<Props> = ({ bookingDetails, setRoomId, toggleRatingModal }) => {
+const Table: FC<Props> = ({ orderDetails, setProductId,setOrderId,toggleRatingModal }) => {
   const router = useRouter();
 
   return (
@@ -32,25 +33,26 @@ const Table: FC<Props> = ({ bookingDetails, setRoomId, toggleRatingModal }) => {
          </thead>
          
          <tbody> 
-        {bookingDetails.map(booking => (
-            booking.products.map(product => (
+        {orderDetails.map(order => (
+            order.products.map(product => (
     <tr
     
-      key={`${booking._id}-${product.product._id}`}
+      key={`${order._id}-${product.product._id}`}
       className='border-b bg-white hover:bg-gray-50'
     >
-      <td className='px-6 py-4'>{booking._id}</td>
-      <td className='px-6 py-4'>{booking.orderdate}</td>
-      <td className='px-6 py-4'>{booking.status}</td>
-      <td className='px-6 py-4'>{booking.trackingNumber || '-'}</td>
+      <td className='px-6 py-4'>{order._id}</td>
+      <td className='px-6 py-4'>{order.orderdate}</td>
+      <td className='px-6 py-4'>{order.status}</td>
+      <td className='px-6 py-4'>{order.trackingNumber || '-'}</td>
       <td className='px-6 py-4'>{product.product.name}</td>
       <td className='px-6 py-4'>{product.style}</td>
       <td className='px-6 py-4'>{product.size}</td>
-      <td className='px-6 py-4'>{booking.totalPrice/100}€</td>
+      <td className='px-6 py-4'>{order.totalPrice/100}€</td>
       <td className='px-6 py-4'>
         <button
           onClick={() => {
-            setRoomId(product.product._id);
+            setProductId(product.product._id);
+            setOrderId(order._id)
             toggleRatingModal();
           }}
           className='font-medium text-blue-600 hover:underline'

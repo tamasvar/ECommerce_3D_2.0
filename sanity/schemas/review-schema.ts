@@ -6,17 +6,17 @@ const review = {
   type: 'document',
   fields: [
     defineField({
-      name: 'reviewid',
-      title: 'ReviewID',
-      type: 'string',
-      validation: Rule => Rule.required(),
-      readOnly: true, // Az _id legyen csak olvasható és ne legyen szerkeszthető
-    }),
-    defineField({
       name: 'user',
       title: 'User',
       type: 'reference',
       to: [{ type: 'user' }],
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
+      name: 'order',
+      title: 'Order',
+      type: 'reference',
+      to: [{ type: 'order' }],
       validation: Rule => Rule.required(),
     }),
     defineField({

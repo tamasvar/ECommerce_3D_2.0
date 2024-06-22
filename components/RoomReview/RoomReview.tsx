@@ -5,9 +5,9 @@ import useSWR from 'swr';
 import { Review } from '@/models/review';
 import Rating from '../Rating/Rating';
 
-const RoomReview: FC<{ roomId: string }> = ({ roomId}) => {
+const RoomReview: FC<{ productId: string }> = ({ productId}) => {
   const fetchRoomReviews = async () => {
-    const { data } = await axios.get<Review[]>(`/api/room-reviews/${roomId}`);
+    const { data } = await axios.get<Review[]>(`/api/room-reviews/${productId}`);
     return data;
   };
 

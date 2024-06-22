@@ -43,7 +43,7 @@ export const getRoom = groq`*[_type == "hotelRoom" && slug.current == $slug][0] 
     type
 }`;
 
-export const getUserBookingsQuery = groq`*[_type == 'order' && user._ref == $userId] {
+export const getUserOrdersQuery = groq`*[_type == 'order' && user._ref == $userId] {
     _id,
     products[]  {
         product -> {

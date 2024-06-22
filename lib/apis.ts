@@ -3,10 +3,9 @@ import axios from 'axios';
 
 import { SanityProduct } from '@/config/inventory'; 
 
-import { CreateOrderDto } from '@/models/room';
 import  sanityClient  from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
-import { Order } from '@/models/booking';
+import { Order,CreateOrderDto } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 
 export async function getFeaturedRoom() {
@@ -56,7 +55,7 @@ export const createOrder = async ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
             size: product.size , // Méret neve
-            _key:product.product._id,
+            _key:product.product._id+id,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár
@@ -99,9 +98,9 @@ export const updateHotelRoom = async (ProductId: string) => {
   return data;
 };
 
-export async function getUserBookings(userId: string) {
+export async function getUserOrders(userId: string) {
   const result = await sanityClient.fetch<Order[]>(
-    queries.getUserBookingsQuery,
+    queries.getUserOrdersQuery,
     {
       userId,
     },
@@ -123,15 +122,17 @@ export async function getUserData(userId: string) {
 
 export async function checkReviewExists(
   userId: string,
-  ProductId: string
+  ProductId: string,
+  OrderId:string,
 ): Promise<null | { _id: string }> {
-  const query = `*[_type == 'review' && user._ref == $userId && product._ref == $ProductId][0] {
+  const query = `*[_type == 'review' && user._ref == $userId && product._ref == $ProductId && order._ref == $OrderId][0] {
     _id
   }`;
 
   const params = {
     userId,
     ProductId,
+    OrderId,
   };
 
   const result = await sanityClient.fetch(query, params);
@@ -170,6 +171,7 @@ export const updateReview = async ({
 };
 
 export const createReview = async ({
+  OrderId,
   ProductId,
   reviewText,
   userId,
@@ -184,6 +186,10 @@ export const createReview = async ({
           user: {
             _type: 'reference',
             _ref: userId,
+          },
+          order: {
+            _type: 'reference',
+            _ref: OrderId,
           },
           product: {
             _type: 'reference',
@@ -206,11 +212,11 @@ console.log(mutation);
   return data;
 };
 
-export async function getRoomReviews(roomId: string) {
+export async function getRoomReviews(productId: string) {
   const result = await sanityClient.fetch<Review[]>(
     queries.getRoomReviewsQuery,
     {
-      roomId,
+      productId,
     },
     { cache: 'no-cache' }
   );
