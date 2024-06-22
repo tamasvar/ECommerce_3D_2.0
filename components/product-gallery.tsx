@@ -43,7 +43,7 @@ export function ProductGallery({product}: Props) {
                   width={200}
                   height={200}
                   alt=""
-                  className="h-full w-full object-cover object-center"
+                  className="size-full object-cover object-center"
                   placeholder="blur"
                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(200,200))}`}
                    unoptimized
@@ -90,7 +90,7 @@ export function ProductGallery({product}: Props) {
             shimmer(600,750)
             )}`}
           unoptimized
-          className="h-full w-full border-2 border-gray-200 object-cover object-center shadow-sm dark:border-gray-800 sm:rounded-lg"
+          className="size-full border-2 border-gray-200 object-cover object-center shadow-sm dark:border-gray-800 sm:rounded-lg"
         />
         
         

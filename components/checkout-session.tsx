@@ -5,6 +5,7 @@ import { CheckCheck, XCircle } from "lucide-react"
 import Stripe from "stripe"
 import { useShoppingCart } from "use-shopping-cart"
 import React from 'react';
+
 interface Props {
   customerDetails: Stripe.Checkout.Session.CustomerDetails | null
 }
@@ -29,7 +30,7 @@ export function CheckoutSession({customerDetails}:Props) {
   if (!customerDetails) {
     return (
       <>
-        <XCircle className="mx-auto h-10 w-10 text-red-400" />
+        <XCircle className="mx-auto size-10 text-red-400" />
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-red-400 sm:text-5xl">
           No checkout session found
         </h1>
@@ -39,7 +40,7 @@ export function CheckoutSession({customerDetails}:Props) {
 
   return (
     <>
-      <CheckCheck className="mx-auto h-10 w-10 text-lime-500 dark:text-lime-400" />
+      <CheckCheck className="mx-auto size-10 text-lime-500 dark:text-lime-400" />
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-lime-500 dark:text-lime-400 sm:text-5xl">
         Order Successful!
       </h1>

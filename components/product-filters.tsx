@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
+import LoadingSpinner from "@/app/loading";
 
 const filters = [
   {
@@ -150,7 +151,7 @@ const filters = [
   },
 ]
 
-export function ProductFilters() {
+ function ProductFiltersContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const searchValues=Array.from(searchParams.entries())
@@ -201,4 +202,11 @@ export function ProductFilters() {
       ))}
     </form>
   )
+}
+export function ProductFilters() {
+  return (
+    <Suspense fallback={LoadingSpinner()}>
+      <ProductFiltersContent />
+    </Suspense>
+  );
 }

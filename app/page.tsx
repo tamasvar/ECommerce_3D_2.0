@@ -50,7 +50,7 @@ export default async function Page({searchParams}:Props) {
 
   }`)
   
-  console.log(products)
+  //console.log(products)
   return (
     <div>
       <div className="px-4 pt-20 text-center">

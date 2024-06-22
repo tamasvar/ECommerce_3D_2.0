@@ -69,7 +69,7 @@ const [selectedSize, setSelectedSize] = useState<string | null>(initialSize);
         <Link href="/cart">
           <Button variant="link" className="gap-x-2 whitespace-nowrap">
             <span>Open cart</span>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="size-5" />
           </Button>
         </Link>
       ),

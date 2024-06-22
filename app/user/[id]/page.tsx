@@ -95,7 +95,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     <div className='py10 container mx-auto px-2 md:px-4'>
       <div className='grid gap-10 md:grid-cols-12'>
         <div className='sticky top-10 hidden h-fit rounded-lg bg-[#eff0f2] px-6 py-4 text-black shadow-lg md:col-span-4 md:block lg:col-span-3'>
-          <div className='mx-auto mb-5 h-28 w-28 overflow-hidden rounded-full md:h-[143px] md:w-[143px]'>
+          <div className='mx-auto mb-5 size-28 overflow-hidden rounded-full md:size-[143px]'>
             <Image
               src={userData.image}
               alt={userData.name}
@@ -124,7 +124,7 @@ const UserDetails = (props: { params: { id: string } }) => {
           <div className='flex items-center'>
             <h5 className='mr-3 text-2xl font-bold'>Hello, {userData.name}</h5>
           </div>
-          <div className='h-14 w-14 overflow-hidden rounded-l-full md:hidden'>
+          <div className='size-14 overflow-hidden rounded-l-full md:hidden'>
             <Image
               className='img scale-animation rounded-full'
               width={56}

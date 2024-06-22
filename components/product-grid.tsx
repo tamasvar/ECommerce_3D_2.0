@@ -58,7 +58,7 @@ export function ProductGrid({ products }: Props) {
     return (
       <div className="mx-auto grid h-40 w-full place-items-center rounded-md border-2 border-dashed bg-gray-50 py-10 text-center dark:bg-gray-900">
         <div>
-          <XCircle className="mx-auto h-10 w-10 text-gray-500 dark:text-gray-200" />
+          <XCircle className="mx-auto size-10 text-gray-500 dark:text-gray-200" />
           <h1 className="mt-2 text-xl font-bold tracking-tight text-gray-500 dark:text-gray-200 sm:text-2xl">
             No products found
           </h1>
@@ -84,7 +84,7 @@ export function ProductGrid({ products }: Props) {
               alt={product.name}
               width={225}
               height={280}
-              className="h-full w-full object-cover object-center"
+              className="size-full object-cover object-center"
               unoptimized
               style={{ aspectRatio: '1 / 1' }}
             />

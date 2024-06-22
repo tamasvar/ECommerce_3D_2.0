@@ -37,9 +37,9 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
 
   return (
     <div className='container mx-auto'>
-      <div className='grid md:grid-cols-2 relative gap-5 px-3'>
-        <div className='h-[540px] relative rounded-2xl overflow-hidden'>
-          <div className='hidden md:flex justify-center items-center w-full h-full'>
+      <div className='relative grid gap-5 px-3 md:grid-cols-2'>
+        <div className='relative h-[540px] overflow-hidden rounded-2xl'>
+          <div className='hidden size-full items-center justify-center md:flex'>
             <Image
               src={photos[0].url}
               alt={`Room Photo ${currenPhotoIndex + 1}`}
@@ -49,7 +49,7 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
               onClick={openModal.bind(this, 0)}
             />
           </div>
-          <div className='md:hidden flex justify-center items-center w-full h-full'>
+          <div className='flex size-full items-center justify-center md:hidden'>
             <Image
               src={photos[currenPhotoIndex].url}
               alt={`Room Photo ${currenPhotoIndex + 1}`}
@@ -60,7 +60,7 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
             />
           </div>
         </div>
-        <div className='md:hidden flex justify-between items-center'>
+        <div className='flex items-center justify-between md:hidden'>
           <div className='flex space-x-2'>
             <FaArrowLeft className='cursor-pointer' onClick={handlePrevious} />
             <FaArrowRight className='cursor-pointer' onClick={handleNext} />
@@ -70,11 +70,11 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
           </span>
         </div>
 
-        <div className='hidden md:grid grid-cols-2 h-full gap-5'>
+        <div className='hidden h-full grid-cols-2 gap-5 md:grid'>
           {displayPhotos.map((photo, index) => (
             <div
               key={index}
-              className='cursor-pointer h-64 rounded-2xl overflow-hidden'
+              className='h-64 cursor-pointer overflow-hidden rounded-2xl'
             >
               <Image
                 width={150}
@@ -87,7 +87,7 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
           ))}
           {remainingPhotosCount > 0 && (
             <div
-              className='cursor-pointer relative h-64 rounded-2xl overflow-hidden'
+              className='relative h-64 cursor-pointer overflow-hidden rounded-2xl'
               onClick={openModal.bind(this, maximumVisiblePhotos)}
             >
               <Image
@@ -97,7 +97,7 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
                 alt={`Room Photo ${maximumVisiblePhotos}`}
                 className='img'
               />
-              <div className='absolute cursor-pointer text-white inset-0 flex justify-center bg-[rgba(0,0,0,0.5)] items-center text-2xl'>
+              <div className='absolute inset-0 flex cursor-pointer items-center justify-center bg-[rgba(0,0,0,0.5)] text-2xl text-white'>
                 + {remainingPhotosCount}
               </div>
             </div>
@@ -105,8 +105,9 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
         </div>
 
         {showModal && (
-          <div className='fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-90 z-[55]'>
-            <div className='h-[75vh] w-[320px] md:w-[700px] relative'>
+          // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
+          <div className='fixed left-0 top-0 z-[55] flex size-full items-center justify-center bg-black bg-opacity-90'>
+            <div className='relative h-[75vh] w-[320px] md:w-[700px]'>
               <Image
                 src={photos[currenPhotoIndex].url}
                 alt={`Room Photo ${currenPhotoIndex + 1}`}
@@ -114,8 +115,8 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
                 height={150}
                 className='img'
               />
-              <div className='flex justify-between items-center py-3'>
-                <div className='flex space-x-2 items-center text-white'>
+              <div className='flex items-center justify-between py-3'>
+                <div className='flex items-center space-x-2 text-white'>
                   <FaArrowLeft
                     className='cursor-pointer'
                     onClick={handlePrevious}
@@ -125,15 +126,15 @@ const HotelPhotoGallery: FC<{ photos: ImageType[] }> = ({ photos }) => {
                     onClick={handleNext}
                   />
                 </div>
-                <span className='text-white text-sm'>
+                <span className='text-sm text-white'>
                   {currenPhotoIndex + 1} / {photos.length}
                 </span>
               </div>
               <button
-                className='absolute top-2 right-2 text-white text-lg'
+                className='absolute right-2 top-2 text-lg text-white'
                 onClick={closeModal}
               >
-                <MdCancel className='font-medium text-2xl text-tertiary-dark' />
+                <MdCancel className='text-tertiary-dark text-2xl font-medium' />
               </button>
             </div>
           </div>

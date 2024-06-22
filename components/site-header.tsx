@@ -47,7 +47,7 @@ export function SiteHeader() {
         <div className="flex items-center space-x-1">
           <Link href="/cart">
             <Button size="sm" variant="ghost">
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag className="size-5" />
               <span className="ml-2 text-sm font-bold">{cartCount}</span>
               <span className="sr-only">Cart</span>
             </Button>
@@ -57,7 +57,7 @@ export function SiteHeader() {
           {session?.user ? (
               <Link href={`/user/${session.user.id}`}>
                 {session.user.image ? (
-                  <div className='h-10 w-10 overflow-hidden rounded-full'>
+                  <div className='size-10 overflow-hidden rounded-full'>
                     <Image
                       src={session.user.image}
                       alt={session.user.name!}
@@ -80,7 +80,7 @@ export function SiteHeader() {
           {process.env.NODE_ENV === 'development' && (
             <Link href='/studio'>
             <Button size="sm" variant="ghost">
-              <Edit className="h-5 w-5" />
+              <Edit className="size-5" />
             </Button>
             </Link>
           )}

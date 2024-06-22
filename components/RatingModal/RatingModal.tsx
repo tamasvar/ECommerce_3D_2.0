@@ -54,7 +54,7 @@ const RatingModal: FC<Props> = props => {
           <div className='flex items-center'>
             {starValues.map(value => (
               <button
-                className={`h-6 w-6 ${
+                className={`size-6 ${
                   ratingValue === value ? 'text-yellow-500' : 'text-gray-300'
                 }`}
                 onClick={() => setRatingValue(value)}

@@ -43,7 +43,7 @@ if (cartItems.length === 0) return <CartItemsEmpty/>
                  alt={product.name}
                  width={200}
                  height={200}  
-              className="h-24 w-24 rounded-md border-2 border-gray-200 object-cover object-center dark:border-gray-800 sm:h-48 sm:w-48"
+              className="size-24 rounded-md border-2 border-gray-200 object-cover object-center dark:border-gray-800 sm:size-48"
               unoptimized
             />
           </div>
@@ -94,14 +94,14 @@ if (cartItems.length === 0) return <CartItemsEmpty/>
                     onClick={() => removeCartItem(product)}
                   >
                     <span className="sr-only">Remove</span>
-                    <X className="h-5 w-5" aria-hidden="true" />
+                    <X className="size-5" aria-hidden="true" />
                   </Button>
                 </div>
               </div>
             </div>
 
             <p className="mt-4 flex space-x-2 text-sm">
-              <Clock className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <Clock className="size-5 shrink-0" aria-hidden="true" />
               <span>Ships in 10-15 day</span>
             </p>
           </div>
