@@ -1,3 +1,4 @@
+//review-schema.ts
 import { defineField } from 'sanity';
 
 const review = {
@@ -43,6 +44,9 @@ const review = {
       name: 'image',
       title: 'Review Image',
       type: 'image',
+      options: {
+        accept: ['image/jpeg','image/png']
+      }
     },
   ],
 };

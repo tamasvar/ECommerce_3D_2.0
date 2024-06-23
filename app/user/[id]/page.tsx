@@ -1,5 +1,5 @@
 'use client';
-
+//user\[id] page.tsx
 import useSWR from 'swr';
 import { FaSignOutAlt } from 'react-icons/fa';
 import Image from 'next/image';

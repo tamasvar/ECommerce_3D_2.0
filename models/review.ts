@@ -3,7 +3,7 @@ export type UpdateReviewDto = {
     reviewId: string;
     reviewText: string;
     userRating: number;
-   
+    image?: File; // Optional image field
   };
   
   export type CreateReviewDto = {
@@ -12,7 +12,7 @@ export type UpdateReviewDto = {
     reviewText: string;
     userRating: number;
     userId: string;
-    
+    image?: File; // Optional image field
   };
   
   export type Review = {

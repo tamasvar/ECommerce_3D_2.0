@@ -151,7 +151,7 @@ const filters = [
   },
 ]
 
- function ProductFiltersContent() {
+ export function ProductFilters() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const searchValues=Array.from(searchParams.entries())
@@ -202,11 +202,4 @@ const filters = [
       ))}
     </form>
   )
-}
-export function ProductFilters() {
-  return (
-    <Suspense fallback={LoadingSpinner()}>
-      <ProductFiltersContent />
-    </Suspense>
-  );
 }
