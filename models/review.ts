@@ -19,6 +19,7 @@ export type UpdateReviewDto = {
     text: string;
     user: { name: string };
     userRating: number;
+    image?: File; // Optional image field
     _createdAt: Date;
     _id: string;
   };
