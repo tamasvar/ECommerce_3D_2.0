@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Dispatch, FC, SetStateAction } from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import React from 'react';
+import sanityClient from '@/sanity/lib/client';
 
 type Props = {
  
@@ -11,6 +12,7 @@ type Props = {
   setRatingValue: Dispatch<SetStateAction<number | null>>;
   ratingText: string;
   setRatingText: Dispatch<SetStateAction<string>>;
+  setRatingImage:Dispatch<SetStateAction<string|Blob>>;
   reviewSubmitHandler: () => Promise<string | undefined>;
   isSubmittingReview: boolean;
   toggleRatingModal: () => void;
@@ -27,12 +29,38 @@ const RatingModal: FC<Props> = props => {
     reviewSubmitHandler,
     isSubmittingReview,
     toggleRatingModal,
-   
+    setRatingImage,
   } = props;
 
-  
-
   const starValues = [1, 2, 3, 4, 5];
+
+  const [wrongImageType, setWrongImageType] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const onImageChange = (event:any) => {
+    if (event.target.files && event.target.files[0]) {
+      const selectedFile = event.target.files[0];
+      if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/jpg') {
+        setWrongImageType(false);
+        setLoading(true);
+        sanityClient.assets
+          .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
+          .then((document:any) => {
+            setRatingImage(document);
+            setLoading(false);
+          })
+          .catch((error:any) => {
+            console.log('Upload failed:', error.message);
+          });
+      } else {
+        setLoading(false);
+        setWrongImageType(true);
+      }
+      
+      // setRatingImage(URL.createObjectURL(event.target.files[0]));
+      console.log("🚀 ~ onImageChange ~ setRatingImage:", event.target.files[0])
+    }
+   }
 
 
   return (
@@ -77,6 +105,19 @@ const RatingModal: FC<Props> = props => {
             rows={4}
             className='w-full rounded-md border px-2 py-3'
           ></textarea>
+        </div>
+
+        <div className='mb-4'>
+          <label className='block text-sm font-medium text-gray-700'>
+            Attachment (Optional)
+          </label>
+
+          <input
+            type='file'
+            onChange={onImageChange}
+            accept="image/png, image/gif, image/jpeg"
+            className='w-full rounded-md border px-2 py-3'
+          ></input>
         </div>
          
         <div className='flex justify-end'>

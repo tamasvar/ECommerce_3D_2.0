@@ -69,7 +69,7 @@ export const createOrder = async ({
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
-    { headers: { Authorization: `Bearer ${process.env.SANITY_STUDIO_TOKEN}` } }
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
   return data;
@@ -92,7 +92,7 @@ export const updateHotelRoom = async (ProductId: string) => {
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
-    { headers: { Authorization: `Bearer ${process.env.SANITY_STUDIO_TOKEN}` } }
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
   return data;
@@ -144,7 +144,7 @@ export const updateReview = async ({
   reviewId,
   reviewText,
   userRating,
- 
+  image
 }: UpdateReviewDto) => {
   const mutation = {
     mutations: [
@@ -154,7 +154,13 @@ export const updateReview = async ({
           set: {
             text: reviewText,
             userRating,
-          
+            image: {
+              _type: 'image',
+              asset: {
+                _type: 'reference',
+                _ref: image?._id,
+              },
+            },
           },
         },
       },
@@ -164,7 +170,7 @@ export const updateReview = async ({
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
-    { headers: { Authorization: `Bearer ${process.env.SANITY_STUDIO_TOKEN}` } }
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
   
   return data;
@@ -176,7 +182,7 @@ export const createReview = async ({
   reviewText,
   userId,
   userRating,
- 
+  image
 }: CreateReviewDto) => {
   const mutation = {
     mutations: [
@@ -197,7 +203,13 @@ export const createReview = async ({
           },
           userRating,
           text: reviewText,
-          
+          image: {
+            _type: 'image',
+            asset: {
+              _type: 'reference',
+              _ref: image?._id,
+            },
+          },
         },
       },
     ],
@@ -206,7 +218,7 @@ console.log(mutation);
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
-    { headers: { Authorization: `Bearer ${process.env.SANITY_STUDIO_TOKEN}` } }
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
   return data;

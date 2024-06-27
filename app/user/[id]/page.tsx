@@ -31,6 +31,7 @@ const UserDetails = (props: { params: { id: string } }) => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [ratingValue, setRatingValue] = useState<number | null>(0);
   const [ratingText, setRatingText] = useState('');
+  const [ratingImage, setRatingImage] = useState<string | Blob>('');
 
   const toggleRatingModal = () => setIsRatingVisible(prevState => !prevState);
 
@@ -46,6 +47,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     try {
       const { data } = await axios.post('/api/users', {
         reviewText: ratingText,
+        image:ratingImage,
         ratingValue,
         productId,
         orderId
@@ -200,17 +202,20 @@ const UserDetails = (props: { params: { id: string } }) => {
           
         </div>
       </div>
-
+{
+ isRatingVisible&& 
       <RatingModal
         isOpen={isRatingVisible}
         ratingValue={ratingValue}
         setRatingValue={setRatingValue}
         ratingText={ratingText}
         setRatingText={setRatingText}
+        setRatingImage={setRatingImage}
         isSubmittingReview={isSubmittingReview}
         reviewSubmitHandler={reviewSubmitHandler}
         toggleRatingModal={toggleRatingModal}
       />
+}
       <BackDrop isOpen={isRatingVisible} />
     </div>
   );

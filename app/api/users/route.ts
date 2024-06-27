@@ -26,6 +26,7 @@ export async function GET(req: Request, res: Response) {
   }
 }
 
+// POST REQUEST
 export async function POST(req: Request, res: Response) {
   const session = await getServerSession(authOptions);
 
@@ -33,7 +34,8 @@ export async function POST(req: Request, res: Response) {
     return new NextResponse('Authentication Required', { status: 500 });
   }
 
-  const { productId,orderId, reviewText, ratingValue} = await req.json();
+  const { productId,orderId, reviewText, ratingValue, image} = await req.json();
+
   if (!productId || !reviewText || !ratingValue ) {
     return new NextResponse('All fields are required', { status: 400 });
   }
@@ -50,7 +52,7 @@ export async function POST(req: Request, res: Response) {
         reviewId: alreadyExists._id,
         reviewText,
         userRating: ratingValue,
-        
+        image
       });
     } else {
       data = await createReview({
@@ -59,7 +61,7 @@ export async function POST(req: Request, res: Response) {
         reviewText,
         userId,
         userRating: ratingValue,
-      
+        image
       });
     }
     
