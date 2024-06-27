@@ -30,7 +30,7 @@ export default async function Page({searchParams}:Props) {
   const categoryFilter= category ? `&& "${category}" in categories` : ""
   const searchFilter= search ? `&& name match "${search}"` : ""
 
-  const filter=`*[${productFilter}${artsFilter}${categoryFilter}${searchFilter}]`
+ const filter = `*[${productFilter}${artsFilter}${categoryFilter}${searchFilter} && !(_id in path("drafts.**"))]`
 
   const products = await sanityClient.fetch<SanityProduct[]>(groq` ${filter} ${order} {
     _id,

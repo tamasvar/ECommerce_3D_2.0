@@ -1,22 +1,33 @@
-import  sanityClient  from "@/sanity/lib/client"
-import { groq } from "next-sanity"
-import React from 'react';
-import { SanityProduct } from "@/config/inventory"
-import { ProductGallery } from "@/components/product-gallery"
-import { ProductInfo } from "@/components/product-info"
+import sanityClient from "@/sanity/lib/client";
+import { groq } from "next-sanity";
+import React from "react";
+import { SanityProduct } from "@/config/inventory";
+import { ProductGallery } from "@/components/product-gallery";
+import { ProductInfo } from "@/components/product-info";
+import Image from "next/image";
+import StarRating from "@/components/StarRating";
 
-
-
+interface Review {
+  _id: string;
+  _createdAt: string;
+  text: string;
+  userRating: number;
+  image?: { asset: { url: string } };
+  user: {
+    _id: string;
+    name: string;
+    image: string;
+  };
+}
 
 interface Props {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }
 
-export default async function Page({params}: Props) {
-  const product = await sanityClient.fetch<SanityProduct>(groq`*[_type == "product" && slug.current == "${params.slug}"][0]
-   {
+export default async function Page({ params }: Props) {
+  const productQuery = groq`*[_type == "product" && slug.current == "${params.slug}"][0] {
     _id,
     _createdAt,
     "id": _id,
@@ -34,20 +45,85 @@ export default async function Page({params}: Props) {
     rating,
     rating_quantity,
     "slug": slug.current 
-    }` 
-  )
+  }`;
 
+  const reviewsQuery = groq`*[_type == "review" && product._ref == *[_type=="product" && slug.current == "${params.slug}"][0]._id] {
+    _id,
+    _createdAt,
+    text,
+    userRating,
+    image {
+      asset->{
+        url
+      }
+    },
+    user->{
+      _id,
+      name,
+      image
+    }
+  }`;
+
+  const product = await sanityClient.fetch<SanityProduct>(productQuery);
+  const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
+  console.log(reviews)
   return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
       <div className="mx-auto max-w-2xl lg:max-w-none">
         {/* Product */}
         <div className="pb-20 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
           {/* Product gallery */}
-           <ProductGallery product={product}/>
+          <ProductGallery product={product} />
           {/* Product info */}
-          <ProductInfo product={product}/>
+          <ProductInfo product={product} />
+        </div>
+        {/* Reviews */}
+        <div>
+          <h2 className="text-2xl font-bold">Reviews</h2>
+          <div className="mt-4 space-y-4">
+            {reviews.map((review) => (
+              <div key={review._id} className="flex items-start justify-between border-b pb-4">
+                <div className="flex items-center space-x-4">
+                  <div className="size-10">
+                    {review.user.image && (
+                      <Image
+                        src={review.user.image}
+                        alt={review.user.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{review.user.name}</p>
+                    <p className="mt-2 text-sm">{review.text}</p>
+                    {review.image && (
+                      <Image
+                        src={review.image.asset.url}
+                        alt="Review"
+                        width={200}
+                        height={80}
+                        className="mt-2 cursor-pointer object-cover"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <p className="mb-2 text-xs text-gray-500">
+                    {new Date(review._createdAt).toLocaleDateString()}
+                  </p>
+                  <StarRating
+                    rating={review.userRating}
+                    starDimension="20px"
+                    starSpacing="2px"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
-  )
+  );
 }
