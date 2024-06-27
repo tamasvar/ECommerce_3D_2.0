@@ -66,8 +66,8 @@ export default async function Page({ params }: Props) {
 
   const product = await sanityClient.fetch<SanityProduct>(productQuery);
   const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
-  console.log(reviews)
-  return (
+  
+    return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
       <div className="mx-auto max-w-2xl lg:max-w-none">
         {/* Product */}
