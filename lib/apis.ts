@@ -17,6 +17,18 @@ export async function getFeaturedRoom() {
 
   return result;
 }
+export async function getRoomReviews(productId: string) {
+  const result = await sanityClient.fetch<Review[]>(
+    queries.getRoomReviewsQuery,
+    {
+      productId,
+    },
+    { cache: 'no-cache' }
+  );
+
+  return result;
+}
+
 
 export async function getRooms() {
   const result = await sanityClient.fetch<SanityProduct[]>(
@@ -27,7 +39,16 @@ export async function getRooms() {
   return result;
 }
 
-export async function getRoom(slug: string) {
+export async function getProduct(slug: string) {
+  const result = await sanityClient.fetch<SanityProduct>(
+    queries.getRoom,
+    { slug },
+    { cache: 'no-cache' }
+  );
+
+  return result;
+}
+export async function getReviews(slug: string) {
   const result = await sanityClient.fetch<SanityProduct>(
     queries.getRoom,
     { slug },
@@ -210,18 +231,4 @@ console.log(mutation);
   );
 
   return data;
-};
-
-export async function getRoomReviews(productId: string) {
-  const result = await sanityClient.fetch<Review[]>(
-    queries.getRoomReviewsQuery,
-    {
-      productId,
-    },
-    { cache: 'no-cache' }
-  );
-
-  return result;
-}
-
-
+}; 

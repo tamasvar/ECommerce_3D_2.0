@@ -1,3 +1,4 @@
+//imageModal.tsx
 /* eslint-disable tailwindcss/migration-from-tailwind-2 */
 import React from 'react';
 

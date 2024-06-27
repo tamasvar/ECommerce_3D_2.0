@@ -26,3 +26,18 @@ export interface SanityProduct extends Omit<InventoryProduct, "images"> {
   images: Image[]
 }
 
+export interface Review {
+  _id: string;
+  _createdAt: string;
+  text: string;
+  userRating: number;
+  image?: { asset: { url: string } };
+  user: {
+    _id: string;
+    name: string;
+    image: string;
+  };
+  product: {
+    _ref: string;
+  };
+}

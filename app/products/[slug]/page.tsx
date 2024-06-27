@@ -1,30 +1,22 @@
+
 import sanityClient from "@/sanity/lib/client";
 import { groq } from "next-sanity";
 import React from "react";
-import { SanityProduct } from "@/config/inventory";
+import { SanityProduct , Review } from "@/config/inventory";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductInfo } from "@/components/product-info";
 import Image from "next/image";
 import StarRating from "@/components/StarRating";
 
-interface Review {
-  _id: string;
-  _createdAt: string;
-  text: string;
-  userRating: number;
-  image?: { asset: { url: string } };
-  user: {
-    _id: string;
-    name: string;
-    image: string;
-  };
-}
 
 interface Props {
   params: {
     slug: string;
   };
 }
+
+// Add this line to specify revalidation
+export const revalidate = 60;
 
 export default async function Page({ params }: Props) {
   const productQuery = groq`*[_type == "product" && slug.current == "${params.slug}"][0] {
@@ -67,6 +59,10 @@ export default async function Page({ params }: Props) {
   const product = await sanityClient.fetch<SanityProduct>(productQuery);
   const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
   console.log(reviews)
+  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    image.classList.toggle("enlarged");
+  };
   return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
       <div className="mx-auto max-w-2xl lg:max-w-none">
@@ -75,7 +71,7 @@ export default async function Page({ params }: Props) {
           {/* Product gallery */}
           <ProductGallery product={product} />
           {/* Product info */}
-          <ProductInfo product={product} />
+          <ProductInfo product={product} reviews={reviews}  />
         </div>
         {/* Reviews */}
         <div>
@@ -105,6 +101,7 @@ export default async function Page({ params }: Props) {
                         width={200}
                         height={80}
                         className="mt-2 cursor-pointer object-cover"
+                       
                       />
                     )}
                   </div>
