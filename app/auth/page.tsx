@@ -12,13 +12,14 @@ const defaultFormData = {
   email: '',
   name: '',
   password: '',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocKVV2pV-3eU4JFWtCpLa68AmLunFQVYA-6JFmvCC4_nCI8Vxy_c5k999Y18cTAxri6pMJvYT1l306ZXA041AoeCvNu4jhT3=s288-c-no',
 };
 
 const Auth = () => {
   const [formData, setFormData] = useState(defaultFormData);
 
   const inputStyles =
-    'border border-gray-300 sm:text-sm text-black rounded-lg block w-full p-2.5 focus:outline-none';
+    'border border-gray-300 sm:text-lg text-black dark:text-white rounded-lg block w-full p-4 focus:outline-none';
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -38,7 +39,7 @@ const Auth = () => {
       router.push('/');
     } catch (error) {
       console.log(error);
-      toast.error("Something wen't wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -52,7 +53,7 @@ const Auth = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wen't wrong");
+      toast.error("Something went wrong");
     } finally {
       setFormData(defaultFormData);
     }
@@ -60,7 +61,7 @@ const Auth = () => {
 
   return (
     <section className='container mx-auto'>
-      <div className='mx-auto w-80 space-y-4 p-6 sm:p-8 md:w-[70%] md:space-y-6'>
+      <div className='mx-auto w-[90%] max-w-md space-y-6 p-6 sm:p-8 md:w-[70%] md:space-y-14'>
         <div className='mb-8 flex flex-col items-center justify-between md:flex-row'>
           <h1 className='text-xl font-bold leading-tight tracking-tight md:text-2xl'>
             Create an account
@@ -83,7 +84,7 @@ const Auth = () => {
           <input
             type='email'
             name='email'
-            placeholder='name@company.com'
+            placeholder='Email (name@company.com)'
             required
             className={inputStyles}
             value={formData.email}
@@ -92,7 +93,7 @@ const Auth = () => {
           <input
             type='text'
             name='name'
-            placeholder='John Doe'
+            placeholder='Name (John Doe)'
             required
             className={inputStyles}
             value={formData.name}
@@ -101,7 +102,7 @@ const Auth = () => {
           <input
             type='password'
             name='password'
-            placeholder='password'
+            placeholder='Password'
             required
             minLength={6}
             className={inputStyles}
@@ -111,14 +112,17 @@ const Auth = () => {
 
           <button
             type='submit'
-            className='bg-tertiary-dark w-full rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:outline-none'
+            className='w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-lg font-medium text-white shadow-md transition duration-300 hover:bg-blue-700 hover:shadow-lg focus:outline-none'
           >
             Sign Up
           </button>
         </form>
 
-        <button onClick={loginHandler} className='text-blue-700 underline'>
-          login
+        <button
+          onClick={loginHandler}
+          className='mt-4 w-full rounded-lg bg-green-600 px-5 py-2.5 text-center text-lg font-medium text-white shadow-md transition duration-300 hover:bg-green-700 hover:shadow-lg focus:outline-none'
+        >
+          Login
         </button>
       </div>
     </section>

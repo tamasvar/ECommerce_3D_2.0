@@ -8,6 +8,7 @@ import { ProductFilters } from "@/components/product-filters"
 import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
 
+
 // Add this line to specify revalidation
 export const revalidate = 60;
 
@@ -59,6 +60,7 @@ export default async function Page({searchParams}:Props) {
   }`);
   console.log(products)
   console.log(reviews)
+  
   return (
     <div>
       {/* <div className="px-4 pt-20 text-center">

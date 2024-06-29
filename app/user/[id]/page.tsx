@@ -165,7 +165,7 @@ const UserDetails = (props: { params: { id: string } }) => {
               >
                 <BsJournalBookmarkFill />
                 <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Current Bookings
+                  Current Orders
                 </a>
               </li>
             </ol>

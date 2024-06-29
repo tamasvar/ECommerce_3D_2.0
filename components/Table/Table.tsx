@@ -16,7 +16,7 @@ const Table: FC<Props> = ({ orderDetails, setProductId,setOrderId,toggleRatingMo
   const router = useRouter();
 
   return (
-    <div className='mx-auto max-w-[340px] overflow-x-auto rounded-lg shadow-md sm:rounded-lg md:max-w-full'>
+    <div className='mx-auto max-w-[400px] overflow-x-auto rounded-lg shadow-md sm:rounded-lg md:max-w-full'>
       <table className='w-full text-left text-sm text-gray-500'>
         <thead className='bg-gray-50 text-xs uppercase text-gray-700'>
         <tr>
@@ -40,7 +40,7 @@ const Table: FC<Props> = ({ orderDetails, setProductId,setOrderId,toggleRatingMo
       key={`${order._id}-${product.product._id}`}
       className='border-b bg-white hover:bg-gray-50'
     >
-      <td className='px-6 py-4'>{order._id}</td>
+      <td className='px-1'>{order._id}</td>
       <td className='px-6 py-4'>{order.orderdate}</td>
       <td className='px-6 py-4'>{order.status}</td>
       <td className='px-6 py-4'>{order.trackingNumber || '-'}</td>

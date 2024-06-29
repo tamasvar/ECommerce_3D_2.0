@@ -1,25 +1,50 @@
 /* eslint-disable tailwindcss/migration-from-tailwind-2 */
-import React from 'react';
+/* eslint-disable @next/next/no-img-element */
+// components/ReviewImageModal.tsx
+'use client';
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
+import React from 'react';
+import Image from 'next/image';
+
+interface ReviewImageModalProps {
+  src: string;
 }
 
-const ImageModal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
+export default function ReviewImageModal({ src }: ReviewImageModalProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const closeModal = () => setIsOpen(false);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="rounded bg-white p-4">
-        <button onClick={onClose} className="absolute right-2 top-2 text-black">
-          Close
-        </button>
-        {children}
-      </div>
-    </div>
+    <>
+      <Image
+        src={src}
+        alt="Review"
+        width={150}
+        height={90}
+        className="mt-4 cursor-pointer object-cover"
+        onClick={() => setIsOpen(true)}
+      />
+      {isOpen && (
+        <div
+          id="image-modal"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          onClick={closeModal}
+        >
+          <span
+            className="absolute right-0 top-0 mr-4 mt-4 cursor-pointer text-4xl text-white"
+          >
+            &times;
+          </span>
+          <img
+            id="modal-img"
+            src={src}
+            className="max-h-full max-w-full"
+            alt="Review"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </>
   );
-};
-
-export default ImageModal;
+}
