@@ -9,6 +9,8 @@ import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
 
 
+
+
 // Add this line to specify revalidation
 export const revalidate = 60;
 
@@ -48,6 +50,7 @@ export default async function Page({searchParams}:Props) {
     rating,
     rating_quantity,
     description,
+    specdescription,
     "slug": slug.current
 
 
@@ -58,20 +61,16 @@ export default async function Page({searchParams}:Props) {
     userRating,
     product
   }`);
-  console.log(products)
-  console.log(reviews)
-  
+ 
   return (
     <div>
-      {/* <div className="px-4 pt-20 text-center">
+      
+      <div className="px-4 pt-20 text-center">
         <h1 className="text-4xl font-extrabold tracking-normal">{siteConfig.name}</h1>
         <div className="mx-auto mt-4 max-w-3xl text-base">
           <h2 style={{ textDecoration: 'underline' }}> Purchase Process:</h2>
             <ol>
               <li>Select the model you want to purchase and pay for it using Stripe.</li>
-              <li>The site is legit here is my etsy page: sultry3dprints.etsy.com</li>
-              <li> <span style={{  fontWeight: 'bold' }}> PROMOTION CODE 10% off: for the first time </span><span style={{ color: 'red', fontWeight: 'bold' }}> -{'>'} YD9TTQMW {'<'}- </span></li>
-              <li> <span style={{  fontWeight: 'bold' }}> PROMOTION CODE 15% off: for the first time </span><span style={{ color: 'red', fontWeight: 'bold' }}> -{'>'} YUXPLFQX {'<'}- </span></li>
               <li>I will send you an email or a message to your phone as soon as your selected model is ready.</li>
               <li style={{ fontWeight: 'bold' }}>If you can only pay by paypal, write me an e-mail and I will prepare the paypal invoice for you</li>
               <span style={{ display: 'inline-block', marginLeft: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
@@ -86,9 +85,10 @@ export default async function Page({searchParams}:Props) {
               
             </ol>
         </div>
-      </div> */}
+      </div> 
       <div>
         <main className="mx-auto max-w-6xl px-6">
+        
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-24 dark:border-gray-800">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               {products.length} result{products.length===1?"":"s"}
