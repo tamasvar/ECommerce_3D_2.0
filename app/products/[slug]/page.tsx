@@ -1,13 +1,16 @@
 
+//products/slug
 import sanityClient from "@/sanity/lib/client";
 import { groq } from "next-sanity";
 import React from "react";
-import { SanityProduct , Review } from "@/config/inventory";
+import { SanityProduct, Review } from "@/config/inventory";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductInfo } from "@/components/product-info";
 import Image from "next/image";
 import StarRating from "@/components/StarRating";
+import dynamic from 'next/dynamic';
 
+const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr: false });
 
 interface Props {
   params: {
@@ -58,11 +61,8 @@ export default async function Page({ params }: Props) {
 
   const product = await sanityClient.fetch<SanityProduct>(productQuery);
   const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
-  console.log(reviews)
-  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-    image.classList.toggle("enlarged");
-  };
+  console.log(reviews);
+
   return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
       <div className="mx-auto max-w-2xl lg:max-w-none">
@@ -71,16 +71,16 @@ export default async function Page({ params }: Props) {
           {/* Product gallery */}
           <ProductGallery product={product} />
           {/* Product info */}
-          <ProductInfo product={product} reviews={reviews}  />
+          <ProductInfo product={product} reviews={reviews} />
         </div>
         {/* Reviews */}
-        <div>
+        <div className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
           <h2 className="text-2xl font-bold">Reviews</h2>
           <div className="mt-4 space-y-4">
             {reviews.map((review) => (
               <div key={review._id} className="flex items-start justify-between border-b pb-4">
                 <div className="flex items-center space-x-4">
-                  <div className="size-10">
+                  <div className="shrink-0">
                     {review.user.image && (
                       <Image
                         src={review.user.image}
@@ -94,16 +94,6 @@ export default async function Page({ params }: Props) {
                   <div>
                     <p className="text-sm font-semibold">{review.user.name}</p>
                     <p className="mt-2 text-sm">{review.text}</p>
-                    {review.image && (
-                      <Image
-                        src={review.image.asset.url}
-                        alt="Review"
-                        width={200}
-                        height={80}
-                        className="mt-2 cursor-pointer object-cover"
-                       
-                      />
-                    )}
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -115,6 +105,9 @@ export default async function Page({ params }: Props) {
                     starDimension="20px"
                     starSpacing="2px"
                   />
+                  {review.image && (
+                    <ReviewImageModal src={review.image.asset.url} />
+                  )}
                 </div>
               </div>
             ))}

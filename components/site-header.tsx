@@ -12,6 +12,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import React from 'react';
+export const revalidate = 60;
 export function SiteHeader() {
   const pathname = usePathname()
   const router=useRouter()
@@ -57,7 +58,7 @@ export function SiteHeader() {
           {session?.user ? (
               <Link href={`/user/${session.user.id}`}>
                 {session.user.image ? (
-                  <div className='size-10 overflow-hidden rounded-full'>
+                  <div className='size-9 overflow-hidden rounded-full'>
                     <Image
                       src={session.user.image}
                       alt={session.user.name!}
@@ -67,12 +68,12 @@ export function SiteHeader() {
                     /> 
                   </div>
                 ) : (
-                  <FaUserCircle className='cursor-pointer' />
+                  <FaUserCircle className='size-6 cursor-pointer' />
                 )}
               </Link>
             ) : (
               <Link href='/auth'>
-                <FaUserCircle className='cursor-pointer' />
+                <FaUserCircle className='size-6 cursor-pointer' />
               </Link>
             )}
            

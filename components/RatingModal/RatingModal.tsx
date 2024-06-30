@@ -123,7 +123,7 @@ const RatingModal: FC<Props> = props => {
         <div className='flex justify-end'>
           <button
             onClick={reviewSubmitHandler}
-            className='rounded-md bg-primary px-4 py-2 text-white'
+            className='ml-2 rounded-md bg-green-300 px-4 py-2 text-gray-700 hover:bg-green-400'
             disabled={isSubmittingReview}
           >
             {isSubmittingReview ? 'Submitting' : 'Submit'}

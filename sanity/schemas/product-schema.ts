@@ -21,6 +21,13 @@ export const product = {
       validation: Rule => Rule.required(),
     }),
     defineField({
+      name: 'specdescription',
+      title: 'Spec Description',
+      type: 'text',
+      validation: Rule =>
+        Rule.required().min(10).error('Minimum 100 Characters'),
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

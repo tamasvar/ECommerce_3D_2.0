@@ -42,19 +42,19 @@ export async function POST(request: Request) {
         }
     }
     const sessionuser = await getServerSession(authOptions);
-    if (!sessionuser) {
-        return new NextResponse('Authentication required', { status: 400 });
-      }
-    const userId = sessionuser.user.id;
-    const metadata = line_items.map(item => item.price_data.product_data.metadata);
-    console.log(metadata);
-    const metadataObject: Record<string, string> = {};
-    metadata.forEach((item, index) => {
-        metadataObject[index.toString()] = JSON.stringify(item);
-    });
-    metadataObject['userId'] = userId;
-    console.log(userId);
-    console.log(metadataObject);
+        let metadataObject: Record<string, string> = {};
+
+        if (sessionuser) {
+            const userId = sessionuser.user.id;
+            const metadata = line_items.map(item => item.price_data.product_data.metadata);
+            metadata.forEach((item, index) => {
+                metadataObject[index.toString()] = JSON.stringify(item);
+            });
+            metadataObject['userId'] = userId;
+        } else {
+            metadataObject['userId'] = 'guest';
+        }
+    
     // Calculate shipping cost
     const baseShippingCost = shippingAmount; // €30 in cents
     const additionalItemCost = 400; // €3 in cents

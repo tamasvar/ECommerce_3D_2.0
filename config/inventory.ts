@@ -14,6 +14,7 @@ interface InventoryProduct {
   }[];
   currency: string
   description: string
+  specdescription: string
   sku: string
   price:number
   sizes:string
