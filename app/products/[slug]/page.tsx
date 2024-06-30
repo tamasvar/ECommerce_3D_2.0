@@ -1,5 +1,3 @@
-
-//products/slug
 import Image from "next/image";
 import dynamic from 'next/dynamic';
 import { groq } from "next-sanity";
@@ -60,7 +58,6 @@ export default async function Page({ params }: Props) {
 
   const product = await sanityClient.fetch<SanityProduct>(productQuery);
   const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
-  console.log(reviews);
 
   return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
@@ -77,13 +74,13 @@ export default async function Page({ params }: Props) {
           <h2 className="text-2xl font-bold">Reviews</h2>
           <div className="mt-4 space-y-4">
             {reviews.map((review) => (
-              <div key={review._id} className="flex items-start justify-between border-b pb-4">
+              <div key={review?._id} className="flex items-start justify-between border-b pb-4">
                 <div className="flex items-center space-x-4">
                   <div className="shrink-0">
-                    {review.user.image && (
+                    {review?.user?.image && (
                       <Image
-                        src={review.user.image}
-                        alt={review.user.name}
+                        src={review?.user?.image}
+                        alt={review?.user?.name}
                         width={40}
                         height={40}
                         className="rounded-full object-cover"
@@ -91,21 +88,21 @@ export default async function Page({ params }: Props) {
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">{review.user.name}</p>
-                    <p className="mt-2 text-sm">{review.text}</p>
+                    <p className="text-sm font-semibold">{review?.user?.name}</p>
+                    <p className="mt-2 text-sm">{review?.text}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
                   <p className="mb-2 text-xs text-gray-500">
-                    {new Date(review._createdAt).toLocaleDateString()}
+                    {new Date(review?._createdAt).toLocaleDateString()}
                   </p>
                   <StarRating
-                    rating={review.userRating}
+                    rating={review?.userRating}
                     starDimension="20px"
                     starSpacing="2px"
                   />
-                  {review.image && (
-                    <ReviewImageModal src={review.image.asset.url} />
+                  {review?.image?.asset?.url && (
+                    <ReviewImageModal src={review?.image?.asset?.url} />
                   )}
                 </div>
               </div>

@@ -1,4 +1,9 @@
-import { Dispatch, FC, SetStateAction, ChangeEvent } from 'react';
+import {
+  FC,
+  Dispatch,
+  ChangeEvent,
+  SetStateAction,
+} from 'react';
 import toast from 'react-hot-toast';
 import { BsStarFill } from 'react-icons/bs';
 import sanityClient from '@/sanity/lib/client';
@@ -9,11 +14,11 @@ const starValues = [1, 2, 3, 4, 5];
 
 type Props = {
   isOpen: boolean;
-  ratingValue: number | null;
-  setRatingValue: Dispatch<SetStateAction<number | null>>;
+  ratingValue: number;
+  setRatingValue: Dispatch<SetStateAction<number>>;
   ratingText: string;
   setRatingText: Dispatch<SetStateAction<string>>;
-  setRatingImage: Dispatch<SetStateAction<string | Blob>>;
+  setRatingImage: Dispatch<SetStateAction<Blob | undefined>>;
   reviewSubmitHandler: () => Promise<string | undefined>;
   isSubmittingReview: boolean;
   toggleRatingModal: () => void;
@@ -77,7 +82,7 @@ const RatingModal: FC<Props> = props => {
           <div className='flex items-center'>
             {starValues.map(value => (
               <button
-                className={`size-6 ${ratingValue === value ? 'text-yellow-500' : 'text-gray-300'
+                className={`size-6 ${ratingValue >= value ? 'text-yellow-500' : 'text-gray-300'
                   }`}
                 onClick={() => setRatingValue(value)}
                 key={value}
