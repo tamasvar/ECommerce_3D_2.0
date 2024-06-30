@@ -1,17 +1,11 @@
-import  sanityClient  from "@/sanity/lib/client"
 import { groq } from "next-sanity"
-import React from "react"
+import  sanityClient  from "@/sanity/lib/client"
 import { SanityProduct,Review  } from "@/config/inventory"
-import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
-import { ProductFilters } from "@/components/product-filters"
+import { siteConfig } from "@/config/site"
 import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
-
-// Add this line to specify revalidation
-export const revalidate = 60;
-
-
+import { ProductFilters } from "@/components/product-filters"
 
 // Add this line to specify revalidation
 export const revalidate = 60;

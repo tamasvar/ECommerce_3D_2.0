@@ -1,22 +1,22 @@
-import { checkReviewExists } from '@/lib/apis';
-import { useEffect, useState } from 'react';
-import { Dispatch, FC, SetStateAction } from 'react';
+import { Dispatch, FC, SetStateAction, ChangeEvent } from 'react';
+import toast from 'react-hot-toast';
 import { BsStarFill } from 'react-icons/bs';
-import React from 'react';
 import sanityClient from '@/sanity/lib/client';
 
+const imageTypes = ['image/webp', 'image/png', 'image/svg', 'image/jpeg', 'image/gif', 'image/jpg'];
+const maxImageSize = 10000000;
+const starValues = [1, 2, 3, 4, 5];
+
 type Props = {
- 
   isOpen: boolean;
   ratingValue: number | null;
   setRatingValue: Dispatch<SetStateAction<number | null>>;
   ratingText: string;
   setRatingText: Dispatch<SetStateAction<string>>;
-  setRatingImage:Dispatch<SetStateAction<string|Blob>>;
+  setRatingImage: Dispatch<SetStateAction<string | Blob>>;
   reviewSubmitHandler: () => Promise<string | undefined>;
   isSubmittingReview: boolean;
   toggleRatingModal: () => void;
-  
 };
 
 const RatingModal: FC<Props> = props => {
@@ -32,44 +32,39 @@ const RatingModal: FC<Props> = props => {
     setRatingImage,
   } = props;
 
-  const starValues = [1, 2, 3, 4, 5];
-
-  const [wrongImageType, setWrongImageType] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const onImageChange = (event:any) => {
+  const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
-      if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/jpg') {
-        setWrongImageType(false);
-        setLoading(true);
+      // check for image size must be under 10mb
+      if (selectedFile?.size > maxImageSize) {
+        toast.error('Image size must be under 10mb');
+        event.target.value = '';
+        return;
+      }
+
+      if (imageTypes.includes(selectedFile.type)) {
         sanityClient.assets
-          .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
-          .then((document:any) => {
+          .upload('image', selectedFile,
+            { contentType: selectedFile.type, filename: selectedFile.name }
+          )
+          .then((document: any) => {
             setRatingImage(document);
-            setLoading(false);
           })
-          .catch((error:any) => {
-            console.log('Upload failed:', error.message);
+          .catch(() => {
+            toast.error('Review Failed');
           });
       } else {
-        setLoading(false);
-        setWrongImageType(true);
+        toast.error('Image format not supported');
       }
-      
-      // setRatingImage(URL.createObjectURL(event.target.files[0]));
-      console.log("🚀 ~ onImageChange ~ setRatingImage:", event.target.files[0])
     }
-   }
-
+  }
 
   return (
     <div
-      className={`fixed inset-0 z-[61] flex items-center justify-center ${
-        isOpen
-          ? 'pointer-events-auto opacity-100'
-          : 'pointer-events-none opacity-0'
-      }`}
+      className={`fixed inset-0 z-[61] flex items-center justify-center ${isOpen
+        ? 'pointer-events-auto opacity-100'
+        : 'pointer-events-none opacity-0'
+        }`}
     >
       <div className='w-96 rounded-lg bg-white p-4 shadow-lg'>
         <h2 className='mb-2 text-xl font-semibold dark:text-gray-800'>
@@ -82,9 +77,8 @@ const RatingModal: FC<Props> = props => {
           <div className='flex items-center'>
             {starValues.map(value => (
               <button
-                className={`size-6 ${
-                  ratingValue === value ? 'text-yellow-500' : 'text-gray-300'
-                }`}
+                className={`size-6 ${ratingValue === value ? 'text-yellow-500' : 'text-gray-300'
+                  }`}
                 onClick={() => setRatingValue(value)}
                 key={value}
               >
@@ -104,7 +98,7 @@ const RatingModal: FC<Props> = props => {
             onChange={e => setRatingText(e.target.value)}
             rows={4}
             className='w-full rounded-md border px-2 py-3'
-          ></textarea>
+          />
         </div>
 
         <div className='mb-4'>
@@ -117,9 +111,9 @@ const RatingModal: FC<Props> = props => {
             onChange={onImageChange}
             accept="image/png, image/gif, image/jpeg"
             className='w-full rounded-md border px-2 py-3'
-          ></input>
+          />
         </div>
-         
+
         <div className='flex justify-end'>
           <button
             onClick={reviewSubmitHandler}
@@ -135,7 +129,6 @@ const RatingModal: FC<Props> = props => {
             Cancel
           </button>
         </div>
-        
       </div>
     </div>
   );

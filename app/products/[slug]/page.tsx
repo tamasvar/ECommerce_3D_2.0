@@ -1,14 +1,13 @@
 
 //products/slug
-import sanityClient from "@/sanity/lib/client";
-import { groq } from "next-sanity";
-import React from "react";
-import { SanityProduct, Review } from "@/config/inventory";
-import { ProductGallery } from "@/components/product-gallery";
-import { ProductInfo } from "@/components/product-info";
 import Image from "next/image";
-import StarRating from "@/components/StarRating";
 import dynamic from 'next/dynamic';
+import { groq } from "next-sanity";
+import sanityClient from "@/sanity/lib/client";
+import { SanityProduct, Review } from "@/config/inventory";
+import StarRating from "@/components/StarRating";
+import { ProductInfo } from "@/components/product-info";
+import { ProductGallery } from "@/components/product-gallery";
 
 const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr: false });
 
