@@ -2,8 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 // components/ReviewImageModal.tsx
 'use client';
-
-import React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 
 interface ReviewImageModalProps {
@@ -11,9 +10,10 @@ interface ReviewImageModalProps {
 }
 
 export default function ReviewImageModal({ src }: ReviewImageModalProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
+  const openModal = () => setIsOpen(true);
 
   return (
     <>
@@ -23,8 +23,9 @@ export default function ReviewImageModal({ src }: ReviewImageModalProps) {
         width={150}
         height={90}
         className="mt-4 cursor-pointer object-cover"
-        onClick={() => setIsOpen(true)}
+        onClick={openModal}
       />
+
       {isOpen && (
         <div
           id="image-modal"
