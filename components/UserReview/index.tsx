@@ -34,7 +34,7 @@ const UserReview: FC<{ review: any }> = ({ review }) => {
           starDimension="20px"
           starSpacing="2px"
         />
-        {review?.image && (
+        {review?.image?.asset?.url && (
           <ReviewImageModal src={review?.image?.asset?.url} />
         )}
       </div>

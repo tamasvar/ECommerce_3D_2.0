@@ -1,11 +1,11 @@
 
 //products/slug
-import sanityClient from "@/sanity/lib/client";
 import { groq } from "next-sanity";
+import sanityClient from "@/sanity/lib/client";
 import { SanityProduct, Review } from "@/config/inventory";
-import { ProductGallery } from "@/components/product-gallery";
-import { ProductInfo } from "@/components/product-info";
 import UserReview from "@/components/UserReview";
+import { ProductInfo } from "@/components/product-info";
+import { ProductGallery } from "@/components/product-gallery";
 
 interface Props {
   params: {
@@ -71,12 +71,14 @@ export default async function Page({ params }: Props) {
         <div className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
           <h2 className="text-2xl font-bold">Reviews</h2>
           <div className="mt-4 space-y-4">
-            {reviews?.map((review) => (
-              <UserReview review={review} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
+            {
+              reviews?.map((review) => (
+                <UserReview review={review} />
+              ))
+            }
+          </div >
+        </div >
+      </div >
+    </main >
   );
 }
