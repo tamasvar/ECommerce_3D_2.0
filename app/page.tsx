@@ -108,7 +108,7 @@ export default async function Page({ searchParams }: Props) {
               className="flex items-center rounded-lg !px-6 !pb-8"
               slideClassName='mt-[82px] bg-white rounded-lg p-4' >
               <>
-                <div className='absolute left-0 top-0 z-[50] h-full w-full bg-[rgba(0,0,0,0.5)] z-[-1]' />
+                <div className='absolute left-0 top-0 h-full w-full bg-[rgba(0,0,0,0.5)] z-[-1]' />
                 <p className='absolute w-full top-[24px] font-semibold text-center text-white text-[24px] text-bold z-[1]'>Turning smiles into testimonials – your happiness, our success!</p>
               </>
             </Carousel>
