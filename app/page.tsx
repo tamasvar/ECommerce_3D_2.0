@@ -71,6 +71,12 @@ export default async function Page({ searchParams }: Props) {
     name,
     }
   }`);
+  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
+    _id,
+    userRating,
+    product
+  }`);
+ 
   const fiveStarReviews = reviews?.filter(({ userRating }) => userRating === 5);
   const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 3);
 
@@ -134,7 +140,7 @@ export default async function Page({ searchParams }: Props) {
                 <ProductFilters />
               </div>
               {/* Product grid */}
-              <ProductGrid products={products} reviews={reviews} />
+              <ProductGrid products={products} review={review} />
             </div>
           </section>
         </main>

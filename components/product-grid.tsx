@@ -17,10 +17,10 @@ import React from 'react';
 
 interface Props {
   products: SanityProduct[];
-  reviews: Review[];
+  review: Review[];
 }
 
-export function ProductGrid({ products,reviews  }: Props) {
+export function ProductGrid({ products,review  }: Props) {
   const [loadedProducts, setLoadedProducts] = useState(15);
   const [loading, setLoading] = useState(false);
   const loadMore = () => {
@@ -60,7 +60,7 @@ export function ProductGrid({ products,reviews  }: Props) {
   
  // Create a map of product IDs to their reviews
  const productReviewsMap: { [key: string]: Review[] } = {};
- reviews.forEach(review => {
+ review.forEach(review => {
    const productId = review.product._ref;
    if (!productReviewsMap[productId]) {
      productReviewsMap[productId] = [];
