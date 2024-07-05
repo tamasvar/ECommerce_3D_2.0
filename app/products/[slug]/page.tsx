@@ -1,13 +1,11 @@
-import Image from "next/image";
-import dynamic from 'next/dynamic';
+
+//products/slug
 import { groq } from "next-sanity";
 import sanityClient from "@/sanity/lib/client";
 import { SanityProduct, Review } from "@/config/inventory";
-import StarRating from "@/components/StarRating";
+import UserReview from "@/components/UserReview";
 import { ProductInfo } from "@/components/product-info";
 import { ProductGallery } from "@/components/product-gallery";
-
-const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr: false });
 
 interface Props {
   params: {
@@ -73,43 +71,12 @@ export default async function Page({ params }: Props) {
         <div className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">
           <h2 className="text-2xl font-bold">Reviews</h2>
           <div className="mt-4 space-y-4">
-            {reviews.map((review) => (
-              <div key={review?._id} className="flex items-start justify-between border-b pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="shrink-0">
-                    {review?.user?.image && (
-                      <Image
-                        src={review?.user?.image}
-                        alt={review?.user?.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">{review?.user?.name}</p>
-                    <p className="mt-2 text-sm">{review?.text}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <p className="mb-2 text-xs text-gray-500">
-                    {new Date(review?._createdAt).toLocaleDateString()}
-                  </p>
-                  <StarRating
-                    rating={review?.userRating}
-                    starDimension="20px"
-                    starSpacing="2px"
-                  />
-                  {review?.image?.asset?.url && (
-                    <ReviewImageModal src={review?.image?.asset?.url} />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
+            {
+              reviews?.map(review => <UserReview review={review} />)
+            }
+          </div >
+        </div >
+      </div >
+    </main >
   );
 }
