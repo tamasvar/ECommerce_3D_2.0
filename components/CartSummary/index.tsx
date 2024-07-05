@@ -8,11 +8,13 @@ import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { createOrder } from "@/lib/apis";
 import { CreateOrderDto } from "@/models/order";
 import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
+let sessionSave: any = {};
 
 export function CartSummary() {
-  const { formattedTotalPrice, totalPrice = 0, cartDetails, cartCount = 0, redirectToCheckout } = useShoppingCart();
+  const { formattedTotalPrice, clearCart, totalPrice = 0, cartDetails, cartCount = 0, redirectToCheckout } = useShoppingCart();
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -20,7 +22,8 @@ export function CartSummary() {
   const isDisabled = isLoading || cartCount === 0;
   const cartItems = Object.entries(cartDetails!).map(([_, product]) => product);
   const { data: session } = useSession();
-  console.log('session', session);
+  sessionSave = session;
+
   const [userId, setUserId] = useState(session?.user?.id);
   useEffect(() => setUserId(session?.user?.id), [session])
 
@@ -31,18 +34,12 @@ export function CartSummary() {
     ? formatCurrencyString({ value: shippingAmount + (cartCount - 1) * 400, currency: "EUR" }) // Adding 400 EUR for each additional item
     : formatCurrencyString({ value: shippingAmount, currency: "EUR" });
 
-  const perItemShippingCost = Number(shippingEstimate.replace('€', '')) / cartItems?.length
-  // console.log('perItemShippingCost', perItemShippingCost);
+  const perItemShippingCost = Number(shippingEstimate.replace('€', '')) / cartItems?.length;
 
   // order amount with shipping charges
   const orderTotal = cartCount > 1
     ? formatCurrencyString({ value: totalPrice + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
     : formatCurrencyString({ value: totalPrice + shippingAmount, currency: "EUR" });
-
-  // console.log('orderTotal', orderTotal);
-  // console.log('cartDetails', cartDetails);
-  // console.log('shippingEstimate', shippingEstimate);
-  // console.log(cartItems);
 
   const units = cartItems.map((p) => ({
     reference_id: p?.id,
@@ -71,34 +68,33 @@ export function CartSummary() {
   const paypalCheckout = async ({
     orderId,
     orderDate,
-    userId,
-  }: { orderId: string; orderDate: string, userId: string }) => {
-    // const date = new Date(orderDate * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
-    // console.log('date', date);
+  }: { orderId: string; orderDate: string }) => {
+    try {
+      const date = new Date(orderDate).toISOString().split('T')[0];
+      const products = cartItems?.map(item => ({
+        product: {
+          _id: item?.id,
+          name: item?.name,
+        },
+        style: item?.style?.[0],
+        size: item?.size?.name,
+      }));
 
-    const products = cartItems?.map(item => ({
-      product: {
-        _id: item?.id,
-        name: item?.name,
-      },
-      style: item?.style?.[0],
-      size: item?.size?.name,
-    }))
-    console.log('session in', session);
-    console.log('userId', userId);
+      const orderData: CreateOrderDto = {
+        id: orderId,
+        user: sessionSave?.user?.id ?? "",
+        products,
+        orderdate: date,
+        totalPrice: Number(orderTotal.replace('€', '')) * 1000,
+      };
 
-
-    const orderData: CreateOrderDto = {
-      id: orderId,
-      user: session?.user?.id ?? "user.00688c59-8df9-4360-988a-911130288c45",
-      products,
-      orderdate: '2024-07-04',
-      totalPrice: Number(orderTotal.replace('€', '')),
-    };
-    console.log('orderData', orderData);
-
-    // Call createOrder function to save order in Sanity
-    await createOrder(orderData);
+      // Call createOrder function to save order in Sanity
+      await createOrder(orderData);
+      toast.success("Order placed successfully!");
+      clearCart();
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   }
 
   /*  const handleCouponCodeChange = (event: { target: { value: SetStateAction<string> } }) => {
@@ -214,35 +210,21 @@ export function CartSummary() {
               label: 'pay',
               height: 40
             }}
-            createOrder={(data, actions) => {
+            createOrder={(_, actions) => {
               return actions.order
-                .create({
-                  purchase_units: units
-                })
-                .then((orderId) => {
-                  // Your code here after create the order
-                  return orderId;
-                });
+                .create({ purchase_units: units })
+                .then((orderId) => orderId);
             }}
-            onApprove={async (data, actions) => {
-              console.log('data', data);
-
+            onApprove={async (_, actions) => {
               return actions?.order?.capture()?.then(async function (order) {
-                console.log('order', order);
-                console.log('userId', userId);
-                console.log('session?.user?.id', session?.user?.id);
                 if (order?.status === "COMPLETED") {
                   paypalCheckout({
                     orderId: order?.id || '',
                     orderDate: order?.create_time || '',
-                    userId: session?.user?.id
                   })
                 } else {
-
+                  toast.error("Something went wrong");
                 }
-                // Your code here after capture the order
-                // emptyCart({ type: "empty" });
-                // router.push("/success");
               });
             }}
           />
