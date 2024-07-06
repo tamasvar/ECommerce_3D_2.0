@@ -31,7 +31,7 @@ const Carousel: FC<ICarousel> = (props) => {
         }}
         navigation={navigation}
         modules={[Autoplay, Pagination, Navigation]}
-        className={`w-full h-full ${className} bg-cover`}
+        className={`size-full ${className} bg-cover`}
         style={{ backgroundImage: 'url(assets/feedback-bg.jpg)' }}
       >
         {children}

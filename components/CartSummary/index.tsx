@@ -212,7 +212,10 @@ export function CartSummary() {
             }}
             createOrder={(_, actions) => {
               return actions.order
-                .create({ purchase_units: units })
+                .create({
+                  purchase_units: units,
+                  intent: "CAPTURE"
+                })
                 .then((orderId) => orderId);
             }}
             onApprove={async (_, actions) => {
