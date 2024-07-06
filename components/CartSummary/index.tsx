@@ -204,11 +204,13 @@ export function CartSummary() {
           }}
         >
           <PayPalButtons
-            style={{
+             style={{
               color: 'gold',
               shape: 'rect',
               label: 'pay',
-              height: 40
+              height: 40,
+              layout: 'horizontal', // Ensure buttons are displayed in horizontal layout
+              tagline: false, // Remove tagline if needed
             }}
             createOrder={(_, actions) => {
               return actions.order
