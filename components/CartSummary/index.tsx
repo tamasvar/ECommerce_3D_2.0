@@ -27,7 +27,7 @@ export function CartSummary() {
   const [discount, setDiscount] = useState(0);
   const [selectedCountry, setSelectedCountry] = useState("US"); // Add state for selected country
   const isDisabled = isLoading || cartCount === 0;
-  const cartItems = Object.entries(cartDetails!).map(([_, product]) => product);
+  const cartItems: any[] = Object.entries(cartDetails!).map(([_, product]) => product);
 
   // Calculate shipping amount based on the selected country
   const shippingAmount = selectedCountry ? (countryShippingCosts[selectedCountry as keyof typeof countryShippingCosts] || 0) : 0;
@@ -86,8 +86,8 @@ export function CartSummary() {
             _id: item?.id,
             name: item?.name,
           },
-          style: item?.style?.[0] ?? item?.style ?? '',
-          size: item?.size?.[0]?.name ?? "",
+          style: item?.product_data?.style ?? '',
+          size: item?.product_data?.size ?? '',
         }));
 
         const orderData: CreateOrderDto = {
