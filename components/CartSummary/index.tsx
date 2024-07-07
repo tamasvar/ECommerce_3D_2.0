@@ -3,13 +3,13 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { createOrder } from "@/lib/apis";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { CreateOrderDto } from "@/models/order";
 import { Button } from "@/components/ui/button";
 import { countries, countryShippingCosts } from "./data";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { useRouter } from "next/navigation";
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 let sessionSave: any = {};
@@ -228,7 +228,7 @@ export function CartSummary() {
           }}
         >
           <PayPalButtons
-             style={{
+            style={{
               color: 'gold',
               shape: 'rect',
               label: 'pay',

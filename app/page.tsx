@@ -1,6 +1,5 @@
 import { cn, selectRandomArrayElements } from "@/lib/utils"
 import { groq } from "next-sanity"
-import { siteConfig } from "@/config/site"
 import Carousel from "@/components/Carousel"
 import sanityClient from "@/sanity/lib/client"
 import { ProductGrid } from "@/components/product-grid"
@@ -8,6 +7,7 @@ import { ProductSort } from "@/components/product-sort"
 import { SanityProduct, Review } from "@/config/inventory"
 import { ProductFilters } from "@/components/product-filters"
 import ProductReviewsSlide from "@/components/ProductReviewSlide"
+import PurchaseProcess from "@/components/PurchaseProcess"
 
 // Add this line to specify revalidation
 export const revalidate = 60;
@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: Props) {
     "slug": slug.current
   }`)
   // Fetch reviews
-  const reviews = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
+  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
     _id,
     _createdAt,
     text,
@@ -67,44 +67,21 @@ export default async function Page({ searchParams }: Props) {
       name,
       image
     },
-    product->{
-    name,
-    }
+    product->
   }`);
-  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
-    _id,
-    userRating,
-    product
-  }`);
- 
-  const fiveStarReviews = reviews?.filter(({ userRating }) => userRating === 5);
+
+  console.log('reviewreviewreview', review[0].product);
+
+
+  const fiveStarReviews = review?.filter(({ userRating }) => userRating === 5);
   const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 3);
 
+
   const slides = randomThree_fiveStarReviews?.map((review: any) =>
-    <ProductReviewsSlide review={review} />);
+    <ProductReviewsSlide review={review} children={<PurchaseProcess />} />);
 
   return (
     <div>
-      <div className="px-4 pt-20 text-center">
-        <h1 className="text-4xl font-extrabold tracking-normal">{siteConfig.name}</h1>
-        <div className="mx-auto mt-4 max-w-3xl text-base">
-          <h2 style={{ textDecoration: 'underline' }}> Purchase Process:</h2>
-          <ol>
-            <li>Select the model you want to purchase and pay for it using Stripe.</li>
-            <li>I will send you an email or a message to your phone as soon as your selected model is ready.</li>
-            <li style={{ fontWeight: 'bold' }}>If you can only pay by paypal, write me an e-mail and I will prepare the paypal invoice for you</li>
-            <span style={{ display: 'inline-block', marginLeft: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-            <span style={{ display: 'inline-block', marginRight: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-            <li style={{ fontWeight: 'bold' }}>You can find the complete list of the models I have and what I can create at the following link:</li>
-            <span style={{ display: 'inline-block', marginLeft: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-            <span style={{ display: 'inline-block', marginRight: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-
-            <li style={{ fontWeight: 'bold' }}>Click here for a Catalogue -{'>'} <a href="https://sites.google.com/view/modelscatalogue/" style={{ color: 'red', fontWeight: 'bold' }}>Models Catalogue</a></li>
-            <li style={{ fontWeight: 'bold' }}>Click here for a DM -{'>'} <a href="https://www.facebook.com/Sultry3DPrints" style={{ color: 'red', fontWeight: 'bold' }}>Sultry3DPrints</a></li>
-            <li style={{ color: 'red', fontWeight: 'bold' }}><a href="mailto:info@sultry3dprints.com" style={{ color: 'red', fontWeight: 'bold' }}>info@sultry3dprints.com</a></li>
-          </ol>
-        </div>
-      </div>
       <div>
         <main className="mx-auto max-w-6xl px-6">
           <div className="pb-6 pt-24">

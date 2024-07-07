@@ -20,7 +20,7 @@ const UserReview: FC<{ review: any }> = ({ review }) => {
             />
           )}
         </div>
-        <div>
+        <div className='pr-4'>
           <p className="text-sm font-semibold">{review?.user?.name}</p>
           <p className="mt-2 text-sm">{review?.text}</p>
         </div>
