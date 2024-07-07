@@ -89,7 +89,7 @@ export default async function Page({ searchParams }: Props) {
     <Image src={'/assets/bg.jpg'} alt=''
       width={1000}
       height={500}
-      className="w-full h-full min-h-[500px] lg:min-h-[auto] object-cover"
+      className="w-full h-full min-h-[500px] lg:min-h-[auto] object-cover rounded-lg"
     />
   ];
 
@@ -97,19 +97,18 @@ export default async function Page({ searchParams }: Props) {
     <div>
       <div>
         <main className="mx-auto max-w-6xl px-6">
-          <div className="pb-6 pt-24">
+          <div className="pb-2 md:pb-6 pt-6 md:pt-24">
             <Carousel
               slides={slides}
-              className="flex items-center rounded-lg !px-6 !pb-8"
-              slideClassName=' bg-background' >
-
+              className="flex items-center rounded-lg !px-0 !md:px-6 !pb-8"
+              slideClassName=' bg-background p-4 rounded-lg' >
               <>
                 <div className='absolute left-0 top-0 z-[-1] size-full' />
               </>
             </Carousel>
           </div>
 
-          <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-24 dark:border-gray-800">
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-6 md:pt-24 dark:border-gray-800">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               {products?.length} result{products?.length === 1 ? "" : "s"}
             </h1>
