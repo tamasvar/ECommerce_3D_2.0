@@ -101,7 +101,7 @@ export default async function Page({ searchParams }: Props) {
             <Carousel
               slides={slides}
               className="flex items-center rounded-lg !px-6 !pb-8"
-              slideClassName='mt-[82px] bg-background rounded-lg p-4' >
+              slideClassName=' bg-background' >
               <>
                 <div className='absolute left-0 top-0 z-[-1] size-full' />
                 
