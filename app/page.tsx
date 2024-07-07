@@ -53,7 +53,7 @@ export default async function Page({ searchParams }: Props) {
     "slug": slug.current
   }`)
   // Fetch reviews
-  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
+  const reviews = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
     _id,
     _createdAt,
     text,
@@ -71,9 +71,8 @@ export default async function Page({ searchParams }: Props) {
     product->
   }`);
 
-  const fiveStarReviews = review?.filter(({ userRating }) => userRating === 5);
+  const fiveStarReviews = reviews?.filter(({ userRating }) => userRating === 5);
   const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 3);
-
 
   const slides = [
     <PurchaseProcess />,
@@ -123,7 +122,7 @@ export default async function Page({ searchParams }: Props) {
                 <ProductFilters />
               </div>
               {/* Product grid */}
-              <ProductGrid products={products} review={review} />
+              <ProductGrid products={products} review={reviews} />
             </div>
           </section>
         </main>

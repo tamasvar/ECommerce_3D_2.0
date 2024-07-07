@@ -126,8 +126,8 @@ export function CartSummary() {
       handleDiscount(10); // 10% discount for the specified coupon code
     } else if (couponCode === process.env.NEXT_PUBLIC_COUPON15) {
       handleDiscount(15); // 15% discount for the specified coupon code
-    } else if (couponCode === process.env.NEXT_PUBLIC_SALE35) {
-      handleDiscount(35); // 35% discount for the specified coupon code
+    } else if (couponCode === process.env.NEXT_PUBLIC_FREESHIP) {
+      handleDiscount(perItemShippingCost); // 35% discount for the specified coupon code
     } else {
       handleDiscount(0); // No discount if the entered coupon code doesn't match
       setCouponCode("");
@@ -251,7 +251,10 @@ export function CartSummary() {
                 return toast.error("Session expired.")
               } else
                 return actions.order
-                  .create({ purchase_units: units })
+                  .create({
+                    purchase_units: units,
+                    intent: "CAPTURE"
+                  })
                   .then((orderId) => orderId);
             }}
             onApprove={async (_, actions) => {
