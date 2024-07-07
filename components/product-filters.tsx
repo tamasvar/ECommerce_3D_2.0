@@ -1,7 +1,6 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import React, { Suspense } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +8,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
-import LoadingSpinner from "@/app/loading";
 
 const filters = [
   {
@@ -30,7 +28,7 @@ const filters = [
       { value: "othercomics", label: "Other Comics" },
       { value: "starwars", label: "Star Wars" },
       { value: "warhammer", label: "Warhammer" },
-      
+
     ],
   },
   {
@@ -151,10 +149,10 @@ const filters = [
   },
 ]
 
- export function ProductFilters() {
+export function ProductFilters() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const searchValues=Array.from(searchParams.entries())
+  const searchValues = Array.from(searchParams.entries())
   return (
     <form className="sticky top-20">
       <h3 className="sr-only">Categories</h3>
@@ -166,7 +164,7 @@ const filters = [
               <span>
                 {section.name}{" "}
                 <span className="ml-1 text-xs font-extrabold uppercase text-gray-400"></span>
-                {searchParams.get(section.id) ? `(${searchParams.get(section.id)})`: ""}
+                {searchParams.get(section.id) ? `(${searchParams.get(section.id)})` : ""}
               </span>
             </AccordionTrigger>
             <AccordionContent className="max-h-[400px] overflow-y-auto">
@@ -177,21 +175,21 @@ const filters = [
                     className="flex items-center space-x-2"
                   >
                     <Checkbox id={`filter-${section.id}-${optionIdx}`}
-                    checked={searchValues.some(([key, value]) =>key === section.id && value === option.value)}
-                    onClick={(event)=>{
-                      const params = new URLSearchParams(searchParams)
-                      const checked = event.currentTarget.dataset.state === "checked" 
-                      checked 
-                      ? params.delete(section.id) 
-                      : params.set(section.id, option.value)
-                      router.replace(`/?${params.toString()}`)
+                      checked={searchValues.some(([key, value]) => key === section.id && value === option.value)}
+                      onClick={(event) => {
+                        const params = new URLSearchParams(searchParams)
+                        const checked = event.currentTarget.dataset.state === "checked"
+                        checked
+                          ? params.delete(section.id)
+                          : params.set(section.id, option.value)
+                        router.replace(`/?${params.toString()}`)
                       }}
                     />
 
-                    <label 
-                    htmlFor={`filter-${section.id}-${optionIdx}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    {option.label}
+                    <label
+                      htmlFor={`filter-${section.id}-${optionIdx}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      {option.label}
                     </label>
                   </div>
                 ))}

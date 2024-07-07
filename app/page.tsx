@@ -9,6 +9,8 @@ import PurchaseProcess from "@/components/PurchaseProcess"
 import { cn, selectRandomArrayElements } from "@/lib/utils"
 import { ProductFilters } from "@/components/product-filters"
 import ProductReviewsSlide from "@/components/ProductReviewSlide"
+import { Suspense } from "react"
+import LoadingSpinner from "./loading"
 // Add this line to specify revalidation
 export const revalidate = 60;
 
@@ -119,7 +121,9 @@ export default async function Page({ searchParams }: Props) {
                 ? 'lg:grid-cols-4'
                 : 'lg:grid-cols-[1fr_3fr]')}>
               <div className="hidden lg:block">{/* Product filters */}
-                <ProductFilters />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <ProductFilters />
+                </Suspense>
               </div>
               {/* Product grid */}
               <ProductGrid products={products} review={reviews} />

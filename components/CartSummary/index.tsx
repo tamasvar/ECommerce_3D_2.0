@@ -86,8 +86,8 @@ export function CartSummary() {
             _id: item?.id,
             name: item?.name,
           },
-          style: item?.style?.[0],
-          size: item?.size?.name,
+          style: item?.style?.[0] ?? item?.style ?? '',
+          size: item?.size?.[0]?.name ?? "",
         }));
 
         const orderData: CreateOrderDto = {
