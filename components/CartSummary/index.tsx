@@ -171,7 +171,17 @@ export function CartSummary() {
             {cartCount && orderTotal}
           </dd>
         </div>
+
+        <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
+          <dt className="flex items-center text-sm">
+            <span>Coupon Codes for discount</span>
+          </dt>
+          <dd className="text-sm font-medium">
+            <b>Kb12tDuI</b>
+          </dd>
+        </div>
       </dl>
+
 
       <div className="mt-4">
         <label htmlFor="couponCode" className="block text-sm font-medium">
@@ -181,7 +191,7 @@ export function CartSummary() {
           <input
             value={couponCode}
             name="couponCode"
-            className="block w-full flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block px-4 w-full flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             onChange={handleCouponCodeChange}
           />
           <button
