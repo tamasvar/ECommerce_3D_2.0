@@ -2,20 +2,17 @@
 
 import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
-import Stripe from "stripe"
 import { useShoppingCart } from "use-shopping-cart"
-import React from 'react';
 
 interface Props {
-  customerDetails: Stripe.Checkout.Session.CustomerDetails | null
+  customerDetails: any
 }
 
-export function CheckoutSession({customerDetails}:Props) {
-  const {clearCart} = useShoppingCart()
+export function CheckoutSession({ customerDetails }: Props) {
+  const { clearCart } = useShoppingCart()
 
- 
+
   function handleSuccessfulTransaction() {
-    
     clearCart();
   }
 
@@ -23,10 +20,10 @@ export function CheckoutSession({customerDetails}:Props) {
     if (customerDetails) {
       handleSuccessfulTransaction();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerDetails]);
-    
-  
+
+
   if (!customerDetails) {
     return (
       <>
@@ -45,11 +42,11 @@ export function CheckoutSession({customerDetails}:Props) {
         Order Successful!
       </h1>
       <h3 className="mt-8 text-2xl leading-7">
-        Thank you, <span className="font-extrabold">{customerDetails.name}</span>!
+        Thank you, <span className="font-extrabold">{customerDetails?.name}</span>!
       </h3>
       <p className="mt-8">
         Check your purchase email{" "}
-        <span className="mx-1 font-extrabold text-indigo-500">{customerDetails.email}</span> for
+        <span className="mx-1 font-extrabold text-indigo-500">{customerDetails?.email}</span> for
         your invoice.
       </p>
     </>
