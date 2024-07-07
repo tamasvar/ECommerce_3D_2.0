@@ -1,7 +1,7 @@
+import { FC } from 'react'
 import Image from 'next/image'
-import React, { FC } from 'react'
-import StarRating from '../StarRating'
 import dynamic from 'next/dynamic';
+import StarRating from '../StarRating'
 
 const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr: false });
 

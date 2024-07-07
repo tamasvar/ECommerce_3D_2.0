@@ -5,11 +5,10 @@ import sanityClient from "@/sanity/lib/client"
 import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
 import { SanityProduct, Review } from "@/config/inventory"
+import PurchaseProcess from "@/components/PurchaseProcess"
 import { cn, selectRandomArrayElements } from "@/lib/utils"
 import { ProductFilters } from "@/components/product-filters"
 import ProductReviewsSlide from "@/components/ProductReviewSlide"
-import PurchaseProcess from "@/components/PurchaseProcess"
-
 // Add this line to specify revalidation
 export const revalidate = 60;
 
@@ -77,7 +76,8 @@ export default async function Page({ searchParams }: Props) {
   const slides = [
     <PurchaseProcess />,
     ...randomThree_fiveStarReviews?.map((review: any) =>
-      <ProductReviewsSlide review={review} />),
+      <ProductReviewsSlide review={review} />
+    ),
     <Image src={'/assets/feedback-bg.jpg'} alt=''
       width={1000}
       height={300}
@@ -103,7 +103,7 @@ export default async function Page({ searchParams }: Props) {
 
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-24 dark:border-gray-800">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-              {products.length} result{products.length === 1 ? "" : "s"}
+              {products?.length} result{products?.length === 1 ? "" : "s"}
             </h1>
             {/* Product Sort */}
             <ProductSort />
@@ -115,7 +115,7 @@ export default async function Page({ searchParams }: Props) {
             </h2>
             <div className={cn(
               "grid grid-cols-1 gap-x-8 gap-y-10",
-              products.length > 0
+              products?.length > 0
                 ? 'lg:grid-cols-4'
                 : 'lg:grid-cols-[1fr_3fr]')}>
               <div className="hidden lg:block">{/* Product filters */}

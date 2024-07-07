@@ -1,5 +1,5 @@
 'use client'
-import { FC, Fragment, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 // Import Swiper styles
@@ -37,9 +37,7 @@ const Carousel: FC<ICarousel> = (props) => {
         {children}
         {
           slides?.map((slide, index) => (
-            <Fragment key={index}>
-              <SwiperSlide className={slideClassName}>{slide}</SwiperSlide>
-            </Fragment>
+            <SwiperSlide key={index} className={slideClassName}>{slide}</SwiperSlide>
           ))}
       </Swiper>
     </>

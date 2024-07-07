@@ -28,7 +28,6 @@ export function CartSummary() {
   const [selectedCountry, setSelectedCountry] = useState("US"); // Add state for selected country
   const isDisabled = isLoading || cartCount === 0;
   const cartItems = Object.entries(cartDetails!).map(([_, product]) => product);
-  console.log('out discount', discount);
 
   // Calculate shipping amount based on the selected country
   const shippingAmount = selectedCountry ? (countryShippingCosts[selectedCountry as keyof typeof countryShippingCosts] || 0) : 0;
