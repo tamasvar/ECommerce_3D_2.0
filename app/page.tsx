@@ -107,14 +107,14 @@ export default async function Page({ searchParams }: Props) {
       </div>
       <div>
         <main className="mx-auto max-w-6xl px-6">
-          <div className="pt-24 pb-6">
+          <div className="pb-6 pt-24">
             <Carousel
               slides={slides}
               className="flex items-center rounded-lg !px-6 !pb-8"
               slideClassName='mt-[82px] bg-background rounded-lg p-4' >
               <>
-                <div className='absolute left-0 top-0 h-full w-full bg-[rgba(0,0,0,0.5)] z-[-1]' />
-                <p className='absolute w-full top-[24px] font-semibold text-center text-white text-[24px] text-bold z-[1]'>Turning smiles into testimonials – your happiness, our success!</p>
+                <div className='absolute left-0 top-0 z-[-1] size-full bg-[rgba(0,0,0,0.5)]' />
+                <p className='text-bold absolute top-[24px] z-[1] w-full text-center text-[24px] font-semibold text-white'>Turning smiles into testimonials – your happiness, our success!</p>
               </>
             </Carousel>
           </div>
