@@ -71,8 +71,8 @@ export default async function Page({ searchParams }: Props) {
     },
     product->
   }`);
-   // Fetch reviews
-   const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
+  // Fetch reviews
+  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
     _id,
     userRating,
     product
@@ -102,9 +102,9 @@ export default async function Page({ searchParams }: Props) {
               slides={slides}
               className="flex items-center rounded-lg !px-6 !pb-8"
               slideClassName=' bg-background' >
+
               <>
                 <div className='absolute left-0 top-0 z-[-1] size-full' />
-                
               </>
             </Carousel>
           </div>
