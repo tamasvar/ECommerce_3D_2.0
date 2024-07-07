@@ -7,7 +7,7 @@ const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr:
 
 const UserReview: FC<{ review: any }> = ({ review }) => {
   return (
-    <div key={review?._id} className="flex items-start justify-between border-b pb-4">
+    <div className="flex items-start justify-between border-b pb-4">
       <div className="flex items-center space-x-4">
         <div className="shrink-0">
           {review?.user?.image && (
