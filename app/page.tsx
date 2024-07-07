@@ -69,8 +69,12 @@ export default async function Page({ searchParams }: Props) {
     },
     product->
   }`);
-
-  console.log('reviewreviewreview', review[0].product);
+  const reviews = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
+    _id,
+    userRating,
+    product 
+  }`);
+  
 
 
   const fiveStarReviews = review?.filter(({ userRating }) => userRating === 5);
@@ -78,6 +82,7 @@ export default async function Page({ searchParams }: Props) {
 
 
   const slides = randomThree_fiveStarReviews?.map((review: any) =>
+    // eslint-disable-next-line react/no-children-prop
     <ProductReviewsSlide review={review} children={<PurchaseProcess />} />);
 
   return (
@@ -117,7 +122,7 @@ export default async function Page({ searchParams }: Props) {
                 <ProductFilters />
               </div>
               {/* Product grid */}
-              <ProductGrid products={products} review={review} />
+              <ProductGrid products={products} review={reviews} />
             </div>
           </section>
         </main>
