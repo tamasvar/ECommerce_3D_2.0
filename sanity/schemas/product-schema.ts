@@ -25,7 +25,7 @@ export const product = {
       title: 'Spec Description',
       type: 'text',
       validation: Rule =>
-        Rule.required().min(10).error('Minimum 100 Characters'),
+        Rule.required().min(10).error('Minimum 10 Characters'),
     }),
     defineField({
       name: 'description',

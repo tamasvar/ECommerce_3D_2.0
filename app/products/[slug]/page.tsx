@@ -72,7 +72,7 @@ export default async function Page({ params }: Props) {
           <h2 className="text-2xl font-bold">Reviews</h2>
           <div className="mt-4 space-y-4">
             {
-              reviews?.map(review => <UserReview review={review} />)
+              reviews?.map(review => <UserReview key={review?._id} review={review} />)
             }
           </div >
         </div >
