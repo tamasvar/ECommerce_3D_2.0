@@ -8,12 +8,14 @@ import { Providers } from "@/components/providers"
 import { SiteBlob } from "@/components/site-blob"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
+import { Suspense } from "react"
+import LoadingSpinner from "./loading"
 
 export const metadata: Metadata = {
   title: siteConfig.name, //itt adtam meg a címet a fejlécnek
-  description:siteConfig.description,
-  icons:{
-    icon:'/favicon.ico'
+  description: siteConfig.description,
+  icons: {
+    icon: '/favicon.ico'
   }
 
 }
@@ -34,12 +36,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           <Providers>
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader/>
-            <SiteBlob/>
-            <div className="flex-1">{children}</div>
-            <SiteFooter/>
-          </div>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <SiteBlob />
+              <Suspense fallback={<LoadingSpinner />}>
+                <div className="flex-1">{children}</div>
+              </Suspense>
+              <SiteFooter />
+            </div>
           </Providers>
         </body>
       </html>
