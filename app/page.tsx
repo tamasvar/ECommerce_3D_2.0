@@ -88,8 +88,8 @@ export default async function Page({ searchParams }: Props) {
     ),
     <Image src={'/assets/bg.jpg'} alt=''
       width={1000}
-      height={300}
-      style={{ width: '100%', height: '100%', maxHeight: 300, objectFit: 'cover' }}
+      height={500}
+      className="w-full h-full min-h-[500px] lg:min-h-[auto] object-cover"
     />
   ];
 
