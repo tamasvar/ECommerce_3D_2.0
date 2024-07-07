@@ -1,10 +1,11 @@
-import { cn, selectRandomArrayElements } from "@/lib/utils"
+import Image from "next/image"
 import { groq } from "next-sanity"
 import Carousel from "@/components/Carousel"
 import sanityClient from "@/sanity/lib/client"
 import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
 import { SanityProduct, Review } from "@/config/inventory"
+import { cn, selectRandomArrayElements } from "@/lib/utils"
 import { ProductFilters } from "@/components/product-filters"
 import ProductReviewsSlide from "@/components/ProductReviewSlide"
 import PurchaseProcess from "@/components/PurchaseProcess"
@@ -70,15 +71,20 @@ export default async function Page({ searchParams }: Props) {
     product->
   }`);
 
-  console.log('reviewreviewreview', review[0].product);
-
-
   const fiveStarReviews = review?.filter(({ userRating }) => userRating === 5);
   const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 3);
 
 
-  const slides = randomThree_fiveStarReviews?.map((review: any) =>
-    <ProductReviewsSlide review={review} children={<PurchaseProcess />} />);
+  const slides = [
+    <PurchaseProcess />,
+    ...randomThree_fiveStarReviews?.map((review: any) =>
+      <ProductReviewsSlide review={review} />),
+    <Image src={'/assets/feedback-bg.jpg'} alt=''
+      width={1000}
+      height={300}
+      style={{ width: '100%', height: '100%', maxHeight: 300, objectFit: 'cover' }}
+    />
+  ];
 
   return (
     <div>
