@@ -1,4 +1,5 @@
-import { FC } from 'react'
+"use client"
+import { FC, useState } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic';
 import StarRating from '../StarRating'
@@ -6,9 +7,22 @@ import StarRating from '../StarRating'
 const ReviewImageModal = dynamic(() => import('@/components/ImageModal'), { ssr: false });
 
 const UserReview: FC<{ review: any }> = ({ review }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  }
+
+  const handleReadMore = () => {
+    setIsExpanded(!isExpanded);
+  }
+
   return (
     <div className="flex items-start justify-between border-b pb-4">
-      <div className="flex items-center space-x-4">
+      <div className="flex items-start space-x-4">
         <div className="shrink-0">
           {review?.user?.image && (
             <Image
@@ -22,7 +36,17 @@ const UserReview: FC<{ review: any }> = ({ review }) => {
         </div>
         <div className='pr-4'>
           <p className="text-sm font-semibold">{review?.user?.name}</p>
-          <p className="mt-2 text-sm">{review?.text}</p>
+          <p className="mt-2 text-sm">
+            {isExpanded ? review?.text : truncateText(review?.text, 100)}
+            {review?.text.length > 100 && (
+              <button 
+                onClick={handleReadMore} 
+                className="ml-2 text-blue-500 hover:underline"
+              >
+                {isExpanded ? 'Read less' : 'Read more'}
+              </button>
+            )}
+          </p>
         </div>
       </div>
       <div className="flex flex-col items-end">

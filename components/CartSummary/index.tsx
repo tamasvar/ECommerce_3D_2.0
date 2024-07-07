@@ -190,7 +190,7 @@ export function CartSummary() {
           <input
             value={couponCode}
             name="couponCode"
-            className="block px-4 w-full flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full flex-1 rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             onChange={handleCouponCodeChange}
           />
           <button
@@ -247,7 +247,7 @@ export function CartSummary() {
             }}
             createOrder={async (_, actions) => {
               if (!sessionSave?.user?.id) {
-                return toast.error("Session expired.")
+                return toast.error("Session expired. Pls Login")
               } else
                 return actions.order
                   .create({

@@ -20,7 +20,8 @@ const Carousel: FC<ICarousel> = (props) => {
   return (
     <>
       <Swiper
-        spaceBetween={30}
+        autoHeight={true}
+        spaceBetween={40}
         centeredSlides={true}
         autoplay={{
           delay: 5000,
@@ -32,7 +33,6 @@ const Carousel: FC<ICarousel> = (props) => {
         navigation={navigation}
         modules={[Autoplay, Pagination, Navigation]}
         className={`size-full ${className} bg-cover`}
-        style={{ backgroundImage: 'url(assets/feedback-bg.jpg)' }}
       >
         {children}
         {
