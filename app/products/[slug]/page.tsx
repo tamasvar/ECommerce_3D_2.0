@@ -30,7 +30,7 @@ export default async function Page({ params }: Props) {
     size,
     style,
     description,
-    categories,
+    universes,
     arts,
     rating,
     rating_quantity,

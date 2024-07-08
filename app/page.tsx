@@ -11,31 +11,34 @@ import { ProductFilters } from "@/components/product-filters"
 import ProductReviewsSlide from "@/components/ProductReviewSlide"
 import { Suspense } from "react"
 import LoadingSpinner from "./loading"
+import ResponsiveImage from "@/components/ResponsiveImage"
 // Add this line to specify revalidation
-export const revalidate = 60;
+export const revalidate = 10;
 
 interface Props {
   searchParams: {
     date?: string
     price?: string
     arts?: string
-    category?: string
+    universes?: string
+    style?:string
     search?: string
   }
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { date, price, arts, category, search } = searchParams
+  const { date, price, arts,style, universes, search } = searchParams
   const priceOrder = price ? ` | order(price ${price})` : ""
   const dateOrder = date ? ` | order(_createdAt ${date})` : ""
   const order = `${priceOrder}${dateOrder}`
 
-  const productFilter = `_type == "product"`
+  const productFilter = `_type == "product" && isFeatured == true`
   const artsFilter = arts ? `&& "${arts}" in arts` : ""
-  const categoryFilter = category ? `&& "${category}" in categories` : ""
+  const styleFilter = style ? `&& "${style}" in style` : ""
+  const universeFilter = universes ? `&& "${universes}" in universes` : ""
   const searchFilter = search ? `&& name match "${search}"` : ""
 
-  const filter = `*[${productFilter}${artsFilter}${categoryFilter}${searchFilter} && !(_id in path("drafts.**"))]`
+  const filter = `*[${productFilter}${artsFilter}${universeFilter}${searchFilter}${styleFilter} && !(_id in path("drafts.**"))]`
 
   const products = await sanityClient.fetch<SanityProduct[]>(groq` ${filter} ${order} {
     _id,
@@ -51,6 +54,7 @@ export default async function Page({ searchParams }: Props) {
     rating_quantity,
     description,
     specdescription,
+    isFeatured,
     "slug": slug.current
   }`)
   // Fetch reviews
@@ -83,24 +87,21 @@ export default async function Page({ searchParams }: Props) {
 
   const slides = [
     <PurchaseProcess />,
+    <ResponsiveImage key="background-image" />,
     ...randomThree_fiveStarReviews?.map((review: any) =>
       <ProductReviewsSlide review={review} />
     ),
-    <Image src={'/assets/bg.jpg'} alt=''
-      width={1000}
-      height={500}
-      className="w-full h-full min-h-[500px] lg:min-h-[auto] object-cover rounded-lg"
-    />
+    
   ];
 
   return (
     <div>
       <div>
         <main className="mx-auto max-w-6xl px-6">
-          <div className="pb-2 md:pb-6 pt-6 md:pt-24">
+          <div className="pb-2 pt-6 md:pb-6 md:pt-24">
             <Carousel
               slides={slides}
-              className="flex items-center rounded-lg !px-0 !md:px-6 !pb-8"
+              className="!md:px-6 flex items-center rounded-lg !px-0 !pb-8"
               slideClassName=' bg-background p-4 rounded-lg' >
               <>
                 <div className='absolute left-0 top-0 z-[-1] size-full' />
@@ -108,7 +109,7 @@ export default async function Page({ searchParams }: Props) {
             </Carousel>
           </div>
 
-          <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-6 md:pt-24 dark:border-gray-800">
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-6 dark:border-gray-800 md:pt-24">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               {products?.length} result{products?.length === 1 ? "" : "s"}
             </h1>

@@ -5,7 +5,7 @@ interface InventoryProduct {
   name: string
   image: string
   images: string[]
-  categories: string[]
+  universes: string[]
   arts: string[]
   style:string[]
   size: {
@@ -18,6 +18,7 @@ interface InventoryProduct {
   sku: string
   price:number
   sizes:string
+  isFeatured: boolean,
 }
 
 export interface SanityProduct extends Omit<InventoryProduct, "images"> {

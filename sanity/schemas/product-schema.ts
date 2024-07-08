@@ -42,8 +42,8 @@ export const product = {
       
     }),
     defineField({
-      name: 'categories',
-      title: 'Categories',
+      name: 'universes',
+      title: 'Universes',
       type: 'array',
       of: [{ type: 'string' }],
     }),

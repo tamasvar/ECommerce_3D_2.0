@@ -139,11 +139,11 @@ export function ProductInfo({ product,reviews  }: Props) {
       </div>
       <div className="mt-6">
         <div className="mt-2 text-base">
-          <h3 className="space-y-6 text-base">Tags:</h3>
+          <h3 className="space-y-6 text-base">Universe:</h3>
           <div className={isSmallScreen ? 'flex flex-wrap' : 'space-x-2'}>
-            {product.categories.map((category, index) => (
-              <Link key={index} href={`/?category=${category}`}>
-                <span className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{category},</span>
+            {product.universes.map((universe, index) => (
+              <Link key={index} href={`/?universes=${universe}`}>
+                <span className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{universe},</span>
               </Link>
             ))}
           </div>
