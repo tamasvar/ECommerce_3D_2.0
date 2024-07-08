@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { createOrder } from '../../../lib/apis';
-import { CreateOrderDto} from '../../../models/order'
+import { CreateOrderDto } from '../../../models/order'
 
 const checkout_session_completed = 'checkout.session.completed';
 
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
   switch (event.type) {
     case checkout_session_completed:
       const session: Stripe.Checkout.Session = event.data.object as Stripe.Checkout.Session;
+      console.log('webhook session', session);
 
       if (session.metadata) {
         const userId = session.metadata['userId'];
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
                 },
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
-                _key:parsedProductMetadata.id,
+                _key: parsedProductMetadata.id,
               };
 
               products.push(product);
@@ -73,12 +74,15 @@ export async function POST(req: Request) {
 
         // Create order data object
         const orderData: CreateOrderDto = {
-          id:orderId,
+          id: orderId,
           user: userId,
           products: products,
           orderdate: orderDate,
           totalPrice: totalPrice!,
         };
+
+        console.log('orderData in webhook', orderData);
+
 
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);

@@ -16,7 +16,7 @@ import { CartItemsEmpty } from "@/components/cart-items-empty"
 export function CartItems() {
   const {cartDetails, removeItem, setItemQuantity}=useShoppingCart()
   const cartItems = Object.entries(cartDetails!).map(([_, product])=> product)
-  console.log(cartItems)
+  // console.log(cartItems)
  const {toast} = useToast()
   function removeCartItem(product: Product) {
     removeItem(product._id)
