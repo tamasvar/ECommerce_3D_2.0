@@ -32,7 +32,7 @@ export const product = {
       title: 'Description',
       type: 'text',
       validation: Rule =>
-        Rule.required().min(10).error('Minimum 100 Characters'),
+        Rule.required().min(10).error('Minimum 10 Characters'),
     }),
     defineField({
         name: "images",
@@ -44,6 +44,12 @@ export const product = {
     defineField({
       name: 'universes',
       title: 'Universes',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
       type: 'array',
       of: [{ type: 'string' }],
     }),
