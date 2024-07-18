@@ -5,24 +5,30 @@ import axios from 'axios';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
-import { User } from '@/models/user';
 import { getUserOrders } from '@/lib/apis';
 import LoadingSpinner from '../../loading';
 import Table from '@/components/Table/Table';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { GiMoneyStack } from 'react-icons/gi';
 import { BsJournalBookmarkFill } from 'react-icons/bs';
+import { ImProfile } from "react-icons/im";
 import BackDrop from '@/components/BackDrop/BackDrop';
 import RatingModal from '@/components/RatingModal/RatingModal';
+import UserProfile from '@/components/UserProfile';
+import PurchaseHistory from '@/components/PurchaseHistory';
+interface Tabs {
+  profile: JSX.Element;
+  'purchase-history': JSX.Element;
+  bookings: JSX.Element;
+}
 
-const UserDetails = (props: { params: { id: string } }) => {
+const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purchase-history' } }) => {
   const {
     params: { id: userId },
+    searchParams: { t = '' }
   } = props;
 
-  const [currentNav, setCurrentNav] = useState<
-    'bookings' | 'amount' | 'ratings'
-  >('bookings');
+  const [currentNav, setCurrentNav] = useState<'bookings' | 'purchase-history' | 'ratings' | 'profile'>(t || 'bookings');
   const [productId, setProductId] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
@@ -35,12 +41,12 @@ const UserDetails = (props: { params: { id: string } }) => {
 
   const reviewSubmitHandler = async () => {
     if (!ratingText.trim().length || !ratingValue) {
-      return toast.error('Please provide a rating text and a rating');
+      toast.error('Please provide a rating text and a rating');
+      return;
     }
-
     if (!productId) toast.error('Id not provided');
 
-    setIsSubmittingReview(true)
+    setIsSubmittingReview(true);
 
     let payload: any = {
       reviewText: ratingText,
@@ -48,6 +54,7 @@ const UserDetails = (props: { params: { id: string } }) => {
       productId,
       orderId
     }
+
     // adding image in payload if image exist
     ratingImage && (payload.image = ratingImage);
 
@@ -67,8 +74,9 @@ const UserDetails = (props: { params: { id: string } }) => {
   };
 
   const fetchUserBooking = async () => getUserOrders(userId);
+
   const fetchUserData = async () => {
-    const { data } = await axios.get<User>('/api/users');
+    const { data } = await axios.get('/api/users');
     return data;
   };
 
@@ -94,6 +102,17 @@ const UserDetails = (props: { params: { id: string } }) => {
   if (loadingUserData) return <LoadingSpinner />;
   if (!userData) throw new Error('Cannot fetch data');
   if (!userData) throw new Error('Cannot fetch data');
+
+  const tabs: Tabs = {
+    profile: <UserProfile userData={userData} />,
+    'purchase-history': <PurchaseHistory orderDetails={userOrders} />,
+    bookings: <Table
+      orderDetails={userOrders}
+      setProductId={setProductId}
+      setOrderId={setOrderId}
+      toggleRatingModal={toggleRatingModal}
+    />
+  }
 
   return (
     <div className='py10 container mx-auto px-2 md:px-4'>
@@ -154,6 +173,34 @@ const UserDetails = (props: { params: { id: string } }) => {
 
           <nav className='sticky top-0 mx-auto mb-8 mt-7 w-fit rounded-lg border border-gray-200 bg-gray-50 px-2 py-3 text-gray-700 md:w-full md:px-5'>
             <ol
+              className={`${currentNav === 'profile' ? 'text-blue-600' : 'text-gray-700'
+                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
+            >
+              <li
+                onClick={() => setCurrentNav('profile')}
+                className='inline-flex cursor-pointer items-center'
+              >
+                <ImProfile />
+                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
+                  Profile
+                </a>
+              </li>
+            </ol>
+            <ol
+              className={`${currentNav === 'purchase-history' ? 'text-blue-600' : 'text-gray-700'
+                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
+            >
+              <li
+                onClick={() => setCurrentNav('purchase-history')}
+                className='inline-flex cursor-pointer items-center'
+              >
+                <GiMoneyStack />
+                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
+                  Purchase History
+                </a>
+              </li>
+            </ol>
+            <ol
               className={`${currentNav === 'bookings' ? 'text-blue-600' : 'text-gray-700'
                 } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
             >
@@ -163,40 +210,12 @@ const UserDetails = (props: { params: { id: string } }) => {
               >
                 <BsJournalBookmarkFill />
                 <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Current Orders
-                </a>
-              </li>
-            </ol>
-            <ol
-              className={`${currentNav === 'amount' ? 'text-blue-600' : 'text-gray-700'
-                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
-            >
-              <li
-                onClick={() => setCurrentNav('amount')}
-                className='inline-flex cursor-pointer items-center'
-              >
-                <GiMoneyStack />
-                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Amount Spent
+                  Orders
                 </a>
               </li>
             </ol>
           </nav>
-
-          {currentNav === 'bookings' ? (
-            userOrders && (
-              <Table
-                orderDetails={userOrders}
-                setProductId={setProductId}
-                setOrderId={setOrderId}
-                toggleRatingModal={toggleRatingModal}
-              />
-            )
-          ) : (
-            <></>
-          )}
-
-
+          {tabs[currentNav as keyof Tabs]}
         </div>
       </div>
       {

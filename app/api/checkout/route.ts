@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { stripe } from "@/lib/stripe"
 
 export async function POST(request: Request) {
-    const { cartDetails, shippingAmount, selectedCountry, discount } = await request.json();
+    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice } = await request.json();
 
     const line_items = [];
     let totalQuantity = 0;
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         phone_number_collection: {
             enabled: true,
         },
-        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice}&itemsCount=${totalQuantity}`,
         cancel_url: `${origin}/cart`,
         metadata: metadataObject,
     });

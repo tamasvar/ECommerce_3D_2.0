@@ -1,5 +1,21 @@
 import { defineField, defineType } from "sanity";
 
+export const shippingAddress = {
+  title: 'Shipping Address',
+  name: 'shippingAddress',
+  type: 'object',
+  fields: [
+    { name: 'name', type: 'string', title: 'Name' },
+    { name: 'phone', type: 'number', title: 'Phone' },
+    { name: 'country', type: 'string', title: 'Country' },
+    { name: 'state', type: 'string', title: 'State' },
+    { name: 'lineAddress1', type: 'string', title: 'Address Line 1' },
+    { name: 'lineAddress2', type: 'string', title: 'Address Line 2' },
+    { name: 'city', type: 'string', title: 'City' },
+    { name: 'zip', type: 'string', title: 'ZIP Code' },
+  ],
+};
+
 export const user = defineType({
   name: 'user',
   title: 'user',
@@ -47,7 +63,12 @@ export const user = defineType({
       name: 'about',
       title: 'About',
       type: 'text',
-      description: 'A brief dsecription about the user',
+      description: 'A brief description about the user',
+    }),
+    defineField({
+      name: 'shippingAddress',
+      title: 'Shipping Address',
+      type: 'shippingAddress',
     }),
   ],
 });

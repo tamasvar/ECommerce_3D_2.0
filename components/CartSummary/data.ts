@@ -69,3 +69,24 @@ export const countries = [
   { value: 'SK', label: 'Slovakia' },
   { value: 'SI', label: 'Slovenia' }
 ];
+
+export interface FormData {
+  name: string;
+  phone: string;
+  country: string;
+  state: string;
+  lineAddress1: string;
+  lineAddress2?: string;
+  city: string;
+  zip: string;
+}
+export const formDataInitialState = {
+  name: '',
+  phone: '',
+  country: '',
+  state: '',
+  lineAddress1: '',
+  lineAddress2: '',
+  city: '',
+  zip: ''
+}

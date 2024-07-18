@@ -68,6 +68,7 @@ export const getUserDataQuery = groq`*[_type == 'user' && _id == $userId][0] {
     about,
     _createdAt,
     image,
+    shippingAddress
 }`;
 
 export const getRoomReviewsQuery = groq`*[_type == "review" && product._ref == $ProductId] {

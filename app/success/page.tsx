@@ -3,7 +3,8 @@ import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
 import { CheckoutSession } from "@/components/checkout-session"
 
-export default async function Page() {
+export default async function Page(props: any) {
+  const { searchParams: { totalAmount = 0, itemsCount = 0 } } = props;
   const sessionUser = await getServerSession(authOptions);
 
   return (
@@ -11,7 +12,7 @@ export default async function Page() {
       <div className="text-center">
         {/* Checkout session */}
 
-        <CheckoutSession customerDetails={sessionUser?.user} />
+        <CheckoutSession totalAmount={totalAmount} itemsCount={itemsCount} customerDetails={sessionUser?.user} />
 
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link

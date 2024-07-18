@@ -1,20 +1,15 @@
 'use client';
-import React from 'react';
 import { Dispatch, FC, SetStateAction } from 'react';
-import { useRouter } from 'next/navigation';
-
 import { Order } from '@/models/order';
 
 type Props = {
-  orderDetails: Order[];
+  orderDetails: Order[] | undefined;
   setProductId: Dispatch<SetStateAction<string | null>>;
   setOrderId: Dispatch<SetStateAction<string | null>>;
   toggleRatingModal: () => void;
 };
 
-const Table: FC<Props> = ({ orderDetails, setProductId, setOrderId, toggleRatingModal }) => {
-  const router = useRouter();
-
+const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleRatingModal }) => {
   // Sort orders by date
   const sortedOrderDetails = [...orderDetails].sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
 
@@ -37,7 +32,7 @@ const Table: FC<Props> = ({ orderDetails, setProductId, setOrderId, toggleRating
 
         <tbody>
           {sortedOrderDetails.map(order =>
-            order.products.map(product => (
+            order.products.map((product: any) => (
               <tr
                 key={`${order._id}-${product.product._id}`}
                 className='border-b bg-white hover:bg-gray-50'
@@ -48,7 +43,7 @@ const Table: FC<Props> = ({ orderDetails, setProductId, setOrderId, toggleRating
                 <td className='px-6 py-4'>{order.trackingNumber || '-'}</td>
                 <td className='px-6 py-4'>{product.product.name}</td>
                 <td className='px-6 py-4'>{product.style}</td>
-                <td className='px-6 py-4'>{product.size}</td>
+                <td className='px-6 py-4'>{product.size?.name || product.size}</td>
                 <td className='px-6 py-4'>{order.totalPrice / 100}€</td>
                 <td className='px-6 py-4'>
                   <button
@@ -63,7 +58,8 @@ const Table: FC<Props> = ({ orderDetails, setProductId, setOrderId, toggleRating
                   </button>
                 </td>
               </tr>
-            ))
+            )
+            )
           )}
         </tbody>
       </table>
