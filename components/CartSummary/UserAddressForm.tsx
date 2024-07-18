@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction } from 'react'
-import { countries, FormData } from './data'
+import { europeanCountriesWithStates, FormData } from './data'
 
 interface Props {
   formData: FormData;
@@ -9,6 +9,8 @@ interface Props {
 
 const UserAddressForm: FC<Props> = (props) => {
   const { formData, setFormData, readOnly = false } = props;
+
+  const selectedCountryStates = formData?.country && (europeanCountriesWithStates?.find(country => country.value === formData.country)?.states || []) || [];
 
   return (
     <div className="">
@@ -56,10 +58,13 @@ const UserAddressForm: FC<Props> = (props) => {
               id="country"
               name="country"
               value={formData?.country}
-              className="bg-[#efefef4d] dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm"
-              onChange={(e) => setFormData?.(prev => ({ ...prev, country: e.target.value }))}
+              className={`${readOnly && 'bg-[#efefef4d]'} dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm`}
+              onChange={(e) => {
+                setFormData?.(prev => ({ ...prev, country: e.target.value }));
+                setFormData?.(prev => ({ ...prev, state: '' }))
+              }}
             >
-              {countries?.map(({ value, label, disabled = false }) =>
+              {europeanCountriesWithStates?.map(({ value, label, disabled = false }) =>
                 <option key={value} disabled={disabled} value={value}>{label}</option>)}
             </select>
           </div>
@@ -74,11 +79,12 @@ const UserAddressForm: FC<Props> = (props) => {
               id="state"
               name="state"
               value={formData?.state}
-              className="bg-[#efefef4d] dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm"
+              className={`${readOnly && 'bg-[#efefef4d]'} dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm`}
               onChange={(e) => setFormData?.(prev => ({ ...prev, state: e.target.value }))}
             >
-              {countries?.map(({ value, label, disabled = false }) =>
-                <option key={value} disabled={disabled} value={value}>{label}</option>)}
+              {
+                selectedCountryStates?.map(({ value, label, disabled = false }) =>
+                  <option key={value} disabled={disabled} value={value}>{label}</option>)}
             </select>
           </div>
         </div>
