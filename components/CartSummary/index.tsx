@@ -94,6 +94,19 @@ export function CartSummary() {
         currency_code: "EUR",
         value: totalAmount.toFixed(2), // Ensure correct formatting
       },
+      shipping: {
+        name: {
+          full_name: shippingDataSaved?.name
+        },
+        type: 'SHIPPING',
+        address: {
+          address_line_1: shippingDataSaved?.lineAddress1,
+          admin_area_1: shippingDataSaved?.state,
+          admin_area_2: shippingDataSaved?.city,
+          postal_code: shippingDataSaved?.zip,
+          country_code: shippingDataSaved?.country
+        }
+      },
     };
   });
 
@@ -166,6 +179,9 @@ export function CartSummary() {
           }
         },
         purchase_units: units,
+        application_context: {
+          shipping_preference: 'SET_PROVIDED_ADDRESS',
+        }
       })
       .then((orderId: any) => orderId));
   };
