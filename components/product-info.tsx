@@ -1,3 +1,4 @@
+//product-info
 "use client"
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -9,14 +10,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import StarRating from "@/components/StarRating"; // Import your StarRating component
 
-
-
 interface Props {
   product: SanityProduct;
   reviews: Review[];
 }
 
-export function ProductInfo({ product,reviews  }: Props) {
+export function ProductInfo({ product, reviews }: Props) {
   const isSmallScreen = typeof window !== "undefined" && window.innerWidth < 640;
   const { addItem, incrementItem, cartDetails } = useShoppingCart();
   const { toast } = useToast();
@@ -30,10 +29,7 @@ export function ProductInfo({ product,reviews  }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(initialSize);
   const [price, setPrice] = useState<number | null>(null);
 
-  const isInCart = !!cartDetails?.[product._id];
-
   useEffect(() => {
-    // When the selected size changes, find the price in the sizes array
     if (selectedSize && selectedStyle) {
       const selectedSizeData = sizes.find((size) => size.name === selectedSize);
       if (selectedSizeData) {
@@ -49,15 +45,19 @@ export function ProductInfo({ product,reviews  }: Props) {
       return;
     }
 
+    const itemKey = `${product._id}-${selectedSize}-${selectedStyle}`;
     const item = {
       ...product,
       product_data: {
         size: selectedSize,
         style: selectedStyle,
       },
+      id: itemKey, // This will be used as a unique identifier in the cart
     };
 
-    isInCart ? incrementItem(item._id) : addItem(item);
+    const isInCart = !!cartDetails?.[itemKey];
+
+    isInCart ? incrementItem(itemKey) : addItem(item);
 
     toast({
       title: `${item.name} (${selectedSize}) - ${selectedStyle}`,
@@ -76,15 +76,13 @@ export function ProductInfo({ product,reviews  }: Props) {
     });
   }
 
-   // Calculate the average rating and number of ratings
-   const totalRating = reviews?.reduce((acc, review) => acc + review.userRating, 0) || 0;
-   const numberOfRatings = reviews?.length || 0;
-   const averageRating = numberOfRatings > 0 ? totalRating / numberOfRatings : 0;
+  const totalRating = reviews?.reduce((acc, review) => acc + review.userRating, 0) || 0;
+  const numberOfRatings = reviews?.length || 0;
+  const averageRating = numberOfRatings > 0 ? totalRating / numberOfRatings : 0;
 
   return (
     <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
       <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
-      {/* Average user rating */}
       <div className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-200">
         <StarRating rating={averageRating} starDimension="16px" starSpacing="2px" />{"  "}
         <span>({numberOfRatings} reviews)</span>
