@@ -252,13 +252,12 @@ export function CartSummary() {
     setDiscount(discountValue);
   }
 
-  const applyCouponCode = () => {
-    let couponFound = false;
-
-    coupons.forEach(coupon => {
-      if (couponCode === coupon?.code) {
-        couponFound = true;
-        switch (coupon?.type) {
+  const applyCouponCode = async () => {
+    try {
+      const coupon = await fetchCouponByCode(couponCode);
+  
+      if (coupon) {
+        switch (coupon.type) {
           case 'free_shipping':
             setDiscount(shippingAmount + (cartCount - 1) * 400);
             break;
@@ -269,19 +268,20 @@ export function CartSummary() {
             setDiscount(+coupon.discount);
             break;
           default:
-            toast.error('Coupon type does not match');
-            return;
+            toast.error('Invalid coupon type.');
         }
-        return;
+      } else {
+        handleDiscount(0); // No discount
+        setCouponCode("");
+        toast.error('Invalid coupon code!');
       }
-    });
-
-    if (!couponFound) {
-      handleDiscount(0); // No discount
-      setCouponCode("");
-      toast.error('Invalid coupon code!');
+    } catch (error) {
+      console.error("Error applying coupon:", error);
+      toast.error('An error occurred while applying the coupon.');
     }
-  };
+    };
+
+    
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -297,13 +297,15 @@ export function CartSummary() {
     userData?.shippingAddress && setFormData(userData?.shippingAddress);
   }, [userData]);
 
-  useEffect(() => {
-    const getCoupons = async () => {
-      const couponsList = await sanityClient.fetch<any[]>(groq`*[_type == "coupon" ]`);
-      !!couponsList.length && setCoupons(couponsList);
-    };
-    getCoupons();
-  }, []);
+  const fetchCouponByCode = async (code: string) => {
+    const query = groq`*[_type == "coupon" && code == $code][0]{
+    discount,
+    expirationDate,
+    type,
+    }`
+    const params = { code };
+    return await sanityClient.fetch(query, params);
+  };
 
   return (
     <section
