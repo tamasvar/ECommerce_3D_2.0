@@ -26,6 +26,11 @@ export interface SanityProduct extends Omit<InventoryProduct, "images"> {
   _createdAt: Date
   slug: string
   images: Image[]
+  product_data: {
+    size: string
+    style: string
+  };
+  quantity: number
 }
 
 export interface Review {
