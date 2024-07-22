@@ -587,23 +587,6 @@ export const europeanCountriesWithStates = [
     ]
   },
   {
-    label: 'Lithuania',
-    value: 'LT',
-    states: [
-      { value: '', label: 'Select State', disabled: true },
-      { label: 'Vilnius County', value: 'VI' },
-      { label: 'Kaunas County', value: 'KA' },
-      { label: 'Klaipėda County', value: 'KL' },
-      { label: 'Panevėžys County', value: 'PA' },
-      { label: 'Šiauliai County', value: 'SI' },
-      { label: 'Tauragė County', value: 'TA' },
-      { label: 'Telšiai County', value: 'TE' },
-      { label: 'Utena County', value: 'UT' },
-      { label: 'Marijampolė County', value: 'MA' },
-      { label: 'Alytus County', value: 'AL' }
-    ]
-  },
-  {
     label: 'Norway',
     value: 'NO',
     states: [
@@ -821,58 +804,6 @@ export const europeanCountriesWithStates = [
     ]
   },
   {
-    label: 'Spain',
-    value: 'ES',
-    states: [
-      { value: '', label: 'Select State', disabled: true },
-      { label: 'Andalusia', value: 'AN' },
-      { label: 'Aragon', value: 'AR' },
-      { label: 'Asturias', value: 'AS' },
-      { label: 'Balearic Islands', value: 'BA' },
-      { label: 'Basque Country', value: 'BC' },
-      { label: 'Canary Islands', value: 'CA' },
-      { label: 'Cantabria', value: 'CT' },
-      { label: 'Castile and León', value: 'CL' },
-      { label: 'Castilla-La Mancha', value: 'CM' },
-      { label: 'Catalonia', value: 'CT' },
-      { label: 'Extremadura', value: 'EX' },
-      { label: 'Galicia', value: 'GA' },
-      { label: 'La Rioja', value: 'LR' },
-      { label: 'Madrid', value: 'MD' },
-      { label: 'Murcia', value: 'MU' },
-      { label: 'Navarre', value: 'NA' },
-      { label: 'Valencian Community', value: 'VC' }
-    ]
-  },
-  {
-    label: 'Sweden',
-    value: 'SE',
-    states: [
-      { value: '', label: 'Select State', disabled: true },
-      { label: 'Blekinge County', value: 'BL' },
-      { label: 'Dalarna County', value: 'DA' },
-      { label: 'Gävleborg County', value: 'GA' },
-      { label: 'Gotland County', value: 'GO' },
-      { label: 'Halland County', value: 'HA' },
-      { label: 'Jämtland County', value: 'JA' },
-      { label: 'Jönköping County', value: 'JO' },
-      { label: 'Kalmar County', value: 'KA' },
-      { label: 'Kronoberg County', value: 'KR' },
-      { label: 'Norrbotten County', value: 'NO' },
-      { label: 'Örebro County', value: 'OR' },
-      { label: 'Östergötland County', value: 'OS' },
-      { label: 'Skåne County', value: 'SK' },
-      { label: 'Södermanland County', value: 'SM' },
-      { label: 'Stockholm County', value: 'ST' },
-      { label: 'Uppsala County', value: 'UP' },
-      { label: 'Värmland County', value: 'VR' },
-      { label: 'Västerbotten County', value: 'VB' },
-      { label: 'Västernorrland County', value: 'VN' },
-      { label: 'Västmanland County', value: 'VS' },
-      { label: 'Västra Götaland County', value: 'VG' }
-    ]
-  },
-  {
     label: 'Switzerland',
     value: 'CH',
     states: [
@@ -935,17 +866,6 @@ export const europeanCountriesWithStates = [
       { label: 'Zaporizhzhia Oblast', value: 'ZP' },
       { label: 'Zhytomyr Oblast', value: 'ZH' },
       { label: 'Crimea', value: 'CR' }
-    ]
-  },
-  {
-    label: 'United Kingdom',
-    value: 'GB',
-    states: [
-      { value: '', label: 'Select State', disabled: true },
-      { label: 'England', value: 'EN' },
-      { label: 'Northern Ireland', value: 'NI' },
-      { label: 'Scotland', value: 'SC' },
-      { label: 'Wales', value: 'WA' }
     ]
   }
 ];

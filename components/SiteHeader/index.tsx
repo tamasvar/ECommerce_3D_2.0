@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import React from 'react';
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Edit, ShoppingBag } from "lucide-react"
 import { useShoppingCart } from "use-shopping-cart"
@@ -9,24 +10,23 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import React from 'react';
+import UserDropdown from "./UserDropdown"
 export const revalidate = 60;
 export function SiteHeader() {
   const pathname = usePathname()
-  const router=useRouter()
+  const router = useRouter()
   const searchPrams = useSearchParams()
-  const {cartCount} = useShoppingCart()
+  const { cartCount } = useShoppingCart()
   const defaultSearchQuery = searchPrams.get('search') ?? ""
   const { data: session } = useSession();
-  
+
   if (pathname.startsWith("/studio")) return null
 
-  function onSubmit(event: React.SyntheticEvent<HTMLFormElement>){
+  function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
-    const fromData= new FormData(event.currentTarget)
-    const searchQuery= fromData.get('search')
+    const fromData = new FormData(event.currentTarget)
+    const searchQuery = fromData.get('search')
     router.replace(`/?search=${searchQuery}`)
   }
 
@@ -54,35 +54,22 @@ export function SiteHeader() {
             </Button>
           </Link>
           <ThemeToggle />
-            
-          {session?.user ? (
-              <Link href={`/user/${session.user.id}`}>
-                {session.user.image ? (
-                  <div className='size-9 overflow-hidden rounded-full'>
-                    <Image
-                      src={session.user.image}
-                      alt={session.user.name!}
-                      width={40}
-                      height={40}
-                      className='scale-animation img'
-                    /> 
-                  </div>
-                ) : (
-                  <FaUserCircle className='size-6 cursor-pointer' />
-                )}
-              </Link>
-            ) : (
-              <Link href='/auth'>
-                <FaUserCircle className='size-6 cursor-pointer' />
-              </Link>
-            )}
-           
-      
+
+          {session?.user ? (<>
+            <UserDropdown session={session} />
+          </>
+          ) : (
+            <Link href='/auth'>
+              <FaUserCircle className='size-6 cursor-pointer' />
+            </Link>
+          )}
+
+
           {process.env.NODE_ENV === 'development' && (
             <Link href='/studio'>
-            <Button size="sm" variant="ghost">
-              <Edit className="size-5" />
-            </Button>
+              <Button size="sm" variant="ghost">
+                <Edit className="size-5" />
+              </Button>
             </Link>
           )}
         </div>

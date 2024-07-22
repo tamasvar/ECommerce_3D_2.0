@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { CreateOrderDto } from "@/models/order";
 import { Button } from "@/components/ui/button";
-import { countryShippingCosts, FormData, formDataInitialState } from "./data";
+import { countryShippingCosts, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import UserAddressForm from "./UserAddressForm";
@@ -74,19 +74,27 @@ export function CartSummary() {
     (countryShippingCosts[formData?.country as keyof typeof countryShippingCosts] || 0) : 0;
 
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * 400, currency: "EUR" }) || '';
+  console.log('shippingEstimate', shippingEstimate);
 
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
+
+  // order amount with shipping charges
+  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
+  console.log('cartItems', cartItems);
+
 
   const perItemShippingCost = Number(shippingEstimate.replace('€', '')) / cartCount;
   const perItemDiscount = Number(discountAmount.replace('€', '')) / cartCount;
 
-  // order amount with shipping charges
-  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
-
   units = cartItems?.map((p) => {
     const itemPrice = Number(p?.formattedPrice.replace('€', ''));
+
     const discountedPrice = itemPrice - perItemDiscount;
-    const totalAmount = discountedPrice + perItemShippingCost;
+    const totalAmount = discountedPrice * p?.quantity + perItemShippingCost * p?.quantity;
+    console.log('itemPrice', itemPrice);
+    console.log('discountedPrice', discountedPrice);
+    console.log('totalAmount', totalAmount);
+    console.log('perItemShippingCost', perItemShippingCost);
 
     return {
       reference_id: p?.id,
@@ -111,15 +119,10 @@ export function CartSummary() {
   });
 
   async function onCheckout() {
-    if (!sessionSave?.user?.id) {
-      toast.error("Session expired. Pls Login")
+    if (!formData?.country) {
+      toast.error("Please Select shipping country to proceed order")
       return;
     };
-
-    // if (isEmptyFormData) {
-    //   toast.error("Please add shipping address");
-    //   return;
-    // }
 
     setLoading(true);
     const response = await fetch('/api/checkout', {
@@ -143,48 +146,68 @@ export function CartSummary() {
   }
 
   const createPaypalOrder = async (_: any, actions: any) => {
-    if (!sessionSave?.user?.id) {
-      toast.error("Session expired. Pls Login")
-      return;
-    };
+    try {
+      if (!sessionSave?.user?.id) {
+        toast.error("Session expired. please Login")
+        return;
+      };
 
-    if (!hasShippingAddress) {
-      toast.error("Please add shipping address");
-      return;
-    }
+      if (!hasShippingAddress) {
+        toast.error("Please add shipping address");
+        return;
+      }
 
-    return (actions.order
-      .create({
-        intent: "CAPTURE",
-        payer: {
-          name: {
-            given_name: shippingDataSaved?.name.split(' ')?.[0]?.trim(),
-            surname: shippingDataSaved?.name.split(' ')?.[1]?.trim()
+      return (actions.order
+        .create({
+          intent: "CAPTURE",
+          payer: {
+            name: {
+              given_name: shippingDataSaved?.name.split(' ')?.[0]?.trim(),
+              surname: shippingDataSaved?.name.split(' ')?.[1]?.trim()
+            },
+            address: {
+              address_line_1: shippingDataSaved?.lineAddress1,
+              admin_area_1: shippingDataSaved?.state,
+              admin_area_2: shippingDataSaved?.city,
+              postal_code: shippingDataSaved?.zip,
+              country_code: shippingDataSaved?.country
+            }
           },
-          address: {
-            address_line_1: shippingDataSaved?.lineAddress1,
-            admin_area_1: shippingDataSaved?.state,
-            admin_area_2: shippingDataSaved?.city,
-            postal_code: shippingDataSaved?.zip,
-            country_code: shippingDataSaved?.country
+          shipping: {
+            address: {
+              address_line_1: shippingDataSaved?.lineAddress1,
+              admin_area_1: shippingDataSaved?.state,
+              admin_area_2: shippingDataSaved?.city,
+              postal_code: shippingDataSaved?.zip,
+              country_code: shippingDataSaved?.country
+            }
+          },
+          purchase_units: units,
+          application_context: {
+            shipping_preference: 'SET_PROVIDED_ADDRESS',
           }
-        },
-        shipping: {
-          address: {
-            address_line_1: shippingDataSaved?.lineAddress1,
-            admin_area_1: shippingDataSaved?.state,
-            admin_area_2: shippingDataSaved?.city,
-            postal_code: shippingDataSaved?.zip,
-            country_code: shippingDataSaved?.country
-          }
-        },
-        purchase_units: units,
-        application_context: {
-          shipping_preference: 'SET_PROVIDED_ADDRESS',
-        }
-      })
-      .then((orderId: any) => orderId));
+        })
+        .then((orderId: any) => orderId));
+    } catch (error: any) {
+      toast.error(error?.message || 'Something went wrong, Please try again!')
+    }
   };
+
+  console.log('cartCount', cartCount);
+  // console.log('units', units);
+
+  const onPaypalOrderApprove = async (_: any, actions: any) => {
+    return actions?.order?.capture()?.then(async function (order: any) {
+      if (order?.status === "COMPLETED") {
+        paypalCheckout({
+          orderId: order?.id || '',
+          orderDate: order?.create_time || '',
+        })
+      } else {
+        toast.error("Something went wrong");
+      }
+    });
+  }
 
   const paypalCheckout = async ({
     orderId,
@@ -268,6 +291,8 @@ export function CartSummary() {
     setIsModalOpen(false);
   };
 
+  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails])
+
   useEffect(() => {
     userData?.shippingAddress && setFormData(userData?.shippingAddress);
   }, [userData]);
@@ -346,20 +371,42 @@ export function CartSummary() {
       </div>
 
       <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-600">
-        <div className="flex items-center gap-4">
-          <label className="block text-base font-medium">
-            Shipping Address
-          </label>
-          <FaEdit className='cursor-pointer' onClick={openModal} />
-        </div>
-        <div className="mt-2 bg-white dark:bg-[#121212] p-4 rounded-lg">
-          {
-            isEmptyFormData ? <p>N/A</p> :
-              <pre>
-                {formattedAddress}
-              </pre>
-          }
-        </div>
+        {
+          !userData ?
+            <div className='w-full'>
+              <label htmlFor="country" className="block text-sm font-medium">
+                Country
+              </label>
+              <div className="relative mt-1">
+                <select
+                  id="country"
+                  name="country"
+                  value={formData?.country}
+                  className={'dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm'}
+                  onChange={(e) => {
+                    setFormData?.(prev => ({ ...prev, country: e.target.value }));
+                  }}
+                >
+                  {europeanCountriesWithStates?.map(({ value, label, disabled = false }) =>
+                    <option key={value + label} disabled={disabled} value={value}>{label}</option>)}
+                </select>
+              </div>
+            </div> : <>
+              <div className="flex items-center gap-4">
+                <label className="block text-base font-medium">
+                  Shipping Address
+                </label>
+                <FaEdit className='cursor-pointer' onClick={openModal} />
+              </div>
+              <div className="mt-2 bg-white dark:bg-[#121212] p-4 rounded-lg">
+                {
+                  isEmptyFormData ? <p>N/A</p> :
+                    <pre>
+                      {formattedAddress}
+                    </pre>
+                }
+              </div>
+            </>}
       </div>
 
       <div className="mt-6">
@@ -377,6 +424,7 @@ export function CartSummary() {
           }}
         >
           <PayPalButtons
+            disabled={!userData}
             style={{
               color: 'gold',
               shape: 'rect',
@@ -386,18 +434,7 @@ export function CartSummary() {
               tagline: false, // Remove tagline if needed
             }}
             createOrder={createPaypalOrder}
-            onApprove={async (_, actions) => {
-              return actions?.order?.capture()?.then(async function (order) {
-                if (order?.status === "COMPLETED") {
-                  paypalCheckout({
-                    orderId: order?.id || '',
-                    orderDate: order?.create_time || '',
-                  })
-                } else {
-                  toast.error("Something went wrong");
-                }
-              });
-            }}
+            onApprove={onPaypalOrderApprove}
           />
         </PayPalScriptProvider>
       </div>

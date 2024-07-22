@@ -14,19 +14,20 @@ import { useToast } from "@/components/ui/use-toast"
 import { CartItemsEmpty } from "@/components/cart-items-empty"
 
 export function CartItems() {
-  const {cartDetails, removeItem, setItemQuantity}=useShoppingCart()
-  const cartItems = Object.entries(cartDetails!).map(([_, product])=> product)
+  const { cartDetails, removeItem, setItemQuantity } = useShoppingCart()
+  const cartItems = Object.entries(cartDetails!).map(([_, product]) => product)
   // console.log(cartItems)
- const {toast} = useToast()
+  const { toast } = useToast()
   function removeCartItem(product: Product) {
     removeItem(product._id)
     toast({
-      title :`${product.name} removed`,
+      title: `${product.name} removed`,
       description: "Product removed from cart",
-      variant:"destructive",
+      variant: "destructive",
     })
   }
-if (cartItems.length === 0) return <CartItemsEmpty/>
+
+  if (cartItems.length === 0) return <CartItemsEmpty />
 
   return (
     <ul
@@ -37,12 +38,12 @@ if (cartItems.length === 0) return <CartItemsEmpty/>
         <li key={product._id} className="flex py-6 sm:py-10">
           <div className="shrink-0">
             <Image
-               placeholder="blur"
-               blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(200,200))}`}
-                 src={urlForImage(product.images[0]).url()}
-                 alt={product.name}
-                 width={200}
-                 height={200}  
+              placeholder="blur"
+              blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(200, 200))}`}
+              src={urlForImage(product.images[0]).url()}
+              alt={product.name}
+              width={200}
+              height={200}
               className="size-24 rounded-md border-2 border-gray-200 object-cover object-center dark:border-gray-800 sm:size-48"
               unoptimized
             />
@@ -59,9 +60,9 @@ if (cartItems.length === 0) return <CartItemsEmpty/>
                   </h3>
                 </div>
                 <p className="mt-1 text-sm font-medium">    {formatCurrencyString({
-              currency:product.currency,
-                value:product.price,
-                 })}</p>
+                  currency: product.currency,
+                  value: product.price,
+                })}</p>
                 <p className="mt-1 text-sm font-medium">
                   Size: {/* @ts-ignore */}
                   <strong>{product.product_data?.size}</strong>
@@ -82,9 +83,9 @@ if (cartItems.length === 0) return <CartItemsEmpty/>
                   type="number"
                   className="w-16"
                   min={1}
-                  max={1}
+                  // max={1}
                   value={product.quantity}
-                  onChange={event=>setItemQuantity(product._id, Number(event.target.value))}
+                  onChange={event => setItemQuantity(product._id, Number(event.target.value))}
                 />
                 <div className="absolute right-0 top-0">
                   <Button

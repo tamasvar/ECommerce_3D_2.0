@@ -80,7 +80,7 @@ const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
   }, []);
 
   return (
-    <div className='flex flex-col lg:flex-row gap-4 items-start mb-4'>
+    <div className='flex flex-col lg:flex-row gap-4 items-start'>
       <div className="w-full flex-1 flex flex-col space-y-4">
         {/* Summary Section */}
         <div className="p-4 shadow border rounded-lg">

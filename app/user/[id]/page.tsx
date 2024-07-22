@@ -1,14 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
-import Image from 'next/image';
-import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { getUserOrders } from '@/lib/apis';
 import LoadingSpinner from '../../loading';
 import Table from '@/components/Table/Table';
-import { FaSignOutAlt } from 'react-icons/fa';
 import { GiMoneyStack } from 'react-icons/gi';
 import { BsJournalBookmarkFill } from 'react-icons/bs';
 import { ImProfile } from "react-icons/im";
@@ -19,7 +16,7 @@ import PurchaseHistory from '@/components/PurchaseHistory';
 interface Tabs {
   profile: JSX.Element;
   'purchase-history': JSX.Element;
-  bookings: JSX.Element;
+  orders: JSX.Element;
 }
 
 const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purchase-history' } }) => {
@@ -28,7 +25,7 @@ const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purcha
     searchParams: { t = '' }
   } = props;
 
-  const [currentNav, setCurrentNav] = useState<'bookings' | 'purchase-history' | 'ratings' | 'profile'>(t || 'bookings');
+  const [currentNav, setCurrentNav] = useState<'orders' | 'purchase-history' | 'profile'>(t || 'orders');
   const [productId, setProductId] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
@@ -36,6 +33,8 @@ const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purcha
   const [ratingValue, setRatingValue] = useState<number>(0);
   const [ratingText, setRatingText] = useState('');
   const [ratingImage, setRatingImage] = useState<Blob>();
+
+  useEffect(() => { t && setCurrentNav(t) }, [t]);
 
   const toggleRatingModal = () => setIsRatingVisible(prevState => !prevState);
 
@@ -106,7 +105,7 @@ const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purcha
   const tabs: Tabs = {
     profile: <UserProfile userData={userData} />,
     'purchase-history': <PurchaseHistory orderDetails={userOrders} />,
-    bookings: <Table
+    orders: <Table
       orderDetails={userOrders}
       setProductId={setProductId}
       setOrderId={setOrderId}
@@ -115,109 +114,53 @@ const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purcha
   }
 
   return (
-    <div className='py10 container mx-auto px-2 md:px-4'>
-      <div className='grid gap-10 md:grid-cols-12'>
-        <div className='sticky top-10 hidden h-fit rounded-lg bg-[#eff0f2] px-6 py-4 text-black shadow-lg md:col-span-4 md:block lg:col-span-3'>
-          <div className='mx-auto mb-5 size-28 overflow-hidden rounded-full md:size-[143px]'>
-            <Image
-              src={userData?.image}
-              alt={userData?.name}
-              width={143}
-              height={143}
-              className='img scale-animation rounded-full'
-            />
-          </div>
-          <div className='py-4 text-left font-normal'>
-            <h6 className='pb-3 text-xl font-bold'>About</h6>
-            <p className='text-sm'>{userData?.about ?? ''}</p>
-          </div>
-          <div className='text-left font-normal'>
-            <h6 className='pb-3 text-xl font-bold'>{userData?.name}</h6>
-          </div>
-          <div className='flex items-center'>
-            <p className='mr-2'>Sign Out</p>
-            <FaSignOutAlt
-              className='cursor-pointer text-3xl'
-              onClick={() => signOut({ callbackUrl: '/' })}
-            />
-          </div>
-        </div>
+    <div className='mx-auto max-w-6xl px-6 py-10'>
+      <nav className='sticky dark:bg-[#3b3b3b] top-0 mb-8 w-full rounded-lg border border bg-gray-50 px-2 py-3 text-gray-700 md:px-5'>
+        <ol
+          className={`${currentNav === 'profile' ? 'text-blue-600' : 'text-gray-700 dark:text-[#e1e7ef]'
+            } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
+        >
+          <li
+            onClick={() => setCurrentNav('profile')}
+            className='inline-flex cursor-pointer items-center'
+          >
+            <ImProfile />
+            <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
+              Profile
+            </a>
+          </li>
+        </ol>
+        <ol
+          className={`${currentNav === 'purchase-history' ? 'text-blue-600' : 'text-gray-700 dark:text-[#e1e7ef]'
+            } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
+        >
+          <li
+            onClick={() => setCurrentNav('purchase-history')}
+            className='inline-flex cursor-pointer items-center'
+          >
+            <GiMoneyStack />
+            <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
+              Purchase History
+            </a>
+          </li>
+        </ol>
+        <ol
+          className={`${currentNav === 'orders' ? 'text-blue-600' : 'text-gray-700 dark:text-[#e1e7ef]'
+            } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
+        >
+          <li
+            onClick={() => setCurrentNav('orders')}
+            className='inline-flex cursor-pointer items-center'
+          >
+            <BsJournalBookmarkFill />
+            <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
+              Orders
+            </a>
+          </li>
+        </ol>
+      </nav>
+      {tabs[currentNav as keyof Tabs]}
 
-        <div className='md:col-span-8 lg:col-span-9'>
-          <div className='flex items-center'>
-            <h5 className='mr-3 text-2xl font-bold'>Hello, {userData?.name}</h5>
-          </div>
-          <div className='size-14 overflow-hidden rounded-l-full md:hidden'>
-            <Image
-              className='img scale-animation rounded-full'
-              width={56}
-              height={56}
-              src={userData?.image}
-              alt='User  Name'
-            />
-          </div>
-          <p className='block w-fit py-2 text-sm md:hidden'>
-            {userData?.about ?? ''}
-          </p>
-
-          <p className='py-2 text-xs font-medium'>
-            Joined In {userData?._createdAt.split('T')[0]}
-          </p>
-          <div className='my-2 flex items-center md:hidden'>
-            <p className='mr-2'>Sign out</p>
-            <FaSignOutAlt
-              className='cursor-pointer text-3xl'
-              onClick={() => signOut({ callbackUrl: '/' })}
-            />
-          </div>
-
-          <nav className='sticky top-0 mx-auto mb-8 mt-7 w-fit rounded-lg border border-gray-200 bg-gray-50 px-2 py-3 text-gray-700 md:w-full md:px-5'>
-            <ol
-              className={`${currentNav === 'profile' ? 'text-blue-600' : 'text-gray-700'
-                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
-            >
-              <li
-                onClick={() => setCurrentNav('profile')}
-                className='inline-flex cursor-pointer items-center'
-              >
-                <ImProfile />
-                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Profile
-                </a>
-              </li>
-            </ol>
-            <ol
-              className={`${currentNav === 'purchase-history' ? 'text-blue-600' : 'text-gray-700'
-                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
-            >
-              <li
-                onClick={() => setCurrentNav('purchase-history')}
-                className='inline-flex cursor-pointer items-center'
-              >
-                <GiMoneyStack />
-                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Purchase History
-                </a>
-              </li>
-            </ol>
-            <ol
-              className={`${currentNav === 'bookings' ? 'text-blue-600' : 'text-gray-700'
-                } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}
-            >
-              <li
-                onClick={() => setCurrentNav('bookings')}
-                className='inline-flex cursor-pointer items-center'
-              >
-                <BsJournalBookmarkFill />
-                <a className='mx-1 inline-flex items-center text-xs font-medium md:mx-3 md:text-sm'>
-                  Orders
-                </a>
-              </li>
-            </ol>
-          </nav>
-          {tabs[currentNav as keyof Tabs]}
-        </div>
-      </div>
       {
         isRatingVisible &&
         <RatingModal

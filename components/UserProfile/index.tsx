@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
+import Image from 'next/image';
 import { User } from '@/models/user'
 import UserAddressForm from '../CartSummary/UserAddressForm';
 import { FormData, formDataInitialState } from '../CartSummary/data';
@@ -23,9 +24,23 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
 
   return (
     <>
-      <div className="flex flex-wrap gap-4 shadow border rounded-lg p-4 mb-4">
-        <h2 className="text-xl font-bold basis-full">Profile</h2>
-        <div className='flex-1 basis-5/12'>
+      <div className="flex flex-wrap gap-4 shadow border rounded-lg p-4">
+        <div className="w-full flex justify-center my-2">
+          <div className='size-32 md:size-[160px] rounded-lg bg-[#eff0f2] dark:bg-[#3b3b3b4d] md:p-6 p-4 shadow'>
+            <div className='mb-5 overflow-hidden rounded-full'>
+              <Image
+                src={userData?.image}
+                alt={userData?.name}
+                width={160}
+                height={160}
+                className='img scale-animation rounded-full'
+              />
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-xl font-bold basis-full mb-4">Profile</h2>
+        <div className='flex-1 basis-full md:basis-5/12'>
           <label htmlFor="name" className="block text-sm font-medium">
             Name
           </label>
@@ -38,7 +53,7 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
             />
           </div>
         </div>
-        <div className='flex-1 basis-5/12'>
+        <div className='flex-1 basis-full md:basis-5/12'>
           <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
@@ -65,7 +80,7 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
             />
           </div>
         </div>
-        <div className='flex-1 basis-5/12'>
+        <div className='flex-1 basis-full md:basis-5/12'>
           <label htmlFor="phone" className="block text-sm font-medium">
             Phone
           </label>
@@ -78,7 +93,7 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
             />
           </div>
         </div>
-        <div className='flex-1 basis-5/12'>
+        <div className='flex-1 basis-full md:basis-5/12'>
           <label htmlFor="joining_date" className="block text-sm font-medium">
             Joining Date
           </label>
@@ -91,10 +106,10 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
             />
           </div>
         </div>
-      </div>
-      <div className='shadow border rounded-lg p-4 mb-4'>
+      </div >
+      <div className='shadow border rounded-lg p-4 mt-8'>
         <div className='flex items-center gap-4'>
-          <h2 className="text-xl font-bold">Shipping Address</h2>
+          <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
           <FaEdit className='cursor-pointer' onClick={openModal} />
         </div>
         <UserAddressForm formData={userData?.shippingAddress} readOnly />

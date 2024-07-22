@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site"
 import { Providers } from "@/components/providers"
 import { SiteBlob } from "@/components/site-blob"
 import { SiteFooter } from "@/components/site-footer"
-import { SiteHeader } from "@/components/site-header"
+import { SiteHeader } from "@/components/SiteHeader"
 import "@/styles/globals.css"
 
 export const metadata: Metadata = {
