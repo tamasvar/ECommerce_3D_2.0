@@ -6,7 +6,7 @@ export const shippingAddress = {
   type: 'object',
   fields: [
     { name: 'name', type: 'string', title: 'Name' },
-    { name: 'phone', type: 'number', title: 'Phone' },
+    { name: 'phone', type: 'string', title: 'Phone' },
     { name: 'country', type: 'string', title: 'Country' },
     { name: 'state', type: 'string', title: 'State' },
     { name: 'lineAddress1', type: 'string', title: 'Address Line 1' },

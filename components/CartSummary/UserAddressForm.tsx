@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { europeanCountriesWithStates, FormData } from './data'
 interface Props {
   formData: FormData;
@@ -8,8 +8,17 @@ interface Props {
 
 const UserAddressForm: FC<Props> = (props) => {
   const { formData, setFormData, readOnly = false } = props;
-
+  const [phoneSample, setPhoneSample] = useState<string>('');
   const selectedCountryStates = formData?.country && (europeanCountriesWithStates?.find(country => country.value === formData.country)?.states || []) || [];
+  
+  useEffect(() => {
+    const country = europeanCountriesWithStates.find(c => c.value === formData.country);
+    if (country) {
+      setPhoneSample(country.phoneSample || '');
+    } else {
+      setPhoneSample('');
+    }
+  }, [formData.country]);
 
   return (
     <div className="">
@@ -36,7 +45,8 @@ const UserAddressForm: FC<Props> = (props) => {
           <div className="mt-1 flex rounded-md shadow-sm">
             <input
               disabled={readOnly}
-              type='number'
+              placeholder={phoneSample}
+              type='string'
               value={formData?.phone}
               name="phone"
               className="h-[40px] block w-full flex-1 rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

@@ -11,6 +11,7 @@ export const countryShippingCosts = {
   SE: 3000,   // Sweden
   NL: 3000,   // The Netherlands
   GB: 3000,   // United Kingdom
+  NO: 3000,
   DE: 2000,   // Germany
   FR: 2000,   // France
   ES: 2000,   // Spain
@@ -29,6 +30,8 @@ export const countryShippingCosts = {
   RO: 2000,   // Romania
   SK: 2000,   // Slovakia
   SI: 2000,   // Slovenia
+  CH: 2000,
+
   // Add more countries with their respective shipping costs
   // For other countries, use a default value of 20
   // Example:
@@ -70,61 +73,14 @@ export const countries = [
   { value: 'SI', label: 'Slovenia' }
 ];
 
-export const cyprusDistricts = [
-  { label: 'Select State', value: '', disabled: true },
-  { label: 'Famagusta', value: 'FA' },
-  { label: 'Kyrenia', value: 'KY' },
-  { label: 'Larnaca', value: 'LA' },
-  { label: 'Limassol', value: 'LI' },
-  { label: 'Nicosia', value: 'NI' },
-  { label: 'Paphos', value: 'PA' }
-];
 
-export const denmarkRegions = [
-  { label: 'Select State', value: '', disabled: true },
-  { label: 'Capital Region of Denmark', value: 'CAP' },
-  { label: 'Central Denmark Region', value: 'CD' },
-  { label: 'North Denmark Region', value: 'ND' },
-  { label: 'Region Zealand', value: 'ZL' },
-  { label: 'Region of Southern Denmark', value: 'SD' }
-];
-
-export const finlandRegions = [
-  { label: 'Select Region', value: '', disabled: true },
-  { label: 'Åland Islands', value: 'AI' },
-  { label: 'Central Finland', value: 'CF' },
-  { label: 'Central Ostrobothnia', value: 'CO' },
-  { label: 'Eastern Finland', value: 'EF' },
-  { label: 'Finland Proper', value: 'FP' },
-  { label: 'Kainuu', value: 'KA' },
-  { label: 'Kymenlaakso', value: 'KY' },
-  { label: 'Lapland', value: 'LA' },
-  { label: 'North Karelia', value: 'NK' },
-  { label: 'Northern Ostrobothnia', value: 'NO' },
-  { label: 'Northern Savonia', value: 'NS' },
-  { label: 'Ostrobothnia', value: 'OB' },
-  { label: 'Päijänne Tavastia', value: 'PT' },
-  { label: 'Satakunta', value: 'SA' },
-  { label: 'South Karelia', value: 'SK' },
-  { label: 'Southern Ostrobothnia', value: 'SO' },
-  { label: 'Southern Savonia', value: 'SS' },
-  { label: 'Tavastia Proper', value: 'TP' },
-  { label: 'Uusimaa', value: 'UA' }
-];
-
-export const irelandProvinces = [
-  { label: 'Select Province', value: '', disabled: true },
-  { label: 'Connacht', value: 'CON' },
-  { label: 'Leinster', value: 'LEI' },
-  { label: 'Munster', value: 'MUN' },
-  { label: 'Ulster', value: 'ULS' }
-];
 
 export const europeanCountriesWithStates = [
   { value: '', label: 'Select country', disabled: true },
   {
     label: 'United States',
     value: 'US',
+    phoneSample: '+1 202 5550173',
     states: [
       { label: 'Select State', value: '', disabled: true },
       { label: 'Alabama', value: 'AL' },
@@ -182,6 +138,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Italy',
     value: 'IT',
+    phoneSample: '+39 06 69812345',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Abruzzo', value: 'AB' },
@@ -209,6 +166,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Luxembourg',
     value: 'LU',
+    phoneSample: '+352 20 880123',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Luxembourg District', value: 'LD' },
@@ -219,6 +177,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Malta',
     value: 'MT',
+    phoneSample: '+356 21 234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Northern Region', value: 'NR' },
@@ -229,6 +188,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Sweden',
     value: 'SE',
+    phoneSample: '+46 8 123456',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Stockholm County', value: 'SC' },
@@ -255,8 +215,61 @@ export const europeanCountriesWithStates = [
     ]
   },
   {
+    label: 'Denmark',
+    value: 'DK',
+    phoneSample: '+45 32 123456',
+    states: [
+      { label: 'Select State', value: '', disabled: true },
+      { label: 'Capital Region of Denmark', value: 'CAP' },
+      { label: 'Central Denmark Region', value: 'CD' },
+      { label: 'North Denmark Region', value: 'ND' },
+      { label: 'Region Zealand', value: 'ZL' },
+      { label: 'Region of Southern Denmark', value: 'SD' }
+    ]
+  },
+  {
+    label: 'Finland',
+    value: 'FI',
+    phoneSample: '+358 9 1234567',
+    states: [
+      { label: 'Select Region', value: '', disabled: true },
+      { label: 'Åland Islands', value: 'AI' },
+      { label: 'Central Finland', value: 'CF' },
+      { label: 'Central Ostrobothnia', value: 'CO' },
+      { label: 'Eastern Finland', value: 'EF' },
+      { label: 'Finland Proper', value: 'FP' },
+      { label: 'Kainuu', value: 'KA' },
+      { label: 'Kymenlaakso', value: 'KY' },
+      { label: 'Lapland', value: 'LA' },
+      { label: 'North Karelia', value: 'NK' },
+      { label: 'Northern Ostrobothnia', value: 'NO' },
+      { label: 'Northern Savonia', value: 'NS' },
+      { label: 'Ostrobothnia', value: 'OB' },
+      { label: 'Päijänne Tavastia', value: 'PT' },
+      { label: 'Satakunta', value: 'SA' },
+      { label: 'South Karelia', value: 'SK' },
+      { label: 'Southern Ostrobothnia', value: 'SO' },
+      { label: 'Southern Savonia', value: 'SS' },
+      { label: 'Tavastia Proper', value: 'TP' },
+      { label: 'Uusimaa', value: 'UA' }
+    ]
+  },
+  {
+    label: 'Ireland',
+    value: 'IE',
+    phoneSample: '+353 1 2345678',
+    states: [
+      { label: 'Select Province', value: '', disabled: true },
+      { label: 'Connacht', value: 'CON' },
+      { label: 'Leinster', value: 'LEI' },
+      { label: 'Munster', value: 'MUN' },
+      { label: 'Ulster', value: 'ULS' }
+    ]
+  },
+  {
     label: 'The Netherlands',
     value: 'NL',
+    phoneSample: '+31 20 1234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Drenthe', value: 'DR' },
@@ -276,6 +289,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'United Kingdom',
     value: 'GB',
+    phoneSample: '+44 20 79460123',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'England', value: 'ENG' },
@@ -287,6 +301,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Germany',
     value: 'DE',
+    phoneSample: '+49 30 123456',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Baden-Württemberg', value: 'BW' },
@@ -310,6 +325,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'France',
     value: 'FR',
+    phoneSample: '+33 1 23456789',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Auvergne-Rhône-Alpes', value: 'ARA' },
@@ -330,6 +346,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Spain',
     value: 'ES',
+    phoneSample: '+34 91 1234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Andalusia', value: 'AND' },
@@ -354,6 +371,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Portugal',
     value: 'PT',
+    phoneSample: '+351 21 1234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Azores', value: 'AZ' },
@@ -368,6 +386,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Belgium',
     value: 'BE',
+    phoneSample: '+32 2 1234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Brussels-Capital Region', value: 'BC' },
@@ -378,6 +397,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Austria',
     value: 'AT',
+    phoneSample: '+43 1 1234567',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Burgenland', value: 'BUR' },
@@ -394,6 +414,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Bulgaria',
     value: 'BG',
+    phoneSample: '+359 2 123456',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Blagoevgrad', value: 'BGR' },
@@ -429,6 +450,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Croatia',
     value: 'HR',
+    phoneSample: '+385 1 2345678',
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Bjelovar-Bilogora County', value: 'BB' },
@@ -836,38 +858,7 @@ export const europeanCountriesWithStates = [
       { label: 'Zurich', value: 'ZH' }
     ]
   },
-  {
-    label: 'Ukraine',
-    value: 'UA',
-    states: [
-      { value: '', label: 'Select State', disabled: true },
-      { label: 'Cherkasy Oblast', value: 'CH' },
-      { label: 'Chernihiv Oblast', value: 'CN' },
-      { label: 'Chernivtsi Oblast', value: 'CV' },
-      { label: 'Dnipropetrovsk Oblast', value: 'DP' },
-      { label: 'Donetsk Oblast', value: 'DO' },
-      { label: 'Ivano-Frankivsk Oblast', value: 'IF' },
-      { label: 'Kharkiv Oblast', value: 'KH' },
-      { label: 'Kherson Oblast', value: 'KS' },
-      { label: 'Khmelnytskyi Oblast', value: 'KM' },
-      { label: 'Kirovohrad Oblast', value: 'KR' },
-      { label: 'Kyiv Oblast', value: 'KI' },
-      { label: 'Luhansk Oblast', value: 'LU' },
-      { label: 'Lviv Oblast', value: 'LV' },
-      { label: 'Mykolaiv Oblast', value: 'MY' },
-      { label: 'Odessa Oblast', value: 'OD' },
-      { label: 'Poltava Oblast', value: 'PL' },
-      { label: 'Rivne Oblast', value: 'RI' },
-      { label: 'Sumy Oblast', value: 'SU' },
-      { label: 'Ternopil Oblast', value: 'TE' },
-      { label: 'Vinnytsia Oblast', value: 'VI' },
-      { label: 'Volyn Oblast', value: 'VO' },
-      { label: 'Zakarpattia Oblast', value: 'ZA' },
-      { label: 'Zaporizhzhia Oblast', value: 'ZP' },
-      { label: 'Zhytomyr Oblast', value: 'ZH' },
-      { label: 'Crimea', value: 'CR' }
-    ]
-  }
+  
 ];
 
 export interface FormData {

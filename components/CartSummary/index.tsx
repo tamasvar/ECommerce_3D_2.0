@@ -294,7 +294,7 @@ export function CartSummary() {
     setIsModalOpen(false);
   };
 
-  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails])
+  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails,formData?.country])
 
   useEffect(() => {
     userData?.shippingAddress && setFormData(userData?.shippingAddress);
@@ -341,12 +341,14 @@ export function CartSummary() {
             {cartCount && orderTotal}
           </dd>
         </div>
-
-        <div className="border-t border-gray-200 pt-4 dark:border-gray-600">
+        {
+          !userData ?
+          <></>
+        :<><div className="border-t border-gray-200 pt-4 dark:border-gray-600">
           <dt className="flex items-center text-sm">
             <Link className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:decoration-solid hover:underline" href={`/user/${userData?._id}?t=purchase-history`}>Available Coupon</Link>
           </dt>
-        </div>
+        </div></>}
       </dl>
 
       <div className="mt-4">
