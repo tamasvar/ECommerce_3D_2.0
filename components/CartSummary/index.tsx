@@ -42,6 +42,7 @@ export function CartSummary() {
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<any>({});
 
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,14 +81,21 @@ export function CartSummary() {
   const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
 
   const perItemShippingCost = Number(shippingEstimate.replace(/[^\d.-]/g, '')) / cartCount;
-  const perItemDiscount = Number(discountAmount.replace(/[^\d.-]/g, '')) / cartCount;
 
   units = cartItems?.map((p) => {
-    const itemPrice = Number(p?.formattedPrice.replace(/[^\d.-]/g, ''));
+    const cartItemPrice = p.value / 100;
 
-    const discountedPrice = Number(itemPrice) - Number(perItemDiscount);
-    const totalAmount = discountedPrice * p?.quantity + perItemShippingCost * p?.quantity;
-
+    let discountValue = 0;
+    switch (appliedCoupon.type) {
+      case 'percentage':
+        discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
+        break;
+      case 'fixed':
+        discountValue = (appliedCoupon?.discount || 0) / cartItems.length;
+        break;
+    }
+    const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
+      (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
     return {
       reference_id: p?.id,
       amount: {
@@ -246,15 +254,24 @@ export function CartSummary() {
       const coupon = await fetchCouponByCode(couponCode);
 
       if (coupon) {
+        setAppliedCoupon(coupon)
         switch (coupon.type) {
           case 'free_shipping':
             setDiscount(shippingAmount + (cartCount - 1) * 400);
+
             break;
           case 'percentage':
             handleDiscount(+coupon?.discount?.slice(0, -1));
+
             break;
-          case 'fixed':
-            setDiscount(+coupon.discount);
+          case 'fixed': {
+            const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
+            if (isEligible) {
+              setDiscount(+coupon.discount);
+            } else {
+              toast.error('Order amount is insufficient for coupon eligibility. Please add more to qualify!');
+            }
+          }
             break;
           default:
             toast.error('Invalid coupon type.');

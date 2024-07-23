@@ -1,12 +1,11 @@
 //cart-items
 "use client"
+import React from 'react';
 import Image from "next/image"
 import Link from "next/link"
 import { urlForImage } from "@/sanity/lib/image"
 import { Clock, X } from "lucide-react"
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
-import { Product } from "use-shopping-cart/core"
-import React from 'react';
 import { shimmer, toBase64 } from "@/lib/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -95,7 +94,10 @@ export function CartItems() {
                   min={1}
                   max={99}
                   value={product.quantity}
-                  onChange={event => setItemQuantity(product._id, Number(event.target.value))}
+                  onChange={event => {
+                    setItemQuantity(product.id, Number(event.target.value))
+                  }
+                  }
                 />
                 <div className="absolute right-0 top-0">
                   <Button
