@@ -36,7 +36,7 @@ const UserAddressForm: FC<Props> = (props) => {
           <div className="mt-1 flex rounded-md shadow-sm">
             <input
               disabled={readOnly}
-              type='number'
+              type='string'
               value={formData?.phone}
               name="phone"
               className="h-[40px] block w-full flex-1 rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
