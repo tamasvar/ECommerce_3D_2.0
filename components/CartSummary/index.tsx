@@ -18,7 +18,7 @@ import Modal from "./Modal";
 import { FaEdit } from "react-icons/fa";
 import { getAddressString, handleAddShippingAddress, isFormDataEmpty } from "@/lib/utils";
 import sanityClient from "@/sanity/lib/client";
-import { groq } from "next-sanity";
+import { getCouponsQuery } from "@/lib/sanityQueries";
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 let sessionSave: any = {};
@@ -46,7 +46,6 @@ export function CartSummary() {
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(formDataInitialState);
-  const [coupons, setCoupons] = useState<any[]>([]);
 
   shippingDataSaved = formData;
   const isDisabled = isLoading || cartCount === 0;
@@ -74,27 +73,20 @@ export function CartSummary() {
     (countryShippingCosts[formData?.country as keyof typeof countryShippingCosts] || 0) : 0;
 
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * 400, currency: "EUR" }) || '';
-  console.log('shippingEstimate', shippingEstimate);
 
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
 
   // order amount with shipping charges
   const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
-  console.log('cartItems', cartItems);
 
-
-  const perItemShippingCost = Number(shippingEstimate.replace('€', '')) / cartCount;
-  const perItemDiscount = Number(discountAmount.replace('€', '')) / cartCount;
+  const perItemShippingCost = Number(shippingEstimate.replace(/[^\d.-]/g, '')) / cartCount;
+  const perItemDiscount = Number(discountAmount.replace(/[^\d.-]/g, '')) / cartCount;
 
   units = cartItems?.map((p) => {
-    const itemPrice = Number(p?.formattedPrice.replace('€', ''));
+    const itemPrice = Number(p?.formattedPrice.replace(/[^\d.-]/g, ''));
 
-    const discountedPrice = itemPrice - perItemDiscount;
+    const discountedPrice = Number(itemPrice) - Number(perItemDiscount);
     const totalAmount = discountedPrice * p?.quantity + perItemShippingCost * p?.quantity;
-    console.log('itemPrice', itemPrice);
-    console.log('discountedPrice', discountedPrice);
-    console.log('totalAmount', totalAmount);
-    console.log('perItemShippingCost', perItemShippingCost);
 
     return {
       reference_id: p?.id,
@@ -193,9 +185,6 @@ export function CartSummary() {
     }
   };
 
-  console.log('cartCount', cartCount);
-  // console.log('units', units);
-
   const onPaypalOrderApprove = async (_: any, actions: any) => {
     return actions?.order?.capture()?.then(async function (order: any) {
       if (order?.status === "COMPLETED") {
@@ -255,7 +244,7 @@ export function CartSummary() {
   const applyCouponCode = async () => {
     try {
       const coupon = await fetchCouponByCode(couponCode);
-  
+
       if (coupon) {
         switch (coupon.type) {
           case 'free_shipping':
@@ -276,12 +265,9 @@ export function CartSummary() {
         toast.error('Invalid coupon code!');
       }
     } catch (error) {
-      console.error("Error applying coupon:", error);
       toast.error('An error occurred while applying the coupon.');
     }
-    };
-
-    
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -298,13 +284,8 @@ export function CartSummary() {
   }, [userData]);
 
   const fetchCouponByCode = async (code: string) => {
-    const query = groq`*[_type == "coupon" && code == $code][0]{
-    discount,
-    expirationDate,
-    type,
-    }`
     const params = { code };
-    return await sanityClient.fetch(query, params);
+    return await sanityClient.fetch(getCouponsQuery, params);
   };
 
   return (

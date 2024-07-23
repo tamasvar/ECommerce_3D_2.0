@@ -48,7 +48,7 @@ export const getAddressString = (address: any) => {
 export const isFormDataEmpty = (formData: any) => {
 
   for (let key in formData) {
-    if (formData[key].trim() !== '') {
+    if (formData[key].trim() !== '' && key !== 'lineAddress2') {
       return false; // Found a non-empty field
     }
   }

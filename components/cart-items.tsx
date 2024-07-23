@@ -1,6 +1,5 @@
 //cart-items
 "use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import { urlForImage } from "@/sanity/lib/image"
@@ -14,7 +13,6 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { CartItemsEmpty } from "@/components/cart-items-empty"
 import { SanityProduct } from "@/config/inventory"
-
 
 export function CartItems() {
   const { cartDetails, removeItem, setItemQuantity }: any = useShoppingCart()

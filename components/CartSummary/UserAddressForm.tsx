@@ -1,42 +1,15 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { europeanCountriesWithStates, FormData } from './data'
-// import IntlTelInput from 'intl-tel-input/react';
-import "intl-tel-input/styles";
 interface Props {
   formData: FormData;
   setFormData?: Dispatch<SetStateAction<FormData>>;
   readOnly?: boolean;
 }
 
-// const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
-
-
 const UserAddressForm: FC<Props> = (props) => {
   const { formData, setFormData, readOnly = false } = props;
 
   const selectedCountryStates = formData?.country && (europeanCountriesWithStates?.find(country => country.value === formData.country)?.states || []) || [];
-
-  // const [isValid, setIsValid] = useState<boolean | null>(null);
-  // const [number, setNumber] = useState<string | null>(null);
-  // const [errorCode, setErrorCode] = useState<number | null>(null);
-  // const [notice, setNotice] = useState<string | null>(null);
-  // // console.log('notice', notice);
-  // // console.log('errorCode', errorCode);
-  // // console.log('isValid', isValid);
-  // // console.log('number', number);
-
-  // const handleSubmit = (): void => {
-  //   if (isValid) {
-  //     setNotice(`Valid number: ${number}`);
-  //   } else {
-  //     const errorMessage = errorMap[errorCode || 0] || "Invalid number";
-  //     setNotice(`Error: ${errorMessage}`);
-  //   }
-  // };
-  // const handleChange = (value: any) => {
-  //   console.log("value", value);
-
-  // }
 
   return (
     <div className="">
@@ -69,28 +42,6 @@ const UserAddressForm: FC<Props> = (props) => {
               className="h-[40px] block w-full flex-1 rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               onChange={(e) => setFormData?.(prev => ({ ...prev, phone: e.target.value }))}
             />
-            {/* <IntlTelInput
-              onChange={(e) => handleChange(e)}
-              onChangeNumber={setNumber}
-              onChangeNumber={(isValid, number, info) => {
-                setNumber(number);
-                setIsValid(isValid);
-                setErrorCode(info.error);
-                // Additional logic based on validity
-                if (!isValid) {
-                  setNotice("Invalid phone number");
-                } else {
-                  setNotice(null);
-                }
-              }}
-              onChangeValidity={setIsValid}
-              onChangeErrorCode={setErrorCode}
-              initOptions={{
-                initialCountry: "us",
-                separateDialCode: true,
-              }}
-            /> */}
-            {/* <p>{errorMap[errorCode || 0] || "Invalid number"}</p> */}
           </div>
         </div>
       </div>

@@ -36,7 +36,6 @@
     "class-variance-authority": "^0.7.0",
     "eslint": "8.56.0",
     "eslint-config-next": "13.5.4",
-    "intl-tel-input": "^23.5.0",
     "lucide-react": "^0.396.0",
     "next": "^14.2.4",
     "next-auth": "^4.23.2",
