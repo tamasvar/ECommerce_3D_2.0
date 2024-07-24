@@ -263,17 +263,26 @@ export function CartSummary() {
   const applyCouponCode = async () => {
     try {
       const coupon = await fetchCouponByCode(couponCode);
-
+  
       if (coupon) {
-        setAppliedCoupon(coupon)
+        // Check if the coupon has expired
+        const currentDate = new Date();
+        const expirationDate = new Date(coupon.expirationDate);
+  
+        if (expirationDate < currentDate) {
+          toast.error('Coupon code has expired!');
+          setCouponCode("");
+          setDiscount(0);
+          return;
+        }
+  
+        setAppliedCoupon(coupon);
         switch (coupon.type) {
           case 'free_shipping':
             setDiscount(shippingAmount + (cartCount - 1) * 400);
-
             break;
           case 'percentage':
             handleDiscount(+coupon?.discount?.slice(0, -1));
-
             break;
           case 'fixed': {
             const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
@@ -282,8 +291,8 @@ export function CartSummary() {
             } else {
               toast.error('Order amount is insufficient for coupon eligibility. Please add more to qualify!');
             }
-          }
             break;
+          }
           default:
             toast.error('Invalid coupon type.');
         }
