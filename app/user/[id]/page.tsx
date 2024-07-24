@@ -115,7 +115,7 @@ const UserDetails = (props: { params: { id: string }, searchParams: { t: 'purcha
 
   return (
     <div className='mx-auto max-w-6xl px-6 py-10'>
-      <nav className='sticky dark:bg-[#3b3b3b] top-0 mb-8 w-full rounded-lg border border bg-gray-50 px-2 py-3 text-gray-700 md:px-5'>
+      <nav className='sticky top-0 mb-8 w-full rounded-lg border bg-gray-50 px-2 py-3 text-gray-700 dark:bg-[#3b3b3b] md:px-5'>
         <ol
           className={`${currentNav === 'profile' ? 'text-blue-600' : 'text-gray-700 dark:text-[#e1e7ef]'
             } mr-1 inline-flex items-center space-x-1 md:mr-5 md:space-x-3`}

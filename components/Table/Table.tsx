@@ -72,17 +72,17 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
   };
 
   return (
-    <div className='mx-auto min-w-xl overflow-x-auto rounded-lg shadow-md sm:rounded-lg md:max-w-full'>
+    <div className='min-w-xl mx-auto overflow-x-auto rounded-lg shadow-md sm:rounded-lg md:max-w-full'>
 
       <table className='w-full text-left text-sm'>
-        <thead className='bg-gray-50 dark:bg-[#3b3b3b] text-xs uppercase'>
+        <thead className='bg-gray-50 text-xs uppercase dark:bg-[#3b3b3b]'>
           <tr>
-            <th className='px-6 py-3 min-w-[220px]'>Product</th>
+            <th className='min-w-[220px] px-6 py-3'>Product</th>
             <th className='px-6 py-3'>Style</th>
             <th className='px-6 py-3'>Size</th>
             <th className='px-6 py-3'>Status</th>
             <th className='px-6 py-3'>Amount</th>
-            <th className='px-6 py-3 whitespace-nowrap'>Tracking No.</th>
+            <th className='whitespace-nowrap px-6 py-3'>Tracking No.</th>
             <th className='px-6 py-3'>Date</th>
             <th className='px-6 py-3'>Rating</th>
           </tr>
@@ -94,7 +94,7 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
             order.products.map((product: any) => (
               <tr
                 key={`${order._id}-${product?.product?._id}`}
-                className='border-b bg-white dark:bg-[#3b3b3b4d] hover:bg-gray-50'
+                className='border-b bg-white hover:bg-gray-50 dark:bg-[#3b3b3b4d]'
               >
                 <td className='px-6 py-4'>{product?.product?.name || '-'}</td>
                 <td className='px-6 py-4'>{product?.style || '-'}</td>
@@ -121,12 +121,12 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
         </tbody>
       </table>
 
-      <div className='flex justify-between items-center flex-wrap gap-4 mt-4 '>
+      <div className='mt-4 flex flex-wrap items-center justify-between gap-4 '>
         <div className='flex items-center'>
           <label htmlFor='itemsPerPage' className='mr-2'>Items per page:</label>
           <select
             id='itemsPerPage'
-            className='border rounded-md px-2 py-1'
+            className='rounded-md border px-2 py-1'
             value={itemsPerPage}
             onChange={handleItemsPerPageChange}
           >
@@ -140,10 +140,10 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
           <button
             onClick={prevPage}
             disabled={currentPage === 1}
-            className={`${currentPage === 1 ? 'bg-gray-200 dark:bg-[#3b3b3b] text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white'
-              } hover:bg-blue-400 hover:text-white px-3 py-1 rounded-md flex items-center`}
+            className={`${currentPage === 1 ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-[#3b3b3b]' : 'bg-blue-500 text-white'
+              } flex items-center rounded-md px-3 py-1 hover:bg-blue-400 hover:text-white`}
           >
-            <IoChevronBackOutline className='h-5 w-5 mr-1' /> Prev
+            <IoChevronBackOutline className='mr-1 size-5' /> Prev
           </button>
           <ul className='flex gap-1'>
             {getPageNumbers().map((number, index) => (
@@ -156,8 +156,8 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
                   }}
                   className={`${currentPage === number
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 dark:bg-[#3b3b3b] dark:text-[#e1e7ef] text-gray-800'
-                    } hover:bg-blue-400 hover:text-white px-3 py-1 rounded-md`}
+                    : 'bg-gray-200 text-gray-800 dark:bg-[#3b3b3b] dark:text-[#e1e7ef]'
+                    } rounded-md px-3 py-1 hover:bg-blue-400 hover:text-white`}
                 >
                   {number}
                 </button>
@@ -168,11 +168,11 @@ const Table: FC<Props> = ({ orderDetails = [], setProductId, setOrderId, toggleR
             onClick={nextPage}
             disabled={currentPage === totalPages}
             className={`${currentPage === totalPages
-              ? 'bg-gray-200 dark:bg-[#3b3b3b] text-gray-500 cursor-not-allowed'
+              ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-[#3b3b3b]'
               : 'bg-blue-500 text-white'
-              } hover:bg-blue-400 hover:text-white px-3 py-1 rounded-md flex items-center`}
+              } flex items-center rounded-md px-3 py-1 hover:bg-blue-400 hover:text-white`}
           >
-            Next <IoChevronForwardOutline className='h-5 w-5 ml-1' />
+            Next <IoChevronForwardOutline className='ml-1 size-5' />
           </button>
         </div>
       </div>

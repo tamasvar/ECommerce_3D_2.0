@@ -44,6 +44,17 @@ export function CartSummary() {
   const [discount, setDiscount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<any>({});
 
+  const [isValid, setValid] = useState(false);
+
+  const validateForm = () => {
+    const countryStates = formData.country && (europeanCountriesWithStates.find(country => country.value === formData.country)?.states || []);
+    const requiredFields = ['name', 'phone', 'country', 'lineAddress1', 'city', 'zip'];
+    if (countryStates.length > 0) requiredFields.push('state');
+    const isValid = requiredFields.every(field => formData[field as keyof FormData]);
+    setValid(isValid);
+  };
+  
+  
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(formDataInitialState);
@@ -300,6 +311,10 @@ export function CartSummary() {
     userData?.shippingAddress && setFormData(userData?.shippingAddress);
   }, [userData]);
 
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+  
   const fetchCouponByCode = async (code: string) => {
     const params = { code };
     return await sanityClient.fetch(getCouponsQuery, params);
@@ -346,7 +361,7 @@ export function CartSummary() {
           <></>
         :<><div className="border-t border-gray-200 pt-4 dark:border-gray-600">
           <dt className="flex items-center text-sm">
-            <Link className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:decoration-solid hover:underline" href={`/user/${userData?._id}?t=purchase-history`}>Available Coupon</Link>
+            <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${userData?._id}?t=purchase-history`}>Available Coupon</Link>
           </dt>
         </div></>}
       </dl>
@@ -384,7 +399,7 @@ export function CartSummary() {
                   id="country"
                   name="country"
                   value={formData?.country}
-                  className={'dark:bg-[#3b3b3b4d] h-[40px] focus:shadow-outline-blue mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm'}
+                  className={'focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none dark:bg-[#3b3b3b4d] sm:text-sm'}
                   onChange={(e) => {
                     setFormData?.(prev => ({ ...prev, country: e.target.value }));
                   }}
@@ -400,9 +415,9 @@ export function CartSummary() {
                 </label>
                 <FaEdit className='cursor-pointer' onClick={openModal} />
               </div>
-              <div className="mt-2 bg-white dark:bg-[#121212] p-4 rounded-lg">
+              <div className="mt-2 rounded-lg bg-white p-4 dark:bg-[#121212]">
                 {
-                  isEmptyFormData ? <p>N/A</p> :
+                  isEmptyFormData ? <p>Please fill out the shipping details to proceed with the order.</p> :
                     <pre>
                       {formattedAddress}
                     </pre>
@@ -447,6 +462,7 @@ export function CartSummary() {
           onClose={closeModal}
           title='Shipping Address'
           onSave={handleSaveAddress}
+          isValid={isValid}
         >
           <UserAddressForm
             formData={formData}

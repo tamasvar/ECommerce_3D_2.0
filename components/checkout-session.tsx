@@ -49,8 +49,8 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
       <h3 className="mt-8 text-2xl leading-7">
         Thank you, <span className="font-extrabold">{customerDetails?.name}</span>!
       </h3>
-      <div className="mt-8 p-4 shadow border rounded-lg">
-        <h2 className="text-xl font-bold mb-4">Summary</h2>
+      <div className="mt-8 rounded-lg border p-4 shadow">
+        <h2 className="mb-4 text-xl font-bold">Summary</h2>
         <div className='flex flex-col gap-2'>
           <p>
             <strong className='pr-3'>Items Count:</strong>
@@ -60,7 +60,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
             <strong className='pr-3'>Total Amount:</strong>
             {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
           </p>
-          <Link className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:decoration-solid hover:underline" href={`/user/${customerDetails?.id}`}>View Order Details</Link>
+          <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${customerDetails?.id}`}>View Order Details</Link>
         </div>
       </div>
       <p className="mt-8">
