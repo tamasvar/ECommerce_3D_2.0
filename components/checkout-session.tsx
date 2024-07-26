@@ -26,7 +26,6 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerDetails]);
 
-
   if (!customerDetails) {
     return (
       <>
@@ -37,8 +36,6 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
       </>
     )
   }
-  console.log('customerDetails', customerDetails);
-
 
   return (
     <>

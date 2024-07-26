@@ -73,3 +73,18 @@ export const handleAddShippingAddress = async (formData: any) => {
   }
   return await response.json();
 };
+
+export const handleAddCouponsAvailedUser = async (body: any) => {
+  const response = await fetch('/api/coupon', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ...body }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update coupon data');
+  }
+  return await response.json();
+};

@@ -82,6 +82,10 @@ export const getRoomReviewsQuery = groq`*[_type == "review" && product._ref == $
 }`;
 
 export const getCouponsQuery = groq`*[_type == "coupon" && code == $code][0]{
+    _id,
+    useLimit,
+    isValid,
+    usersAvailed,
     discount,
     expirationDate,
     type,

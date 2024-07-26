@@ -26,6 +26,7 @@ let units: any = [];
 let discountCents: number = 0;
 let hasShippingAddress: boolean = false;
 let shippingDataSaved: any = {};
+let couponSaved: any;
 
 export function CartSummary() {
   const { data: session } = useSession();
@@ -42,7 +43,7 @@ export function CartSummary() {
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [appliedCoupon, setAppliedCoupon] = useState<any>({});
+  const [appliedCoupon, setAppliedCoupon] = useState<any>();
 
   const [isValid, setValid] = useState(false);
 
@@ -53,8 +54,8 @@ export function CartSummary() {
     const isValid = requiredFields.every(field => formData[field as keyof FormData]);
     setValid(isValid);
   };
-  
-  
+
+
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(formDataInitialState);
@@ -97,7 +98,7 @@ export function CartSummary() {
     const cartItemPrice = p.value / 100;
 
     let discountValue = 0;
-    switch (appliedCoupon.type) {
+    switch (appliedCoupon?.type) {
       case 'percentage':
         discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
         break;
@@ -105,6 +106,7 @@ export function CartSummary() {
         discountValue = (appliedCoupon?.discount || 0) / cartItems.length;
         break;
     }
+
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
     return {
@@ -143,13 +145,15 @@ export function CartSummary() {
         shippingAmount,
         selectedCountry: formData?.country,
         discount: discount / cartCount,
-        totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)
+        totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
+        couponId: couponSaved?._id
       })
     });
 
     const data = await response.json();
 
     const result = await redirectToCheckout(data.id);
+
     if (result?.error) {
       console.error(result);
     }
@@ -222,11 +226,11 @@ export function CartSummary() {
     orderDate,
   }: { orderId: string; orderDate: string }) => {
     try {
-      if (sessionSave.user.id) {
+      if (sessionSave?.user?.id) {
         const date = new Date(orderDate).toISOString().split('T')[0];
         const products = cartItems?.map(item => ({
           product: {
-            _id: item?.id,
+            _id: item?._id,
             name: item?.name,
           },
           style: item?.product_data?.style ?? '',
@@ -239,9 +243,13 @@ export function CartSummary() {
           products,
           orderdate: date,
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
+          couponId: couponSaved?._id
         };
+
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);
+
+        handleReset();
 
         router.push(`/success?totalAmount=${totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)}&itemsCount=${products?.length}`);
       }
@@ -249,6 +257,13 @@ export function CartSummary() {
       toast.error("Something went wrong!");
     }
   }
+  
+  const handleReset = () => {
+    setAppliedCoupon(null);
+    couponSaved = null;
+    setDiscount(0);
+    setCouponCode("");
+  };
 
   const handleCouponCodeChange = (event: any) => {
     setCouponCode(event.target.value);
@@ -263,20 +278,28 @@ export function CartSummary() {
   const applyCouponCode = async () => {
     try {
       const coupon = await fetchCouponByCode(couponCode);
-  
+      console.log('coupon', coupon);
+
       if (coupon) {
         // Check if the coupon has expired
         const currentDate = new Date();
         const expirationDate = new Date(coupon.expirationDate);
-  
+
         if (expirationDate < currentDate) {
           toast.error('Coupon code has expired!');
           setCouponCode("");
           setDiscount(0);
           return;
         }
-  
+        if (coupon?.useLimit <= coupon?.usersAvailed?.length) {
+          toast.error('Coupon has reached use limit');
+          setCouponCode("");
+          setDiscount(0);
+          return;
+        }
+
         setAppliedCoupon(coupon);
+        couponSaved = coupon;
         switch (coupon.type) {
           case 'free_shipping':
             setDiscount(shippingAmount + (cartCount - 1) * 400);
@@ -314,7 +337,7 @@ export function CartSummary() {
     setIsModalOpen(false);
   };
 
-  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails,formData?.country])
+  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails, formData?.country])
 
   useEffect(() => {
     userData?.shippingAddress && setFormData(userData?.shippingAddress);
@@ -323,7 +346,7 @@ export function CartSummary() {
   useEffect(() => {
     validateForm();
   }, [formData]);
-  
+
   const fetchCouponByCode = async (code: string) => {
     const params = { code };
     return await sanityClient.fetch(getCouponsQuery, params);
@@ -366,13 +389,12 @@ export function CartSummary() {
           </dd>
         </div>
         {
-          !userData ?
-          <></>
-        :<><div className="border-t border-gray-200 pt-4 dark:border-gray-600">
-          <dt className="flex items-center text-sm">
-            <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${userData?._id}?t=purchase-history`}>Available Coupon</Link>
-          </dt>
-        </div></>}
+          userData &&
+          <div className="border-t border-gray-200 pt-4 dark:border-gray-600">
+            <dt className="flex items-center text-sm">
+              <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${userData?._id}?t=purchase-history`}>Available Coupon</Link>
+            </dt>
+          </div>}
       </dl>
 
       <div className="mt-4">

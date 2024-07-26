@@ -7,6 +7,7 @@ import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
 import { Order, CreateOrderDto } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
+import { handleAddCouponsAvailedUser } from './utils';
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<SanityProduct>(
@@ -37,13 +38,17 @@ export async function getRoom(slug: string) {
   return result;
 }
 
+
+
 export const createOrder = async ({
   id,
   user,
   products,
   orderdate,
   totalPrice,
+  couponId
 }: CreateOrderDto) => {
+
   const mutation = {
     mutations: [
       {
@@ -65,13 +70,21 @@ export const createOrder = async ({
     ],
   };
 
-  const { data } = await axios.post(
+  const res = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
-  return data;
+  if (couponId) {
+    await handleAddCouponsAvailedUser({
+      orderId: id,
+      userId: user,
+      orderDate: orderdate,
+      couponId
+    });
+  }
+  return res.data;
 };
 
 export const updateHotelRoom = async (ProductId: string) => {
@@ -247,5 +260,33 @@ export async function updateUser(userId: string, userDataToUpdate: any) {
   } catch (error) {
     console.error('Sanity update error:', error);
     throw new Error('Failed to update user data in Sanity');
+  }
+}
+
+export async function updateCoupon(body: any) {
+  try {
+    const { userId, orderId, orderDate, couponId } = body;
+    const currentCoupon = await sanityClient.getDocument(couponId);
+
+    if (!currentCoupon) {
+      throw new Error('Coupon not found');
+    }
+
+    const updatedCoupon = await sanityClient
+      .patch(couponId)
+      .setIfMissing({ usersAvailed: [] })
+      .append('usersAvailed', [
+        {
+          _key: orderId,
+          userId: { _type: 'reference', _ref: userId },
+          orderId,
+          orderDate,
+        },
+      ])
+      .commit();
+    return updatedCoupon;
+  } catch (error) {
+    console.log('error', error);
+    throw new Error('Failed to update coupon data in Sanity');
   }
 }

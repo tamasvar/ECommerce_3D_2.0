@@ -53,31 +53,32 @@ const handleFormatPurchaseData: any = (orderDetails: any[]) => {
 
 const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
   const [showDetails, setShowDetails] = useState<string | null>(null);
-  const [copySuccess, setCopySuccess] = useState(false);
-  const [coupons, setCoupons] = useState<any[]>([]);
+  // const [copySuccess, setCopySuccess] = useState(false);
+  // const [coupons, setCoupons] = useState<any[]>([]);
   const structuredData = handleFormatPurchaseData(orderDetails);
+  // console.log('coupons', coupons);
 
-  const handleCopyClick = (text: string) => {
-    const tempTextArea = document.createElement('textarea');
-    tempTextArea.value = text;
-    document.body.appendChild(tempTextArea);
-    tempTextArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempTextArea);
-    setCopySuccess(true);
-    toast.success("Copied to clipboard!")
-    setTimeout(() => {
-      setCopySuccess(false);
-    }, 2000);
-  };
+  // const handleCopyClick = (text: string) => {
+  //   const tempTextArea = document.createElement('textarea');
+  //   tempTextArea.value = text;
+  //   document.body.appendChild(tempTextArea);
+  //   tempTextArea.select();
+  //   document.execCommand('copy');
+  //   document.body.removeChild(tempTextArea);
+  //   setCopySuccess(true);
+  //   toast.success("Copied to clipboard!")
+  //   setTimeout(() => {
+  //     setCopySuccess(false);
+  //   }, 2000);
+  // };
 
-  useEffect(() => {
-    const getCoupons = async () => {
-      const couponsList = await sanityClient.fetch<any[]>(groq`*[_type == "coupon" ]`);
-      setCoupons(couponsList);
-    };
-    getCoupons();
-  }, []);
+  // useEffect(() => {
+  //   const getCoupons = async () => {
+  //     const couponsList = await sanityClient.fetch<any[]>(groq`*[_type == "coupon" ]`);
+  //     setCoupons(couponsList);
+  //   };
+  //   getCoupons();
+  // }, []);
 
   return (
     <div className='flex flex-col lg:flex-row gap-4 items-start'>
@@ -126,7 +127,7 @@ const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
       </div>
 
       {/* Coupon Section */}
-      <div className="w-full p-4 shadow border rounded-lg lg:basis-2/5">
+      {/* <div className="w-full p-4 shadow border rounded-lg lg:basis-2/5">
         <h2 className="text-xl font-bold mb-4">Coupon</h2>
         {coupons?.map(coupon => (
           <div key={coupon?.name} className="border-b border-gray-200 py-2">
@@ -165,7 +166,7 @@ const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
             )}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }
