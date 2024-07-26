@@ -72,12 +72,13 @@ export function CartSummary() {
     data: userData,
   } = useSWR('/api/users', fetchUserData);
 
-  const formattedAddress = userData?.shippingAddress ? getAddressString(userData?.shippingAddress) : '';
+  const [formattedAddress, setFormattedAddress] = useState('');
   const isEmptyFormData = isFormDataEmpty(formData);
   hasShippingAddress = !isEmptyFormData;
 
   const handleSaveAddress = () => {
     handleAddShippingAddress(formData);
+    setFormattedAddress(getAddressString(formData));
   }
 
   // Calculate shipping amount based on the selected country
@@ -339,7 +340,10 @@ export function CartSummary() {
   useEffect(() => { couponCode && applyCouponCode() }, [cartDetails, formData?.country])
 
   useEffect(() => {
-    userData?.shippingAddress && setFormData(userData?.shippingAddress);
+    if (userData?.shippingAddress) {
+      setFormData(userData?.shippingAddress);
+      setFormattedAddress(getAddressString(userData?.shippingAddress));
+    }
   }, [userData]);
 
   useEffect(() => {
