@@ -50,15 +50,14 @@ export async function POST(req: Request) {
             try {
               const parsedProductMetadata = JSON.parse(productMetadata || '{}');
               console.log(`Parsed product metadata for key ${key}:`, parsedProductMetadata);
-
+              const id = parsedProductMetadata.id?.split('_')[0];
               const product = {
                 product: {
-                  _id: parsedProductMetadata.id,
+                  _id: id,
                   name: parsedProductMetadata.name,
                 },
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
-                _key: parsedProductMetadata.id,
               };
 
               products.push(product);
@@ -82,6 +81,8 @@ export async function POST(req: Request) {
           orderdate: orderDate,
           totalPrice: totalPrice!,
           couponId,
+          formattedAddress:''
+
         };
 
         console.log('orderData in webhook', orderData);
@@ -109,3 +110,7 @@ export async function POST(req: Request) {
       });
   }
 }
+function uuidv4() {
+  throw new Error('Function not implemented.');
+}
+

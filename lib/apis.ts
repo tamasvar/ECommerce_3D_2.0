@@ -8,6 +8,7 @@ import * as queries from './sanityQueries';
 import { Order, CreateOrderDto } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
+import { randomUUID } from 'crypto';
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<SanityProduct>(
@@ -46,7 +47,8 @@ export const createOrder = async ({
   products,
   orderdate,
   totalPrice,
-  couponId
+  couponId,
+  formattedAddress,
 }: CreateOrderDto) => {
 
   const mutation = {
@@ -60,18 +62,19 @@ export const createOrder = async ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
             size: product.size, // Méret neve
-            _key: product.product._id + id,
+            _key: product.product._id+id,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár
           status: 'process',
+          formattedaddress: formattedAddress,
         },
       },
     ],
   };
 
-  const res = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+  const { data } = await axios.post(
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
@@ -84,7 +87,7 @@ export const createOrder = async ({
       couponId
     });
   }
-  return res.data;
+  return data;
 };
 
 export const updateHotelRoom = async (ProductId: string) => {
@@ -102,7 +105,7 @@ export const updateHotelRoom = async (ProductId: string) => {
   };
 
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
@@ -180,7 +183,7 @@ export const updateReview = async ({
   };
 
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
@@ -228,7 +231,7 @@ export const createReview = async ({
   };
   console.log(mutation);
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );

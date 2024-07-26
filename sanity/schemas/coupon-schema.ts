@@ -48,30 +48,33 @@ export const coupon = defineType({
       name: 'usersAvailed',
       title: 'Users who availed this coupon',
       type: 'array',
-      of: [{
-        type: 'object',
-        fields: [
-          {
-            name: 'userId',
-            type: 'reference',
-            title: 'User ID',
-            to: [{ type: 'user' }], // Reference to user documents
-            validation: Rule => Rule.required(),
-          },
-          {
-            name: 'orderId',
-            type: 'string',
-            title: 'Order ID',
-            validation: Rule => Rule.required(),
-          },
-          {
-            name: 'orderDate',
-            type: 'datetime',
-            title: 'Order Date',
-            validation: Rule => Rule.required(),
-          },
-        ],
-      }],
+      of: [
+        defineField({
+          type: 'object',
+          fields: [
+            {
+              name: 'userId',
+              type: 'reference',
+              title: 'User ID',
+              to: [{ type: 'user' }], // Reference to user documents
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: 'orderId',
+              type: 'string',
+              title: 'Order ID',
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: 'orderDate',
+              type: 'datetime',
+              title: 'Order Date',
+              validation: Rule => Rule.required(),
+            },
+          ],
+          name: ""
+        }),
+      ],
       initialValue: [],
     }),
     defineField({

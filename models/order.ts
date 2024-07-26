@@ -1,4 +1,5 @@
 //booking
+
 export type Order = {
   _id: string;
   id: string;
@@ -14,7 +15,7 @@ export type Order = {
   status: 'shipment' | 'process' | 'delivered';
   trackingNumber?: string;
   totalPrice: number;
-};
+}
 export type CreateOrderDto = {
   id: string;
   user: string;
@@ -30,4 +31,6 @@ export type CreateOrderDto = {
   orderdate: string;
   totalPrice: number;
   couponId?: string
+  formattedAddress:string;
+
 };

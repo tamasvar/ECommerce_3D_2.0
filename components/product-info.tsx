@@ -45,7 +45,7 @@ export function ProductInfo({ product, reviews }: Props) {
       return;
     }
 
-    const itemKey = `${product._id}-${selectedSize}-${selectedStyle}`;
+    const itemKey = `${product._id}_${selectedSize}_${selectedStyle}`;
     const item = {
       ...product,
       product_data: {

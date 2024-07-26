@@ -19,6 +19,7 @@ import { FaEdit } from "react-icons/fa";
 import { getAddressString, handleAddShippingAddress, isFormDataEmpty } from "@/lib/utils";
 import sanityClient from "@/sanity/lib/client";
 import { getCouponsQuery } from "@/lib/sanityQueries";
+import { v4 as uuidv4 } from 'uuid';
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 let sessionSave: any = {};
@@ -58,10 +59,11 @@ export function CartSummary() {
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(formDataInitialState);
-
+  const [formattedAddress, setFormattedAddress] = useState('');
   shippingDataSaved = formData;
   const isDisabled = isLoading || cartCount === 0;
   const cartItems: any[] = Object.entries(cartDetails!).map(([_, product]) => product);
+ 
 
   const fetchUserData = async () => {
     const { data } = await axios.get('/api/users');
@@ -72,12 +74,12 @@ export function CartSummary() {
     data: userData,
   } = useSWR('/api/users', fetchUserData);
 
-  const formattedAddress = userData?.shippingAddress ? getAddressString(userData?.shippingAddress) : '';
   const isEmptyFormData = isFormDataEmpty(formData);
   hasShippingAddress = !isEmptyFormData;
 
   const handleSaveAddress = () => {
     handleAddShippingAddress(formData);
+    setFormattedAddress(getAddressString(formData));
   }
 
   // Calculate shipping amount based on the selected country
@@ -226,22 +228,27 @@ export function CartSummary() {
   }: { orderId: string; orderDate: string }) => {
     try {
       if (sessionSave?.user?.id) {
+        
         const date = new Date(orderDate).toISOString().split('T')[0];
-        const products = cartItems?.map(item => ({
-          product: {
-            _id: item?._id,
-            name: item?.name,
-          },
-          style: item?.product_data?.style ?? '',
-          size: item?.product_data?.size ?? '',
-        }));
-
+        const products = cartItems?.map(item => {
+          const id = item?.id?.split('_')[0];
+          return {
+            product: {
+              _id: id,
+              name: item?.name,
+            },
+            style: item?.product_data?.style ?? '',
+            size: item?.product_data?.size ?? '',
+          };
+        });
+  
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
           products,
           orderdate: date,
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
+          formattedAddress: formattedAddress,
           couponId: couponSaved?._id
         };
 
@@ -255,7 +262,8 @@ export function CartSummary() {
     } catch (error) {
       toast.error("Something went wrong!");
     }
-  }
+  };
+  
 
   const handleReset = () => {
     setAppliedCoupon(null);
@@ -339,7 +347,10 @@ export function CartSummary() {
   useEffect(() => { couponCode && applyCouponCode() }, [cartDetails, formData?.country])
 
   useEffect(() => {
-    userData?.shippingAddress && setFormData(userData?.shippingAddress);
+    if (userData?.shippingAddress) {
+      setFormData(userData?.shippingAddress);
+      setFormattedAddress(getAddressString(userData?.shippingAddress));
+    }
   }, [userData]);
 
   useEffect(() => {
@@ -429,7 +440,7 @@ export function CartSummary() {
                   id="country"
                   name="country"
                   value={formData?.country}
-                  className={'focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none dark:bg-[#3b3b3b4d] sm:text-sm'}
+                  className={'focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm'}
                   onChange={(e) => {
                     setFormData?.(prev => ({ ...prev, country: e.target.value }));
                   }}

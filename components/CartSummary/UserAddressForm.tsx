@@ -1,3 +1,4 @@
+//useraddressfrom
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { europeanCountriesWithStates, FormData } from './data'
 
@@ -50,6 +51,7 @@ const UserAddressForm: FC<Props> = (props) => {
             <input
               disabled={readOnly}
               value={formData?.name}
+              placeholder='John Smith'
               name="name"
               className={`block h-[40px] w-full flex-1 rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${errors.name && 'border-red-500'}`}
               onChange={(e) => setFormData?.(prev => ({ ...prev, name: e.target.value }))}
@@ -89,7 +91,7 @@ const UserAddressForm: FC<Props> = (props) => {
               id="country"
               name="country"
               value={formData?.country}
-              className={`${readOnly && 'bg-[#efefef4d]'} focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none dark:bg-[#3b3b3b4d] sm:text-sm ${errors.country && 'border-red-500'}`}
+              className={`${readOnly && 'bg-[#efefef4d]'} focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm ${errors.country && 'border-red-500'}`}
               onChange={(e) => {
                 setFormData?.(prev => ({ ...prev, country: e.target.value }));
                 setFormData?.(prev => ({ ...prev, state: '' }))
@@ -111,7 +113,7 @@ const UserAddressForm: FC<Props> = (props) => {
               id="state"
               name="state"
               value={formData?.state}
-              className={`${readOnly && 'bg-[#efefef4d]'} focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none dark:bg-[#3b3b3b4d] sm:text-sm ${errors.state && 'border-red-500'}`}
+              className={`${readOnly && 'bg-[#efefef4d]'} focus:shadow-outline-blue mt-1 block h-[40px] w-full rounded-md border-gray-300 py-2 pl-3 pr-10 leading-5 transition duration-150 ease-in-out focus:border-blue-300 focus:outline-none sm:text-sm ${errors.state && 'border-red-500'}`}
               onChange={(e) => setFormData?.(prev => ({ ...prev, state: e.target.value }))}
             >
               {

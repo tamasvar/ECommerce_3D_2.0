@@ -479,6 +479,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Czech Republic',
     value: 'CZ',
+    phoneSample: "+420 2 12345678",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Central Bohemian Region', value: 'CB' },
@@ -500,6 +501,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Estonia',
     value: 'EE',
+    phoneSample: "+372 61234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Harju County', value: 'HA' },
@@ -522,6 +524,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Greece',
     value: 'GR',
+    phoneSample: "+30 21 23456789",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Attica', value: 'AT' },
@@ -542,6 +545,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Hungary',
     value: 'HU',
+    phoneSample: "+36 20 2345678",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Budapest', value: 'BU' },
@@ -569,6 +573,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Iceland',
     value: 'IS',
+    phoneSample: "+354 1234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Capital Region', value: 'CR' },
@@ -582,6 +587,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Latvia',
     value: 'LV',
+    phoneSample: "+371 61234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Riga', value: 'RI' },
@@ -594,6 +600,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Lithuania',
     value: 'LT',
+    phoneSample: "+370 61234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Vilnius County', value: 'VI' },
@@ -611,6 +618,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Norway',
     value: 'NO',
+    phoneSample: "+47 21 234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Oslo', value: 'OS' },
@@ -638,6 +646,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Poland',
     value: 'PL',
+    phoneSample: "+48 12 3456789",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Lower Silesian Voivodeship', value: 'LS' },
@@ -660,6 +669,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Romania',
     value: 'RO',
+    phoneSample: "+40 21 2345678",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Moldova', value: 'MO' },
@@ -674,6 +684,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Slovakia',
     value: 'SK',
+    phoneSample: "+421 2 12345678",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Bratislava Region', value: 'BR' },
@@ -689,6 +700,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Slovenia',
     value: 'SI',
+    phoneSample: "+386 1 1234567",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Ajdovščina Municipality', value: 'AJ' },
@@ -828,6 +840,7 @@ export const europeanCountriesWithStates = [
   {
     label: 'Switzerland',
     value: 'CH',
+    phoneSample: "+41 21 2345678",
     states: [
       { value: '', label: 'Select State', disabled: true },
       { label: 'Aargau', value: 'AG' },
