@@ -55,7 +55,6 @@ export function CartSummary() {
     setValid(isValid);
   };
 
-
   // shipping address
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(formDataInitialState);
@@ -73,7 +72,7 @@ export function CartSummary() {
     data: userData,
   } = useSWR('/api/users', fetchUserData);
 
-  const formattedAddress = getAddressString(formData);
+  const formattedAddress = userData?.shippingAddress ? getAddressString(userData?.shippingAddress) : '';
   const isEmptyFormData = isFormDataEmpty(formData);
   hasShippingAddress = !isEmptyFormData;
 
@@ -257,7 +256,7 @@ export function CartSummary() {
       toast.error("Something went wrong!");
     }
   }
-  
+
   const handleReset = () => {
     setAppliedCoupon(null);
     couponSaved = null;
