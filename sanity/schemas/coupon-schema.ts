@@ -44,12 +44,12 @@ export const coupon = defineType({
       type: 'number',
       validation: Rule => Rule.required().min(1),
     }),
-    defineField({
+    {
       name: 'usersAvailed',
       title: 'Users who availed this coupon',
       type: 'array',
       of: [
-        defineField({
+        {
           type: 'object',
           fields: [
             {
@@ -72,11 +72,10 @@ export const coupon = defineType({
               validation: Rule => Rule.required(),
             },
           ],
-          name: ""
-        }),
+        },
       ],
       initialValue: [],
-    }),
+    },
     defineField({
       name: 'isValid',
       title: 'Is Valid',
