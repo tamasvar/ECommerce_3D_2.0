@@ -83,7 +83,7 @@ export async function POST(request: Request) {
         phone_number_collection: {
             enabled: true,
         },
-        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice+shippingCost}&itemsCount=${totalQuantity}`,
+        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice}&itemsCount=${totalQuantity}`,
         
         cancel_url: `${origin}/cart`,
         metadata: metadataObject,
