@@ -73,7 +73,7 @@ export const createOrder = async ({
     ],
   };
 
-  const { data } = await axios.post(
+  const res = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
@@ -87,7 +87,7 @@ export const createOrder = async ({
       couponId
     });
   }
-  return data;
+  return res.data;
 };
 
 export const updateHotelRoom = async (ProductId: string) => {
