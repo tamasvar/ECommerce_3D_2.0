@@ -31,6 +31,6 @@ export type CreateOrderDto = {
   orderdate: string;
   totalPrice: number;
   couponId?: string
-  formattedAddress:string;
+  formattedAddress?: string;
 
 };

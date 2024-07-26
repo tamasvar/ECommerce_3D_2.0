@@ -3,7 +3,6 @@
 import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
-import Link from "next/link";
 
 interface Props {
   customerDetails: any;
@@ -24,9 +23,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
     if (customerDetails) {
       handleSuccessfulTransaction();
     }
-
-  }, [customerDetails, handleSuccessfulTransaction]);
-
+  }, [customerDetails]);
 
   if (!customerDetails) {
     return (
@@ -59,7 +56,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
             <strong className='pr-3'>Total Amount:</strong>
             {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
           </p>
-          
+
         </div>
       </div>
       <p className="mt-8">

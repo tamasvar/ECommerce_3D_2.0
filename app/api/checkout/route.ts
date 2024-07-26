@@ -37,6 +37,7 @@ export async function POST(request: Request) {
 
         }
     }
+
     const sessionuser = await getServerSession(authOptions);
     let metadataObject: Record<string, string> = {};
 
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
             enabled: true,
         },
         success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice}&itemsCount=${totalQuantity}`,
-        
+
         cancel_url: `${origin}/cart`,
         metadata: metadataObject,
     });
