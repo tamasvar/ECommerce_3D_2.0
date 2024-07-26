@@ -15,6 +15,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
   const { clearCart } = useShoppingCart()
 
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleSuccessfulTransaction() {
     clearCart();
   }
@@ -23,8 +24,9 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
     if (customerDetails) {
       handleSuccessfulTransaction();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customerDetails]);
+
+  }, [customerDetails, handleSuccessfulTransaction]);
+
 
   if (!customerDetails) {
     return (
