@@ -1,18 +1,40 @@
-import Link from "next/link"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
-import { CheckoutSession } from "@/components/checkout-session"
+import Link from "next/link";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { stripe } from "@/lib/stripe";
+import { CheckoutSession } from "@/components/checkout-session";
 
-export default async function Page(props: any) {
-  const { searchParams: { totalAmount = 0, itemsCount = 0 } } = props;
+interface Props {
+  searchParams: {
+    session_id?: string;
+    totalAmount?: number;
+    itemsCount?: number;
+  };
+}
+
+export default async function Page({ searchParams }: Props) {
+  const { session_id, totalAmount = 0, itemsCount = 0 } = searchParams;
+
+  // Get the user session
   const sessionUser = await getServerSession(authOptions);
+
+  let customerDetails;
+
+  // If user is not authenticated, get the customer details from Stripe
+  if (!sessionUser) {
+    if (session_id) {
+      const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
+      customerDetails = checkoutSession?.customer_details;
+    }
+  } else {
+    customerDetails = sessionUser.user;
+  }
 
   return (
     <main className="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
         {/* Checkout session */}
-
-        <CheckoutSession totalAmount={totalAmount} itemsCount={itemsCount} customerDetails={sessionUser?.user} />
+        <CheckoutSession totalAmount={totalAmount} itemsCount={itemsCount} customerDetails={customerDetails} />
 
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link
@@ -27,5 +49,5 @@ export default async function Page(props: any) {
         </div>
       </div>
     </main>
-  )
+  );
 }

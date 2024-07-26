@@ -59,7 +59,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
             <strong className='pr-3'>Total Amount:</strong>
             {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
           </p>
-          <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${customerDetails?.id}`}>View Order Details</Link>
+          
         </div>
       </div>
       <p className="mt-8">
