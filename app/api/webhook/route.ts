@@ -36,6 +36,7 @@ export async function POST(req: Request) {
 
       if (session.metadata) {
         const userId = session.metadata['userId'];
+        const couponId = session.metadata['couponId'];
         const orderId = session.id;
         const products = [];
         const orderDate = new Date(session.created * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
@@ -49,15 +50,14 @@ export async function POST(req: Request) {
             try {
               const parsedProductMetadata = JSON.parse(productMetadata || '{}');
               console.log(`Parsed product metadata for key ${key}:`, parsedProductMetadata);
-
+              const id = parsedProductMetadata.id?.split('_')[0];
               const product = {
                 product: {
-                  _id: parsedProductMetadata.id,
+                  _id: id,
                   name: parsedProductMetadata.name,
                 },
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
-                _key: parsedProductMetadata.id,
               };
 
               products.push(product);
@@ -71,6 +71,7 @@ export async function POST(req: Request) {
         console.log('Order Date:', orderDate);
         console.log('Total Price:', totalPrice);
         console.log('All Products:', products);
+        console.log('couponId:', couponId);
 
         // Create order data object
         const orderData: CreateOrderDto = {
@@ -79,6 +80,9 @@ export async function POST(req: Request) {
           products: products,
           orderdate: orderDate,
           totalPrice: totalPrice!,
+          couponId,
+          formattedAddress:''
+
         };
 
         console.log('orderData in webhook', orderData);
@@ -106,3 +110,7 @@ export async function POST(req: Request) {
       });
   }
 }
+function uuidv4() {
+  throw new Error('Function not implemented.');
+}
+

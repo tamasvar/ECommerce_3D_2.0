@@ -19,7 +19,7 @@ type Props = {
   ratingText: string;
   setRatingText: Dispatch<SetStateAction<string>>;
   setRatingImage: Dispatch<SetStateAction<Blob | undefined>>;
-  reviewSubmitHandler: () => Promise<string | undefined>;
+  reviewSubmitHandler: () => Promise<void>;
   isSubmittingReview: boolean;
   toggleRatingModal: () => void;
 };

@@ -1,4 +1,3 @@
-import Image from "next/image"
 import { groq } from "next-sanity"
 import Carousel from "@/components/Carousel"
 import sanityClient from "@/sanity/lib/client"

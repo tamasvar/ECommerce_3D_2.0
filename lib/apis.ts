@@ -1,12 +1,14 @@
-import { CreateReviewDto, Review } from './../models/review';
 import axios from 'axios';
+import { CreateReviewDto, Review } from './../models/review';
 
-import { SanityProduct } from '@/config/inventory'; 
+import { SanityProduct } from '@/config/inventory';
 
-import  sanityClient  from '@/sanity/lib/client';
+import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
-import { Order,CreateOrderDto } from '@/models/order';
+import { Order, CreateOrderDto } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
+import { handleAddCouponsAvailedUser } from './utils';
+import { randomUUID } from 'crypto';
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<SanityProduct>(
@@ -37,41 +39,54 @@ export async function getRoom(slug: string) {
   return result;
 }
 
+
+
 export const createOrder = async ({
   id,
   user,
   products,
   orderdate,
   totalPrice,
+  couponId,
+  formattedAddress,
 }: CreateOrderDto) => {
+
   const mutation = {
     mutations: [
       {
         create: {
           _type: 'order', // Sanity típusa
-          orderId:id,
+          orderId: id,
           user: { _type: 'reference', _ref: user }, // Felhasználó referencia
           products: products.map(product => ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
-            size: product.size , // Méret neve
-            _key:product.product._id+id,
+            size: product.size, // Méret neve
+            _key: product.product._id+id,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár
-          status:'process',
+          status: 'process',
+          formattedaddress: formattedAddress,
         },
       },
     ],
   };
 
-
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
+  if (couponId) {
+    await handleAddCouponsAvailedUser({
+      orderId: id,
+      userId: user,
+      orderDate: orderdate,
+      couponId
+    });
+  }
   return data;
 };
 
@@ -90,7 +105,7 @@ export const updateHotelRoom = async (ProductId: string) => {
   };
 
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
@@ -123,7 +138,7 @@ export async function getUserData(userId: string) {
 export async function checkReviewExists(
   userId: string,
   ProductId: string,
-  OrderId:string,
+  OrderId: string,
 ): Promise<null | { _id: string }> {
   const query = `*[_type == 'review' && user._ref == $userId && product._ref == $ProductId && order._ref == $OrderId][0] {
     _id
@@ -168,11 +183,11 @@ export const updateReview = async ({
   };
 
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
-  
+
   return data;
 };
 
@@ -214,9 +229,9 @@ export const createReview = async ({
       },
     ],
   };
-console.log(mutation);
+  console.log(mutation);
   const { data } = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-05-12/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
@@ -236,4 +251,45 @@ export async function getRoomReviews(productId: string) {
   return result;
 }
 
+export async function updateUser(userId: string, userDataToUpdate: any) {
+  const transaction = sanityClient.transaction();
 
+  try {
+    const updatedUser = await transaction.patch(userId, patch =>
+      patch.set({ shippingAddress: userDataToUpdate })
+    ).commit();
+
+    return updatedUser;
+  } catch (error) {
+    console.error('Sanity update error:', error);
+    throw new Error('Failed to update user data in Sanity');
+  }
+}
+
+export async function updateCoupon(body: any) {
+  try {
+    const { userId, orderId, orderDate, couponId } = body;
+    const currentCoupon = await sanityClient.getDocument(couponId);
+
+    if (!currentCoupon) {
+      throw new Error('Coupon not found');
+    }
+
+    const updatedCoupon = await sanityClient
+      .patch(couponId)
+      .setIfMissing({ usersAvailed: [] })
+      .append('usersAvailed', [
+        {
+          _key: orderId,
+          userId: { _type: 'reference', _ref: userId },
+          orderId,
+          orderDate,
+        },
+      ])
+      .commit();
+    return updatedCoupon;
+  } catch (error) {
+    console.log('error', error);
+    throw new Error('Failed to update coupon data in Sanity');
+  }
+}

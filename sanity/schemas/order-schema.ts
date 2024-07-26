@@ -80,5 +80,11 @@ export const order = defineType({
       title: 'Tracking Number',
       type: 'string',
     }),
+    defineField({
+      name: 'formattedaddress',
+      title: 'Formatted Address',
+      type: 'text',
+      readOnly: true,
+    }),
   ],
 });

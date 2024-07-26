@@ -2,13 +2,16 @@
 
 import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
-import { useShoppingCart } from "use-shopping-cart"
+import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
+import Link from "next/link";
 
 interface Props {
-  customerDetails: any
+  customerDetails: any;
+  totalAmount: number;
+  itemsCount: number;
 }
 
-export function CheckoutSession({ customerDetails }: Props) {
+export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Props) {
   const { clearCart } = useShoppingCart()
 
 
@@ -22,7 +25,6 @@ export function CheckoutSession({ customerDetails }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerDetails]);
-
 
   if (!customerDetails) {
     return (
@@ -44,6 +46,20 @@ export function CheckoutSession({ customerDetails }: Props) {
       <h3 className="mt-8 text-2xl leading-7">
         Thank you, <span className="font-extrabold">{customerDetails?.name}</span>!
       </h3>
+      <div className="mt-8 rounded-lg border p-4 shadow">
+        <h2 className="mb-4 text-xl font-bold">Summary</h2>
+        <div className='flex flex-col gap-2'>
+          <p>
+            <strong className='pr-3'>Items Count:</strong>
+            {itemsCount}
+          </p>
+          <p>
+            <strong className='pr-3'>Total Amount:</strong>
+            {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
+          </p>
+          <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${customerDetails?.id}`}>View Order Details</Link>
+        </div>
+      </div>
       <p className="mt-8">
         Check your purchase email{" "}
         <span className="mx-1 font-extrabold text-indigo-500">{customerDetails?.email}</span> for

@@ -68,6 +68,7 @@ export const getUserDataQuery = groq`*[_type == 'user' && _id == $userId][0] {
     about,
     _createdAt,
     image,
+    shippingAddress
 }`;
 
 export const getRoomReviewsQuery = groq`*[_type == "review" && product._ref == $ProductId] {
@@ -79,3 +80,13 @@ export const getRoomReviewsQuery = groq`*[_type == "review" && product._ref == $
     },
     userRating
 }`;
+
+export const getCouponsQuery = groq`*[_type == "coupon" && code == $code][0]{
+    _id,
+    useLimit,
+    isValid,
+    usersAvailed,
+    discount,
+    expirationDate,
+    type,
+    }`

@@ -45,7 +45,7 @@ const review = {
       title: 'Review Image',
       type: 'image',
       options: {
-        accept: ['image/jpeg','image/png']
+        accept: ['image/jpeg', 'image/png']
       }
     },
   ],
