@@ -23,7 +23,6 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
     if (customerDetails) {
       handleSuccessfulTransaction();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerDetails]);
 
   if (!customerDetails) {
