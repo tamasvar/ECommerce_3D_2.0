@@ -13,7 +13,6 @@ export async function POST(req: Request) {
   const reqBody = await req.text();
   const sig = req.headers.get('stripe-signature');
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
   let event: Stripe.Event;
 
   try {
@@ -92,7 +91,7 @@ export async function POST(req: Request) {
           await createOrder(orderData);
           console.log('Order successfully created in Sanity.');
         } catch (error: any) {
-          console.error('Error creating order:', error?.message);
+          console.error('Error creating order:', error);
           return new NextResponse('Error creating order', { status: 500 });
         }
 

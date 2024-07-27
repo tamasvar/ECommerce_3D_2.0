@@ -74,16 +74,26 @@ export const handleAddShippingAddress = async (formData: any) => {
 };
 
 export const handleAddCouponsAvailedUser = async (body: any) => {
-  const response = await fetch('/api/coupon', {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ...body }),
-  });
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+  const couponApiUrl = `${baseUrl}/api/coupon`;
 
-  if (!response.ok) {
-    throw new Error('Failed to update coupon data');
+  try {
+    const response = await fetch(couponApiUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update coupon data: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in handleAddCouponsAvailedUser:', error.message);
+    throw new Error(`Failed to update coupon data: ${error.message}`);
   }
-  return await response.json();
 };

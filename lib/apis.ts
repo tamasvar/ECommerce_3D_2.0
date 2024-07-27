@@ -83,7 +83,7 @@ export const createOrder = async ({
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
-  
+
   return res.data;
 };
 
