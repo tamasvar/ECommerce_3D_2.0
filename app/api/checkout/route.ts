@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { stripe } from "@/lib/stripe"
 
 export async function POST(request: Request) {
-    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, couponId } = await request.json();
+    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, coupon } = await request.json();
 
     const line_items = [];
     let totalQuantity = 0;
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
             const lineItem = {
                 price_data: {
                     currency: item.currency,
-                    unit_amount: item.price - discount, // Convert price to cents
+                    unit_amount: (coupon?.type === 'free_shipping') ? (item.price) : (item.price - discount), // Convert price to cents
                     product_data: {
                         name: item.name,
                         description: `${item.description}\n${item.product_data?.size}\n${item.product_data?.style}`,
@@ -29,12 +29,10 @@ export async function POST(request: Request) {
                     },
                 },
                 quantity: item.quantity,
-
             };
 
             totalQuantity += item.quantity;
             line_items.push(lineItem);
-
         }
     }
 
@@ -48,7 +46,7 @@ export async function POST(request: Request) {
             metadataObject[index.toString()] = JSON.stringify(item);
         });
         metadataObject['userId'] = userId;
-        metadataObject['couponId'] = couponId;
+        metadataObject['couponId'] = coupon?.id;
     } else {
         metadataObject['userId'] = 'guest';
     }
@@ -56,13 +54,13 @@ export async function POST(request: Request) {
     // Calculate shipping cost
     const baseShippingCost = shippingAmount; // €30 in cents
     const additionalItemCost = 400; // €3 in cents
-    const shippingCost = totalQuantity > 1 ? baseShippingCost + (totalQuantity - 1) * additionalItemCost : baseShippingCost;
+    const shippingCost = baseShippingCost + (totalQuantity - 1) * additionalItemCost;
 
     // Add shipping line item
     line_items.push({
         price_data: {
             currency: "eur",
-            unit_amount: shippingCost,
+            unit_amount: (coupon?.type === 'free_shipping') ? 0 : shippingCost,
             product_data: {
                 name: "Shipping",
                 description: "Shipping Cost",

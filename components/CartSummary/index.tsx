@@ -147,9 +147,11 @@ export function CartSummary() {
           selectedCountry: formData?.country,
           discount: discount / cartCount,
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
-          couponId: couponSaved?._id
+          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
         })
       });
+
+      console.log('response', response);
 
       const data = await response.json();
       const result = await redirectToCheckout(data.id);

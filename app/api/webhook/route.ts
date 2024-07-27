@@ -81,15 +81,19 @@ export async function POST(req: Request) {
           orderdate: orderDate,
           totalPrice: totalPrice!,
           couponId,
-          formattedAddress:''
-
+          formattedAddress: ''
         };
 
         console.log('orderData in webhook', orderData);
 
-
         // Call createOrder function to save order in Sanity
-        await createOrder(orderData);
+        try {
+          await createOrder(orderData);
+          console.log('Order successfully created in Sanity.');
+        } catch (error: any) {
+          console.error('Error creating order:', error?.message);
+          return new NextResponse('Error creating order', { status: 500 });
+        }
 
         return new NextResponse('Order successful', {
           status: 200,
@@ -110,6 +114,7 @@ export async function POST(req: Request) {
       });
   }
 }
+
 function uuidv4() {
   throw new Error('Function not implemented.');
 }
