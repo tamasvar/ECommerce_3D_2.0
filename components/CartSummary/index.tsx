@@ -145,7 +145,7 @@ export function CartSummary() {
           cartDetails,
           shippingAmount,
           selectedCountry: formData?.country,
-          discount: discount / cartCount,
+          discount: Math.round(discount / cartCount),
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
           coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
         })
@@ -239,7 +239,7 @@ export function CartSummary() {
           // const id = item?.id?.split('_')[0];
           return {
             product: {
-              _key: item?.id + uuidv4(),
+              _key: uuidv4(),
               _id: item?._id,
               name: item?.name,
             },

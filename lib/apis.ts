@@ -48,7 +48,6 @@ export const createOrder = async ({
   couponId,
   formattedAddress,
 }: CreateOrderDto) => {
-
   const mutation = {
     mutations: [
       {
@@ -60,7 +59,7 @@ export const createOrder = async ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
             size: product.size, // Méret neve
-            _key: product.product._id + id,
+            _key: product.product._key,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár
@@ -70,13 +69,6 @@ export const createOrder = async ({
       },
     ],
   };
-
-  const res = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
-    mutation,
-    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
-  );
-
   if (couponId) {
     await handleAddCouponsAvailedUser({
       orderId: id,
@@ -85,6 +77,13 @@ export const createOrder = async ({
       couponId
     });
   }
+  const res = await axios.post(
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    mutation,
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
+  );
+
+  
   return res.data;
 };
 

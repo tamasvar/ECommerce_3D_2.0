@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { createOrder } from '../../../lib/apis';
 import { CreateOrderDto } from '../../../models/order'
-
+import { v4 as uuidv4 } from 'uuid';
 const checkout_session_completed = 'checkout.session.completed';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         const totalPrice = session.amount_total; // Stripe amount is in cents
 
         for (const key in session.metadata) {
-          if (key !== 'userId') {
+          if (key !== 'userId' && key !== 'couponId') {
             const productMetadata = session.metadata[key];
             console.log(`Raw product metadata for key ${key}:`, productMetadata);
 
@@ -53,13 +53,14 @@ export async function POST(req: Request) {
               const id = parsedProductMetadata.id?.split('_')[0];
               const product = {
                 product: {
+                  _key: uuidv4(),
                   _id: id,
                   name: parsedProductMetadata.name,
                 },
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
               };
-
+              console.log(product)
               products.push(product);
             } catch (error: unknown) {
               console.error('Error parsing product metadata:', (error as Error).message);
@@ -114,8 +115,3 @@ export async function POST(req: Request) {
       });
   }
 }
-
-function uuidv4() {
-  throw new Error('Function not implemented.');
-}
-
