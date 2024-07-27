@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
 
+
 interface Props {
   customerDetails: any;
   totalAmount: number;
@@ -55,7 +56,6 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
             <strong className='pr-3'>Total Amount:</strong>
             {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
           </p>
-
         </div>
       </div>
       <p className="mt-8">

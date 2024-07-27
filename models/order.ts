@@ -28,12 +28,12 @@ export type CreateOrderDto = {
     };
     style: string;
     size: string;
-   
   }>;
   orderdate: string;
   totalPrice: number;
   couponId?: string
   formattedAddress?: string;
+
 
 };
 

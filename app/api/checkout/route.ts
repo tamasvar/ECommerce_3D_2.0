@@ -7,6 +7,7 @@ import { stripe } from "@/lib/stripe"
 export async function POST(request: Request) {
     const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, coupon } = await request.json();
 
+
     const line_items = [];
     let totalQuantity = 0;
 
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
         });
         metadataObject['userId'] = userId;
         metadataObject['couponId'] = coupon?.id;
+
     } else {
         metadataObject['userId'] = 'guest';
     }
@@ -83,7 +85,6 @@ export async function POST(request: Request) {
             enabled: true,
         },
         success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice}&itemsCount=${totalQuantity}`,
-
         cancel_url: `${origin}/cart`,
         metadata: metadataObject,
     });

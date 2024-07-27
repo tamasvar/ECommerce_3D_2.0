@@ -5,7 +5,9 @@ import { SanityProduct } from '@/config/inventory';
 
 import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
+
 import { Order, CreateOrderDto, couponUpdateData } from '@/models/order';
+
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
 import { randomUUID } from 'crypto';
@@ -39,6 +41,8 @@ export async function getRoom(slug: string) {
   return result;
 }
 
+
+
 export const createOrder = async ({
   id,
   user,
@@ -48,6 +52,7 @@ export const createOrder = async ({
   couponId,
   formattedAddress,
 }: CreateOrderDto) => {
+
   const mutation = {
     mutations: [
       {
@@ -69,6 +74,7 @@ export const createOrder = async ({
       },
     ],
   };
+
   if (couponId) {
     await handleAddCouponsAvailedUser({
       orderId: id,
@@ -83,7 +89,6 @@ export const createOrder = async ({
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
-  
   return res.data;
 };
 
@@ -111,7 +116,9 @@ export const updateCouponStripe = async ({
   };
  
 
+
   const {data} = await axios.post(
+
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
@@ -274,11 +281,11 @@ export async function updateUser(userId: string, userDataToUpdate: any) {
   }
 }
 
+
 export async function updateCoupon(body: any) {
   try {
     const { userId, orderId, orderDate, couponId } = body;
     const currentCoupon = await sanityClient.getDocument(couponId);
-
     if (!currentCoupon) {
       throw new Error('Coupon not found');
     }

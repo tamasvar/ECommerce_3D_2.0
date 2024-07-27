@@ -63,11 +63,13 @@ export function CartSummary() {
   shippingDataSaved = formData;
   const isDisabled = isLoading || cartCount === 0;
   const cartItems: any[] = Object.entries(cartDetails!).map(([_, product]) => product);
+ 
 
   const fetchUserData = async () => {
     const { data } = await axios.get('/api/users');
     return data;
   };
+
 
   const {
     data: userData,
@@ -87,6 +89,7 @@ export function CartSummary() {
 
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * 400, currency: "EUR" }) || '';
 
+
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
 
   // order amount with shipping charges
@@ -96,6 +99,7 @@ export function CartSummary() {
 
   units = cartItems?.map((p) => {
     const cartItemPrice = p.value / 100;
+
 
     let discountValue = 0;
     switch (appliedCoupon?.type) {
@@ -110,6 +114,19 @@ export function CartSummary() {
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
 
+
+    let discountValue = 0;
+    switch (appliedCoupon?.type) {
+      case 'percentage':
+        discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
+        break;
+      case 'fixed':
+        discountValue = (appliedCoupon?.discount || 0) / cartItems.length;
+        break;
+    }
+
+    const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
+      (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
     return {
       reference_id: p?.id,
       amount: {
@@ -137,6 +154,7 @@ export function CartSummary() {
       toast.error("Please Select shipping country to proceed order")
       return;
     };
+
     try {
       setLoading(true);
       const response = await fetch('/api/checkout', {
@@ -153,14 +171,17 @@ export function CartSummary() {
 
       console.log('response', response);
 
+
       const data = await response.json();
       const result = await redirectToCheckout(data.id);
+
 
       if (result?.error) {
         console.error(result);
       }
     } catch (error: any) {
       toast.error(error?.message || 'Something went wrong!')
+
     }
 
     setLoading(false);
@@ -234,6 +255,7 @@ export function CartSummary() {
     try {
       if (sessionSave?.user?.id) {
 
+
         const date = new Date(orderDate).toISOString().split('T')[0];
         const products = cartItems?.map((item) => {
           // const id = item?.id?.split('_')[0];
@@ -248,12 +270,14 @@ export function CartSummary() {
           };
         });
 
+
         let totalPriceAmount = 0;
         if (couponSaved?.type === 'free_shipping') {
           totalPriceAmount = totalPrice;
         } else {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)
         }
+
 
         const orderData: CreateOrderDto = {
           id: orderId,
@@ -275,6 +299,7 @@ export function CartSummary() {
         router.push(`/success?totalAmount=${totalPriceAmount}&itemsCount=${products?.length}`);
 
         handleReset();
+
       }
     } catch (error) {
       toast.error("Something went wrong!");
@@ -322,6 +347,7 @@ export function CartSummary() {
         setAppliedCoupon(coupon);
         couponSaved = coupon;
 
+
         switch (coupon.type) {
           case 'free_shipping': {
             discountCents = shippingAmount + (cartCount - 1) * 400;
@@ -351,7 +377,35 @@ export function CartSummary() {
       }
     } catch (error) {
       toast.error('An error occurred while applying the coupon.');
+
     }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => { couponCode && applyCouponCode() }, [cartDetails, formData?.country])
+
+  useEffect(() => {
+    if (userData?.shippingAddress) {
+      setFormData(userData?.shippingAddress);
+      setFormattedAddress(getAddressString(userData?.shippingAddress));
+
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
+  const fetchCouponByCode = async (code: string) => {
+    const params = { code };
+    return await sanityClient.fetch(getCouponsQuery, params);
   };
 
   const openModal = () => {

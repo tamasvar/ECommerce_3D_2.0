@@ -94,10 +94,12 @@ export function CartItems() {
                   min={1}
                   max={99}
                   value={product.quantity}
+
                   /* onChange={event => {
                     setItemQuantity(product.id, Number(event.target.value))
                   } 
                   }*/
+
                 />
                 <div className="absolute right-0 top-0">
                   <Button
