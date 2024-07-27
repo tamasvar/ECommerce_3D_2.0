@@ -36,3 +36,11 @@ export type CreateOrderDto = {
   formattedAddress?: string;
 
 };
+
+export type couponUpdateData = {
+  _key: string,
+  userId: string,
+  orderId:string,
+  orderDate:string,
+  couponId:string
+};

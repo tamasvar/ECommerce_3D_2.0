@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
-import { createOrder } from '../../../lib/apis';
+import { createOrder, updateCoupon } from '../../../lib/apis';
 import { CreateOrderDto } from '../../../models/order'
 import { v4 as uuidv4 } from 'uuid';
 const checkout_session_completed = 'checkout.session.completed';
@@ -81,7 +81,6 @@ export async function POST(req: Request) {
           products: products,
           orderdate: orderDate,
           totalPrice: totalPrice!,
-          couponId,
           formattedAddress: ''
         };
 
@@ -95,7 +94,22 @@ export async function POST(req: Request) {
           console.error('Error creating order:', error?.message);
           return new NextResponse('Error creating order', { status: 500 });
         }
-
+          // Update coupon data
+          if (couponId) {
+            try {
+              const couponUpdateData = {
+                userId: userId,
+                orderId: orderId,
+                orderDate: orderDate,
+                couponId: couponId,
+              };
+              await updateCoupon(couponUpdateData);
+              console.log('Coupon successfully updated.');
+            } catch (error: any) {
+              console.error('Error updating coupon:', error?.message);
+              return new NextResponse('Error updating coupon', { status: 500 });
+            }
+          }
         return new NextResponse('Order successful', {
           status: 200,
           statusText: 'Order Successful',
