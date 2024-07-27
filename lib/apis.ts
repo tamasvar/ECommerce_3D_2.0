@@ -50,7 +50,6 @@ export const createOrder = async ({
   couponId,
   formattedAddress,
 }: CreateOrderDto) => {
-
   const mutation = {
     mutations: [
       {
@@ -72,13 +71,6 @@ export const createOrder = async ({
       },
     ],
   };
-
-  const res = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
-    mutation,
-    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
-  );
-
   if (couponId) {
     await handleAddCouponsAvailedUser({
       orderId: id,
@@ -87,6 +79,13 @@ export const createOrder = async ({
       couponId
     });
   }
+  const res = await axios.post(
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    mutation,
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
+  );
+
+  
   return res.data;
 };
 

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         const totalPrice = session.amount_total; // Stripe amount is in cents
 
         for (const key in session.metadata) {
-          if (key !== 'userId') {
+          if (key !== 'userId' && key !== 'couponId') {
             const productMetadata = session.metadata[key];
             console.log(`Raw product metadata for key ${key}:`, productMetadata);
 
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
               };
-
+              console.log(product)
               products.push(product);
             } catch (error: unknown) {
               console.error('Error parsing product metadata:', (error as Error).message);

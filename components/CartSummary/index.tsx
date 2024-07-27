@@ -145,7 +145,7 @@ export function CartSummary() {
           cartDetails,
           shippingAmount,
           selectedCountry: formData?.country,
-          discount: discount / cartCount,
+          discount: Math.round(discount / cartCount),
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
           couponId: couponSaved?._id
         })
