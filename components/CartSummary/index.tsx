@@ -63,7 +63,6 @@ export function CartSummary() {
   shippingDataSaved = formData;
   const isDisabled = isLoading || cartCount === 0;
   const cartItems: any[] = Object.entries(cartDetails!).map(([_, product]) => product);
- 
 
   const fetchUserData = async () => {
     const { data } = await axios.get('/api/users');
@@ -110,6 +109,7 @@ export function CartSummary() {
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
+
     return {
       reference_id: p?.id,
       amount: {
@@ -137,27 +137,32 @@ export function CartSummary() {
       toast.error("Please Select shipping country to proceed order")
       return;
     };
+    try {
+      setLoading(true);
+      const response = await fetch('/api/checkout', {
+        method: "POST",
+        body: JSON.stringify({
+          cartDetails,
+          shippingAmount,
+          selectedCountry: formData?.country,
+          discount: Math.round(discount / cartCount),
+          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
+          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
+        })
+      });
 
-    setLoading(true);
-    const response = await fetch('/api/checkout', {
-      method: "POST",
-      body: JSON.stringify({
-        cartDetails,
-        shippingAmount,
-        selectedCountry: formData?.country,
-        discount: discount / cartCount,
-        totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
-        couponId: couponSaved?._id
-      })
-    });
+      console.log('response', response);
 
-    const data = await response.json();
+      const data = await response.json();
+      const result = await redirectToCheckout(data.id);
 
-    const result = await redirectToCheckout(data.id);
-
-    if (result?.error) {
-      console.error(result);
+      if (result?.error) {
+        console.error(result);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || 'Something went wrong!')
     }
+
     setLoading(false);
   }
 
@@ -228,42 +233,53 @@ export function CartSummary() {
   }: { orderId: string; orderDate: string }) => {
     try {
       if (sessionSave?.user?.id) {
-        
+
         const date = new Date(orderDate).toISOString().split('T')[0];
-        const products = cartItems?.map(item => {
-          const id = item?.id?.split('_')[0];
+        const products = cartItems?.map((item) => {
+          // const id = item?.id?.split('_')[0];
           return {
             product: {
-              _id: id,
+              _key: uuidv4(),
+              _id: item?._id,
               name: item?.name,
             },
             style: item?.product_data?.style ?? '',
             size: item?.product_data?.size ?? '',
           };
         });
-  
+
+        let totalPriceAmount = 0;
+        if (couponSaved?.type === 'free_shipping') {
+          totalPriceAmount = totalPrice;
+        } else {
+          totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)
+        }
+
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
           products,
           orderdate: date,
-          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
-          formattedAddress: formattedAddress,
+          totalPrice: totalPriceAmount,
+          // formattedAddress: formattedAddress,
           couponId: couponSaved?._id
         };
+
+        console.log('discountCents', discountCents);
+
+        console.log('orderData', orderData);
 
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);
 
-        handleReset();
+        router.push(`/success?totalAmount=${totalPriceAmount}&itemsCount=${products?.length}`);
 
-        router.push(`/success?totalAmount=${totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)}&itemsCount=${products?.length}`);
+        handleReset();
       }
     } catch (error) {
       toast.error("Something went wrong!");
     }
   };
-  
 
   const handleReset = () => {
     setAppliedCoupon(null);
@@ -285,8 +301,6 @@ export function CartSummary() {
   const applyCouponCode = async () => {
     try {
       const coupon = await fetchCouponByCode(couponCode);
-      console.log('coupon', coupon);
-
       if (coupon) {
         // Check if the coupon has expired
         const currentDate = new Date();
@@ -307,9 +321,12 @@ export function CartSummary() {
 
         setAppliedCoupon(coupon);
         couponSaved = coupon;
+
         switch (coupon.type) {
-          case 'free_shipping':
+          case 'free_shipping': {
+            discountCents = shippingAmount + (cartCount - 1) * 400;
             setDiscount(shippingAmount + (cartCount - 1) * 400);
+          }
             break;
           case 'percentage':
             handleDiscount(+coupon?.discount?.slice(0, -1));
@@ -317,6 +334,7 @@ export function CartSummary() {
           case 'fixed': {
             const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
             if (isEligible) {
+              discountCents = +coupon.discount;
               setDiscount(+coupon.discount);
             } else {
               toast.error('Order amount is insufficient for coupon eligibility. Please add more to qualify!');

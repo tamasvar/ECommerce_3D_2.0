@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
-import { createOrder } from '../../../lib/apis';
+import { createOrder, updateCoupon } from '../../../lib/apis';
 import { CreateOrderDto } from '../../../models/order'
-
+import { v4 as uuidv4 } from 'uuid';
 const checkout_session_completed = 'checkout.session.completed';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -13,7 +13,6 @@ export async function POST(req: Request) {
   const reqBody = await req.text();
   const sig = req.headers.get('stripe-signature');
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
   let event: Stripe.Event;
 
   try {
@@ -43,7 +42,7 @@ export async function POST(req: Request) {
         const totalPrice = session.amount_total; // Stripe amount is in cents
 
         for (const key in session.metadata) {
-          if (key !== 'userId') {
+          if (key !== 'userId' && key !== 'couponId') {
             const productMetadata = session.metadata[key];
             console.log(`Raw product metadata for key ${key}:`, productMetadata);
 
@@ -53,13 +52,14 @@ export async function POST(req: Request) {
               const id = parsedProductMetadata.id?.split('_')[0];
               const product = {
                 product: {
+                  _key: uuidv4(),
                   _id: id,
                   name: parsedProductMetadata.name,
                 },
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
               };
-
+              console.log(product)
               products.push(product);
             } catch (error: unknown) {
               console.error('Error parsing product metadata:', (error as Error).message);
@@ -80,17 +80,35 @@ export async function POST(req: Request) {
           products: products,
           orderdate: orderDate,
           totalPrice: totalPrice!,
-          couponId,
-          formattedAddress:''
-
+          formattedAddress: ''
         };
 
         console.log('orderData in webhook', orderData);
 
-
         // Call createOrder function to save order in Sanity
-        await createOrder(orderData);
-
+        try {
+          await createOrder(orderData);
+          console.log('Order successfully created in Sanity.');
+        } catch (error: any) {
+          console.error('Error creating order:', error);
+          return new NextResponse('Error creating order', { status: 500 });
+        }
+          // Update coupon data
+          if (couponId) {
+            try {
+              const couponUpdateData = {
+                userId: userId,
+                orderId: orderId,
+                orderDate: orderDate,
+                couponId: couponId,
+              };
+              await updateCoupon(couponUpdateData);
+              console.log('Coupon successfully updated.');
+            } catch (error: any) {
+              console.error('Error updating coupon:', error?.message);
+              return new NextResponse('Error updating coupon', { status: 500 });
+            }
+          }
         return new NextResponse('Order successful', {
           status: 200,
           statusText: 'Order Successful',
@@ -110,7 +128,3 @@ export async function POST(req: Request) {
       });
   }
 }
-function uuidv4() {
-  throw new Error('Function not implemented.');
-}
-

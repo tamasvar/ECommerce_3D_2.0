@@ -5,7 +5,7 @@ import { SanityProduct } from '@/config/inventory';
 
 import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
-import { Order, CreateOrderDto } from '@/models/order';
+import { Order, CreateOrderDto, couponUpdateData } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
 import { randomUUID } from 'crypto';
@@ -39,8 +39,6 @@ export async function getRoom(slug: string) {
   return result;
 }
 
-
-
 export const createOrder = async ({
   id,
   user,
@@ -50,7 +48,6 @@ export const createOrder = async ({
   couponId,
   formattedAddress,
 }: CreateOrderDto) => {
-
   const mutation = {
     mutations: [
       {
@@ -62,7 +59,7 @@ export const createOrder = async ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
             size: product.size, // Méret neve
-            _key: product.product._id+id,
+            _key: product.product._key,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár
@@ -72,13 +69,6 @@ export const createOrder = async ({
       },
     ],
   };
-
-  const res = await axios.post(
-    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
-    mutation,
-    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
-  );
-
   if (couponId) {
     await handleAddCouponsAvailedUser({
       orderId: id,
@@ -87,29 +77,47 @@ export const createOrder = async ({
       couponId
     });
   }
-  return res.data;
-};
-
-export const updateHotelRoom = async (ProductId: string) => {
-  const mutation = {
-    mutations: [
-      {
-        patch: {
-          id: ProductId,
-          set: {
-            isBooked: true,
-          },
-        },
-      },
-    ],
-  };
-
-  const { data } = await axios.post(
+  const res = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
+  
+  return res.data;
+};
+
+export const updateCouponStripe = async ({
+  userId,
+  orderId,
+  orderDate,
+  couponId,
+  
+}: couponUpdateData) => {
+  const mutation = {
+    mutations: [
+      {
+        patch: {
+          id: couponId,
+            set: {
+                _key: orderId,
+                orderId: orderId,
+                user: { _type: 'reference', _ref: userId }, 
+                orderDate, 
+            }
+        },
+      },
+    ],
+  };
+ 
+
+  const {data} = await axios.post(
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    mutation,
+    { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
+  );
+
+  
   return data;
 };
 

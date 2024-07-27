@@ -5,6 +5,7 @@ export type Order = {
   id: string;
   products: Array<{
     product: {
+      _key:string;
       _id: string;
       name: string;
     };
@@ -21,16 +22,25 @@ export type CreateOrderDto = {
   user: string;
   products: Array<{
     product: {
+      _key: string;
       _id: string;
       name: string;
     };
     style: string;
     size: string;
-
+   
   }>;
   orderdate: string;
   totalPrice: number;
   couponId?: string
-  formattedAddress:string;
+  formattedAddress?: string;
 
+};
+
+export type couponUpdateData = {
+  _key: string,
+  userId: string,
+  orderId:string,
+  orderDate:string,
+  couponId:string
 };

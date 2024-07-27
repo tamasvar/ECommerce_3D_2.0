@@ -3,7 +3,6 @@
 import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
-import Link from "next/link";
 
 interface Props {
   customerDetails: any;
@@ -14,7 +13,7 @@ interface Props {
 export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Props) {
   const { clearCart } = useShoppingCart()
 
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleSuccessfulTransaction() {
     clearCart();
   }
@@ -56,7 +55,7 @@ export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Pr
             <strong className='pr-3'>Total Amount:</strong>
             {formatCurrencyString({ value: totalAmount, currency: 'EUR' })}
           </p>
-          <Link className="text-sm font-medium text-indigo-600 hover:underline hover:decoration-solid dark:text-indigo-400" href={`/user/${customerDetails?.id}`}>View Order Details</Link>
+
         </div>
       </div>
       <p className="mt-8">
