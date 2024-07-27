@@ -5,7 +5,7 @@ import { SanityProduct } from '@/config/inventory';
 
 import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
-import { Order, CreateOrderDto } from '@/models/order';
+import { Order, CreateOrderDto, couponUpdateData } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
 import { randomUUID } from 'crypto';
@@ -87,26 +87,37 @@ export const createOrder = async ({
   return res.data;
 };
 
-export const updateHotelRoom = async (ProductId: string) => {
+export const updateCouponStripe = async ({
+  userId,
+  orderId,
+  orderDate,
+  couponId,
+  
+}: couponUpdateData) => {
   const mutation = {
     mutations: [
       {
         patch: {
-          id: ProductId,
-          set: {
-            isBooked: true,
-          },
+          id: couponId,
+            set: {
+                _key: orderId,
+                orderId: orderId,
+                user: { _type: 'reference', _ref: userId }, 
+                orderDate, 
+            }
         },
       },
     ],
   };
+ 
 
-  const { data } = await axios.post(
+  const {data} = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
+  
   return data;
 };
 
