@@ -237,7 +237,7 @@ export function CartSummary() {
           // const id = item?.id?.split('_')[0];
           return {
             product: {
-              _key: item?.id + uuidv4(),
+              _key: uuidv4(),
               _id: item?._id,
               name: item?.name,
             },

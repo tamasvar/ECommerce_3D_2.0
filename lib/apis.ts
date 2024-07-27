@@ -62,7 +62,7 @@ export const createOrder = async ({
             product: { _type: 'reference', _ref: product.product._id },
             style: product.style, // Termék stílusa
             size: product.size, // Méret neve
-            _key: product.product._id+id,
+            _key: product.product._key,
           })), // Termékek referenciái
           orderdate, // Rendelés dátuma
           totalPrice, // Teljes ár

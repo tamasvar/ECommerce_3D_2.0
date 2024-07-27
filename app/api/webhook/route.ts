@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { createOrder } from '../../../lib/apis';
 import { CreateOrderDto } from '../../../models/order'
-
+import { v4 as uuidv4 } from 'uuid';
 const checkout_session_completed = 'checkout.session.completed';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
               const id = parsedProductMetadata.id?.split('_')[0];
               const product = {
                 product: {
+                  _key: uuidv4(),
                   _id: id,
                   name: parsedProductMetadata.name,
                 },
@@ -110,7 +111,5 @@ export async function POST(req: Request) {
       });
   }
 }
-function uuidv4() {
-  throw new Error('Function not implemented.');
-}
+
 
