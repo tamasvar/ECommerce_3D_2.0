@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     // Calculate shipping cost
     const baseShippingCost = shippingAmount; // €30 in cents
-    const additionalItemCost = 400; // €3 in cents
+    const additionalItemCost = 200; // €3 in cents
     const shippingCost = baseShippingCost + (totalQuantity - 1) * additionalItemCost;
 
     // Add shipping line item

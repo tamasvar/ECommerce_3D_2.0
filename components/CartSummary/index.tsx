@@ -81,19 +81,25 @@ export function CartSummary() {
     handleAddShippingAddress(formData);
     setFormattedAddress(getAddressString(formData));
   }
-
+  const additionalItemCost = 200; 
   // Calculate shipping amount based on the selected country
   const shippingAmount = formData?.country ?
     (countryShippingCosts[formData?.country as keyof typeof countryShippingCosts] || 0) : 0;
 
-  const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * 400, currency: "EUR" }) || '';
+  const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * additionalItemCost, currency: "EUR" }) || '';
+
+  const shippingEstimateValue = parseFloat(shippingEstimate.replace(/[^\d.,-]/g, '').replace(',', '.'));
+  
+  // Számold ki az egy tételre jutó költséget és kedvezményt
+  const perItemShippingCost = shippingEstimateValue / cartCount;
+ 
 
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
 
   // order amount with shipping charges
-  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * 400), currency: "EUR" }) // Adding 400 EUR for each additional item
+  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" }) 
 
-  const perItemShippingCost = Number(shippingEstimate.replace(/[^\d.-]/g, '')) / cartCount;
+  
 
   units = cartItems?.map((p) => {
     const cartItemPrice = p.value / 100;
@@ -110,7 +116,6 @@ export function CartSummary() {
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-
     return {
       reference_id: p?.id,
       amount: {
@@ -147,7 +152,7 @@ export function CartSummary() {
           shippingAmount,
           selectedCountry: formData?.country,
           discount: Math.round(discount / cartCount),
-          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400),
+          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
           coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
         })
       });
@@ -253,7 +258,7 @@ export function CartSummary() {
         if (couponSaved?.type === 'free_shipping') {
           totalPriceAmount = totalPrice;
         } else {
-          totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * 400)
+          totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
 
         const orderData: CreateOrderDto = {
@@ -325,8 +330,8 @@ export function CartSummary() {
 
         switch (coupon.type) {
           case 'free_shipping': {
-            discountCents = shippingAmount + (cartCount - 1) * 400;
-            setDiscount(shippingAmount + (cartCount - 1) * 400);
+            discountCents = shippingAmount + (cartCount - 1) * additionalItemCost;
+            setDiscount(shippingAmount + (cartCount - 1) * additionalItemCost);
           }
             break;
           case 'percentage':
