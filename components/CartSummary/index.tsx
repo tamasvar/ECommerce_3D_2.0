@@ -20,6 +20,7 @@ import { getAddressString, handleAddShippingAddress, isFormDataEmpty } from "@/l
 import sanityClient from "@/sanity/lib/client";
 import { getCouponsQuery } from "@/lib/sanityQueries";
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 let sessionSave: any = {};
@@ -488,7 +489,13 @@ export function CartSummary() {
       <div className="mt-6">
         <Button type="button" onClick={onCheckout} className="w-full" disabled={isDisabled}>
           {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-          {isLoading ? "Loading..." : "Pay by Stripe"}
+          {isLoading ? (
+        "Loading..."
+      ) : (
+        <>
+          Pay with<Image src='/assets/Stripelogo.png' alt="Stripe Logo" width={60} height={20} className="inline h-7" />
+        </>
+      )}
         </Button>
       </div>
       <div className="mt-6">

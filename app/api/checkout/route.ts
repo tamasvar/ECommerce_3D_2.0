@@ -48,7 +48,8 @@ export async function POST(request: Request) {
         metadataObject['userId'] = userId;
         metadataObject['couponId'] = coupon?.id;
     } else {
-        metadataObject['userId'] = 'guest';
+        metadataObject['userId'] = 'user.48fca19f-146a-4a88-80a0-315667f2c6d3';
+        metadataObject['couponId'] = coupon?.id;
     }
 
     // Calculate shipping cost
