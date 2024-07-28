@@ -11,11 +11,17 @@ interface Props {
 
 export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Props) {
   const { clearCart } = useShoppingCart()
+
+  function handleSuccessfulTransaction() {
+    clearCart();
+  }
+
   useEffect(() => {
     if (customerDetails) {
-      clearCart();
+      handleSuccessfulTransaction();
     }
   }, [customerDetails]);
+
 
   if (!customerDetails) {
     return (
