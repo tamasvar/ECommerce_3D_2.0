@@ -21,7 +21,7 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
+  
   return (
     <>
       <div className="flex flex-wrap gap-4 rounded-lg border p-4 shadow">
@@ -112,8 +112,10 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
           <h2 className="mb-4 text-xl font-bold">Shipping Address</h2>
           <FaEdit className='cursor-pointer' onClick={openModal} />
         </div>
-        <UserAddressForm formData={userData?.shippingAddress} readOnly />
+        {userData?.shippingAddress && <UserAddressForm formData={userData?.shippingAddress} readOnly />}
+        
       </div>
+      
       {
         isModalOpen &&
         <Modal

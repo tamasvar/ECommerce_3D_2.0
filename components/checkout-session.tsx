@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect } from "react"
 import { CheckCheck, XCircle } from "lucide-react"
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"

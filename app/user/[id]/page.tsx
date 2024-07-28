@@ -13,6 +13,7 @@ import BackDrop from '@/components/BackDrop/BackDrop';
 import RatingModal from '@/components/RatingModal/RatingModal';
 import UserProfile from '@/components/UserProfile';
 import PurchaseHistory from '@/components/PurchaseHistory';
+
 interface Tabs {
   profile: JSX.Element;
   'purchase-history': JSX.Element;

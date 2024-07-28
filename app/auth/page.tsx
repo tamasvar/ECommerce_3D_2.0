@@ -12,7 +12,7 @@ const defaultFormData = {
   email: '',
   name: '',
   password: '',
-  image: 'https://lh3.googleusercontent.com/a/ACg8ocKVV2pV-3eU4JFWtCpLa68AmLunFQVYA-6JFmvCC4_nCI8Vxy_c5k999Y18cTAxri6pMJvYT1l306ZXA041AoeCvNu4jhT3=s288-c-no',
+  image: 'https://avatars.githubusercontent.com/u/41537421?v=4',
 };
 
 const Auth = () => {
