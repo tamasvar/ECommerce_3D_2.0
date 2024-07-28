@@ -81,11 +81,11 @@ const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
   // }, []);
 
   return (
-    <div className='flex flex-col lg:flex-row gap-4 items-start'>
-      <div className="w-full flex-1 flex flex-col space-y-4">
+    <div className='flex flex-col items-start gap-4 lg:flex-row'>
+      <div className="flex w-full flex-1 flex-col space-y-4">
         {/* Summary Section */}
-        <div className="p-4 shadow border rounded-lg">
-          <h2 className="text-xl font-bold mb-4">Summary</h2>
+        <div className="rounded-lg border p-4 shadow">
+          <h2 className="mb-4 text-xl font-bold">Summary</h2>
           <div className='flex flex-col gap-2'>
             <p>
               <strong className='pr-3'>Overall Total Amount:</strong>
@@ -103,19 +103,19 @@ const PurchaseHistory: FC<{ orderDetails: any }> = ({ orderDetails = [] }) => {
         </div>
 
         {/* Details Section */}
-        <div className="p-4 shadow border rounded-lg">
-          <h2 className="text-xl font-bold mb-4">Details</h2>
+        <div className="rounded-lg border p-4 shadow">
+          <h2 className="mb-4 text-xl font-bold">Details</h2>
           {structuredData.months.map((month: any) => (
             <div key={month.yearMonth} className="border-b border-gray-200 py-2">
               <button
-                className="flex items-center justify-between w-full focus:outline-none"
+                className="flex w-full items-center justify-between focus:outline-none"
                 onClick={() => setShowDetails(showDetails === month.yearMonth ? null : month.yearMonth)}
               >
                 <h3 className="text-lg font-medium">{month.monthName}</h3>
                 {showDetails === month.yearMonth ? <IoIosArrowDown /> : <IoIosArrowForward />}
               </button>
               {showDetails === month.yearMonth && (
-                <div className="mt-2 flex flex-col gap-2 border p-4 rounded-lg">
+                <div className="mt-2 flex flex-col gap-2 rounded-lg border p-4">
                   <p><strong className='pr-3'>Number of Orders:</strong> {month.numOrders}</p>
                   <p><strong className='pr-3'>Total Amount:</strong> {formatCurrencyString({ value: month.totalAmount, currency: 'EUR' })}</p>
                   <p><strong className='pr-3'>Total Products:</strong> {month.totalProducts}</p>

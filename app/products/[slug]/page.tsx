@@ -29,6 +29,7 @@ export default async function Page({ params }: Props) {
     sizes,
     size,
     style,
+    specdescription,
     description,
     universes,
     arts,

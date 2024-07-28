@@ -37,31 +37,31 @@ const UserDropdown = ({ session }: any) => {
         <FaUserCircle className='size-4 cursor-pointer' />
       )}
       {isOpen && (
-        <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-[#3b3b3b] border rounded-md shadow-lg'>
+        <div className='absolute right-0 mt-2 w-48 rounded-md border bg-white shadow-lg dark:bg-[#3b3b3b]'>
           <div className='py-1'>
             <button
-              className='flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className='flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-600'
               onClick={() => handleNavigate(`/user/${session?.user?.id}?t=profile`)}
             >
               <ImProfile className='text-xl' />
               Profile
             </button>
             <button
-              className='flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className='flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-600'
               onClick={() => handleNavigate(`/user/${session?.user?.id}?t=orders`)}
             >
               <BsJournalBookmarkFill className='text-xl' />
               Orders
             </button>
             <button
-              className='flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className='flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-600'
               onClick={() => handleNavigate(`/user/${session?.user?.id}?t=purchase-history`)}
             >
               <GiMoneyStack className='text-xl' />
               Purchase History
             </button>
             <button
-              className='flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className='flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-600'
               onClick={() => signOut({ callbackUrl: '/' })}
             >
               <FaSignOutAlt className='text-xl' />

@@ -97,6 +97,17 @@ export function ProductInfo({ product, reviews }: Props) {
         </p>
       </div>
       <div className="mt-6">
+        <h3 className="sr-only">Spec Description</h3>
+        <div className="space-y-6 text-base">
+          {product.specdescription.split('|').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              {index < product.specdescription.split('|').length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+      <div className="mt-6">
         <h3 className="sr-only">Description</h3>
         <div className="space-y-6 text-base">
           {product.description.split('|').map((line, index) => (

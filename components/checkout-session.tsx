@@ -13,14 +13,9 @@ interface Props {
 export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Props) {
   const { clearCart } = useShoppingCart()
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  function handleSuccessfulTransaction() {
-    clearCart();
-  }
-
   useEffect(() => {
     if (customerDetails) {
-      handleSuccessfulTransaction();
+      clearCart();
     }
   }, [customerDetails]);
 
