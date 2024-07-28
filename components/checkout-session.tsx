@@ -11,7 +11,6 @@ interface Props {
 
 export function CheckoutSession({ customerDetails, itemsCount, totalAmount }: Props) {
   const { clearCart } = useShoppingCart()
-
   useEffect(() => {
     if (customerDetails) {
       clearCart();
