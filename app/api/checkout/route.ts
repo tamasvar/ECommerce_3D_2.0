@@ -48,6 +48,10 @@ export async function POST(request: Request) {
         metadataObject['userId'] = userId;
         metadataObject['couponId'] = coupon?.id;
     } else {
+        const metadata = line_items.map(item => item.price_data.product_data.metadata);
+        metadata.forEach((item, index) => {
+            metadataObject[index.toString()] = JSON.stringify(item);
+        });
         metadataObject['userId'] = 'user.48fca19f-146a-4a88-80a0-315667f2c6d3';
         metadataObject['couponId'] = coupon?.id;
     }
