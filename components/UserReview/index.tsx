@@ -28,6 +28,7 @@ const UserReview: FC<{ review: any }> = ({ review }) => {
             <Image
               src={review?.user?.image}
               alt={review?.user?.name}
+              unoptimized
               width={40}
               height={40}
               className="rounded-full object-cover"

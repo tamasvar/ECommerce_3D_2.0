@@ -42,7 +42,7 @@ export function ProductGallery({product}: Props) {
                   src={urlForImage(image).url()}
                   width={200}
                   height={200}
-                  alt=""
+                  alt={`${product.name} image`}
                   className="size-full object-cover object-center"
                   placeholder="blur"
                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(200,200))}`}

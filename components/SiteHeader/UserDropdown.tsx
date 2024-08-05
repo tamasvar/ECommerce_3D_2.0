@@ -28,6 +28,7 @@ const UserDropdown = ({ session }: any) => {
           <Image
             src={session?.user?.image}
             alt={session?.user?.name}
+            unoptimized
             width={40}
             height={40}
             className='scale-animation img'

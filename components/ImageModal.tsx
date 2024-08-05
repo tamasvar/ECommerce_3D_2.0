@@ -22,6 +22,7 @@ export default function ReviewImageModal({ src }: ReviewImageModalProps) {
         alt="Review"
         width={150}
         height={90}
+        unoptimized
         className="mt-4 cursor-pointer object-cover"
         onClick={openModal}
       />

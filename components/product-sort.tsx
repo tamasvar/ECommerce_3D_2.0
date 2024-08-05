@@ -1,8 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Filter } from "lucide-react"
 import React from 'react';
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -28,6 +29,8 @@ const sortOptions = [
 
 export function ProductSort() {
   const router=useRouter()
+  const searchPrams = useSearchParams()
+  const defaultSearchQuery = searchPrams.get('search') ?? ""
   return (
     <div className="flex items-center">
       <Select onValueChange={(value) => router.replace(value)}>
@@ -45,10 +48,21 @@ export function ProductSort() {
       <Sheet>
         <SheetContent className="w-[300px]">
           <SheetHeader>
-            <SheetTitle>Categories</SheetTitle>
-            <SheetDescription>
+          <SheetTitle>Filters</SheetTitle>
+          <SheetDescription>
               Narrow your product search using the options below.
             </SheetDescription>
+          <form className="items-center lg:inline-flex">
+          <Input
+            id="search"
+            name="search"
+            type="search"
+            autoComplete="off"
+            placeholder="Search products..."
+            className="h-9 lg:w-[300px]"
+            defaultValue={defaultSearchQuery}
+          />
+        </form>
           </SheetHeader>
           <ProductFilters />
         </SheetContent>

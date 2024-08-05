@@ -4,15 +4,17 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
-import StarRatings from 'react-star-ratings';
-import { SanityProduct,Review } from "@/config/inventory";
+import { SanityProduct, Reviews } from "@/config/inventory";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import StarRating from "@/components/StarRating"; // Import your StarRating component
+import { urlForImage } from "@/sanity/lib/image";
+import { filters } from "./product-filters"; // Import filters
+
 
 interface Props {
   product: SanityProduct;
-  reviews: Review[];
+  reviews: Reviews[];
 }
 
 export function ProductInfo({ product, reviews }: Props) {
@@ -21,14 +23,14 @@ export function ProductInfo({ product, reviews }: Props) {
   const { toast } = useToast();
   const sizes = product.size;
   const styles = product.style;
-  
+
   const initialSize = sizes.length > 0 ? sizes[0].name : null;
   const initialStyle = styles.length > 0 ? styles[0] : null;
 
   const [selectedStyle, setSelectedStyle] = useState<string | null>(initialStyle);
   const [selectedSize, setSelectedSize] = useState<string | null>(initialSize);
   const [price, setPrice] = useState<number | null>(null);
-
+  
   useEffect(() => {
     if (selectedSize && selectedStyle) {
       const selectedSizeData = sizes.find((size) => size.name === selectedSize);
@@ -38,7 +40,7 @@ export function ProductInfo({ product, reviews }: Props) {
       }
     }
   }, [selectedSize, selectedStyle, sizes, product]);
-
+  
   function addToCart() {
     if (!price || !selectedSize || !selectedStyle) {
       // Handle error if the price or size could not be set
@@ -80,23 +82,83 @@ export function ProductInfo({ product, reviews }: Props) {
   const numberOfRatings = reviews?.length || 0;
   const averageRating = numberOfRatings > 0 ? totalRating / numberOfRatings : 0;
 
+  const structuredData = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": urlForImage(product.images[0]).url(),
+    "description": product.specdescription.substring(0, 200),
+    "sku": product.sku.substring(0, 50),
+    "brand": {
+      "@type": "Brand",
+      "name": "Sultry3dPrints"
+    },
+    "positiveNotes": {
+            "@type": "ItemList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "3D Printed Figurines"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Unpainted 3d Models"
+              }
+            ]
+          },
+          "negativeNotes": {
+            "@type": "ItemList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "No child protection"
+              },
+            ]
+          },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": averageRating.toString(),
+      "reviewCount": numberOfRatings.toString()
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://www.sultry3dprints.com/product/${product.slug}`,
+      "priceCurrency": product.currency,
+      "price": (product.price)/100,
+      "priceValidUntil": "2030-11-20",
+      "availability": "https://schema.org/PreOrder"
+    },
+    "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "HU",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 15,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        }
+  };
+
+  const findLabel = (category: string, value: string) => {
+    const categoryFilter = filters.find(filter => filter.id === category);
+    const option = categoryFilter?.options.find(option => option.value === value);
+    return option ? option.label : value;
+  };
+
   return (
     <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
-      <div className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-200">
+      <div className="mt-2 text-xs font-medium text-gray-500 dark:text-gray-200">
         <StarRating rating={averageRating} starDimension="16px" starSpacing="2px" />{"  "}
         <span>({numberOfRatings} reviews)</span>
       </div>
       <div className="mt-3">
-        <h2 className="sr-only">Product information</h2>
-        <p className="text-3xl tracking-tight">
-          {formatCurrencyString({
-            value: price !== null ? price : product.price,
-            currency: product.currency,
-          })}
-        </p>
-      </div>
-      <div className="mt-6">
         <h3 className="sr-only">Spec Description</h3>
         <div className="space-y-6 text-base">
           {product.specdescription.split('|').map((line, index) => (
@@ -117,8 +179,17 @@ export function ProductInfo({ product, reviews }: Props) {
             </React.Fragment>
           ))}
         </div>
+        <div className="mt-6">
+        <h2 className="sr-only">Product information</h2>
+        <p className="text-3xl tracking-tight">
+          {formatCurrencyString({
+            value: price !== null ? price : product.price,
+            currency: product.currency,
+          })}
+        </p>
       </div>
-      <div className="mt-4">
+      </div>
+      <div className="mt-3">
         <p>
           Size: <strong>{selectedSize || "Select a size"}</strong>
         </p>
@@ -147,24 +218,24 @@ export function ProductInfo({ product, reviews }: Props) {
         ))}
       </div>
       <div className="mt-6">
-        <div className="mt-2 text-base">
-          <h3 className="space-y-6 text-base">Universe:</h3>
-          <div className={isSmallScreen ? 'flex flex-wrap' : 'space-x-2'}>
+        <div className="mt-2 flex items-center text-base">
+          <p className="mr-4 text-base">Universe:</p>
+          <div className={isSmallScreen ? 'flex flex-wrap' : 'flex space-x-2'}>
             {product.universes.map((universe, index) => (
-              <Link key={index} href={`/?universes=${universe}`}>
-                <span className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{universe},</span>
+              <Link key={index} href={`/?universes=${universe}`} title={`${findLabel("universes", universe)}`}>
+                <h3 className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{findLabel("universes", universe)}</h3>
               </Link>
             ))}
           </div>
         </div>
       </div>
       <div className="mt-6">
-        <div className="mt-2 text-base">
-          <h3 className="space-y-6 text-base">Arts:</h3>
-          <div className={isSmallScreen ? 'flex flex-wrap' : 'space-x-2'}>
+        <div className="mt-2 flex items-center text-base">
+          <p className="mr-4 text-base">Arts:</p>
+          <div className={isSmallScreen ? 'flex flex-wrap' : 'flex space-x-2'}>
             {product.arts.map((art, index) => (
-              <Link key={index} href={`/?arts=${art}`}>
-                <span className={isSmallScreen ? 'mb-2 mr-2' : 'mr-5'}>{art}</span>
+              <Link key={index} href={`/?arts=${art}`} title={`${findLabel("arts", art)}`}>
+                <h3 className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{findLabel("arts", art)}</h3>
               </Link>
             ))}
           </div>

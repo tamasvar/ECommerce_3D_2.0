@@ -7,9 +7,9 @@ export const shimmer = (w: number, h: number) => `
       <stop stop-color="#e5e7eb" offset="70%" />
     </linearGradient>
   </defs>
-  <rect width="${w}" height="${h}" fill="#e5e7eb" />
+  <rect width="${w}" height="${h}"  />
   <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
-  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="500ms" repeatCount="indefinite"  />
 </svg>`
 
 export const toBase64 = (str: string) =>

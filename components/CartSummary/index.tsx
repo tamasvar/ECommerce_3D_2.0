@@ -498,7 +498,7 @@ export function CartSummary() {
         "Loading..."
       ) : (
         <>
-          Pay with<Image src='/assets/Stripelogo.png' alt="Stripe Logo" width={60} height={20} className="inline h-7" />
+          Pay with<Image src='/assets/Stripelogo.png' unoptimized alt="Stripe Logo" width={60} height={20} className="inline h-7" />
         </>
       )}
         </Button>

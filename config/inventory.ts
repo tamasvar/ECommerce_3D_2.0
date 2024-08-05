@@ -33,7 +33,7 @@ export interface SanityProduct extends Omit<InventoryProduct, "images"> {
   quantity: number
 }
 
-export interface Review {
+export interface Reviews {
   _id: string;
   _createdAt: string;
   text: string;

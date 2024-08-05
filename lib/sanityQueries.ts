@@ -1,4 +1,46 @@
+//sanityQueries
 import { groq } from 'next-sanity';
+export const getProductsQuery = (filter: string, order: string) => groq`${filter} ${order} {
+    _id,
+    _createdAt,
+    name,
+    sku,
+    images,
+    currency,
+    sizes,
+    size,
+    style,
+    rating,
+    rating_quantity,
+    description,
+    specdescription,
+    isFeatured,
+    "slug": slug.current
+  }`;
+  
+  export const getAllReviewsQuery = groq`*[_type == "review"] {
+    _id,
+    _createdAt,
+    text,
+    userRating,
+    image {
+      asset->{
+        url
+      }
+    },
+    user->{
+      _id,
+      name,
+      image
+    },
+    product->
+  }`;
+  
+  export const getReviewRatingsQuery = groq`*[_type == "review"] {
+    _id,
+    userRating,
+    product
+  }`;
 
 export const getFeaturedRoomQuery = groq`*[_type == "hotelRoom" && isFeatured == true][0] {
     _id,

@@ -1,28 +1,33 @@
-import { siteConfig } from '@/config/site'
+import { siteConfig } from '@/config/site';
+import Image from 'next/image';
 
 const PurchaseProcess = () => {
   return (
-    <div className="px-4 text-center">
-      <h1 className="text-4xl font-extrabold tracking-normal">{siteConfig?.name}</h1>
-      <div className="mx-auto mt-4 max-w-3xl text-base">
-        <h2 style={{ textDecoration: 'underline' }}> Purchase Process:</h2>
-        <ol>
-          <li>Select the model you want to purchase and pay for it using Stripe.</li>
-          <li>I will send you an email or a message to your phone as soon as your selected model is ready.</li>
-          <li style={{ fontWeight: 'bold' }}>If you can only pay by paypal, write me an e-mail and I will prepare the paypal invoice for you</li>
-          <span style={{ display: 'inline-block', marginLeft: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-          <span style={{ display: 'inline-block', marginRight: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-          <li style={{ fontWeight: 'bold' }}>You can find the complete list of the models I have and what I can create at the following link:</li>
-          <span style={{ display: 'inline-block', marginLeft: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-          <span style={{ display: 'inline-block', marginRight: '4px', animation: 'bounce 2s infinite' }}>&darr;</span>
-
-          <li style={{ fontWeight: 'bold' }}>Click here for a Catalogue -{'>'} <a href="https://sites.google.com/view/modelscatalogue/" style={{ color: 'red', fontWeight: 'bold' }}>Models Catalogue</a></li>
-          <li style={{ fontWeight: 'bold' }}>Click here for a DM -{'>'} <a href="https://www.facebook.com/Sultry3DPrints" style={{ color: 'red', fontWeight: 'bold' }}>Sultry3DPrints</a></li>
-          <li style={{ color: 'red', fontWeight: 'bold' }}><a href="mailto:info@sultry3dprints.com" style={{ color: 'red', fontWeight: 'bold' }}>info@sultry3dprints.com</a></li>
-        </ol>
+    <div 
+      className="relative px-4 text-center" 
+      style={{ 
+        backgroundImage: 'url("/logo.webp")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: '20px',
+        borderRadius: '10px',
+      }}
+    >
+      <div className="absolute inset-0 bg-black opacity-50" style={{ borderRadius: '10px' }}></div>
+      <div className="relative mx-auto mt-4 max-w-3xl rounded-lg bg-white bg-opacity-85 p-6 text-base dark:bg-black dark:bg-opacity-85">
+        <h1 className="text-lg text-black dark:text-white">
+          Explore Sultry3DPrints for a wide selection of high-quality 3D printed figurines and statues. Our collection includes NSFW 3D printed figurines, adult-themed miniatures, and anime-inspired designs.
+        </h1>
+        <p className="text-lg font-bold text-black dark:text-white">
+          Choose the model you want and proceed to checkout. You can pay securely with Stripe. Please note, only registered users can pay with PayPal.
+        </p>
+        <p className="text-lg text-black dark:text-white">
+          After your purchase, you will receive an email confirming your order. Our typical processing time is 1-2 weeks.
+        </p>
+        
       </div>
     </div>
-  )
+  );
 }
 
-export default PurchaseProcess
+export default PurchaseProcess;

@@ -31,6 +31,7 @@ const UserProfile: FC<{ userData: User }> = ({ userData }) => {
               <Image
                 src={userData?.image}
                 alt={userData?.name}
+                unoptimized
                 width={160}
                 height={160}
                 className='img scale-animation rounded-full'

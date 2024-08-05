@@ -3,7 +3,7 @@ import Carousel from "@/components/Carousel"
 import sanityClient from "@/sanity/lib/client"
 import { ProductGrid } from "@/components/product-grid"
 import { ProductSort } from "@/components/product-sort"
-import { SanityProduct, Review } from "@/config/inventory"
+import { SanityProduct, Reviews } from "@/config/inventory"
 import PurchaseProcess from "@/components/PurchaseProcess"
 import { cn, selectRandomArrayElements } from "@/lib/utils"
 import { ProductFilters } from "@/components/product-filters"
@@ -11,8 +11,11 @@ import ProductReviewsSlide from "@/components/ProductReviewSlide"
 import { Suspense } from "react"
 import LoadingSpinner from "./loading"
 import ResponsiveImage from "@/components/ResponsiveImage"
-// Add this line to specify revalidation
-export const revalidate = 10;
+import { Metadata } from "next"
+import PurchaseProcess2 from "@/components/PurchaseProcess2"
+import { generateMeta } from "@/lib/mainmetadata"
+import { getAllReviews, getProducts, getReviewRatings } from "@/lib/apis"
+export const revalidate = 3600; 
 
 interface Props {
   searchParams: {
@@ -20,14 +23,35 @@ interface Props {
     price?: string
     arts?: string
     universes?: string
-    style?:string
+    style?: string
     search?: string
   }
 }
 
+export const generateMetadata = async ({ searchParams }: Props): Promise<Metadata> => {
+  const { style, universes } = searchParams;
+  
+  const { title, description, keywords } = generateMeta(style, universes); // Use the utility function
+
+  return {
+    title,
+    description,
+    keywords,
+    openGraph: {
+      description,
+      images: '/assets/bg1.webp',
+      url: 'https://www.sultry3dprints.com/'
+    },
+    twitter: {
+      description,
+      images: '/assets/bg1.webp',
+    },
+  };
+}
+
 export default async function Page({ searchParams }: Props) {
-  const { date, price, arts,style, universes, search } = searchParams
-  const priceOrder = price ? ` | order(price ${price})` : ""
+  const { date, price, arts, style, universes, search } = searchParams
+  const priceOrder = price ? ` | order(size[0].price ${price})` : ""
   const dateOrder = date ? ` | order(_createdAt ${date})` : ""
   const order = `${priceOrder}${dateOrder}`
 
@@ -39,54 +63,17 @@ export default async function Page({ searchParams }: Props) {
 
   const filter = `*[${productFilter}${artsFilter}${universeFilter}${searchFilter}${styleFilter} && !(_id in path("drafts.**"))]`
 
-  const products = await sanityClient.fetch<SanityProduct[]>(groq` ${filter} ${order} {
-    _id,
-    _createdAt,
-    name,
-    sku,
-    images,
-    currency,
-    sizes,
-    size,
-    style,
-    rating,
-    rating_quantity,
-    description,
-    specdescription,
-    isFeatured,
-    "slug": slug.current
-  }`)
-  // Fetch reviews
-  const reviews = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
-    _id,
-    _createdAt,
-    text,
-    userRating,
-    image {
-      asset->{
-        url
-      }
-    },
-    user->{
-      _id,
-      name,
-      image
-    },
-    product->
-  }`);
-  // Fetch reviews
-  const review = await sanityClient.fetch<Review[]>(groq`*[_type == "review" ] {
-    _id,
-    userRating,
-    product
-  }`);
+  const products = await getProducts(filter, order);
+  const reviews = await getAllReviews();
+  const review = await getReviewRatings();
 
   const fiveStarReviews = reviews?.filter(({ userRating }) => userRating === 5);
-  const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 3);
+  const randomThree_fiveStarReviews = selectRandomArrayElements(fiveStarReviews, 5);
 
   const slides = [
-    <PurchaseProcess />,
-    <ResponsiveImage key="background-image" />,
+    <PurchaseProcess key="process-part1" />,
+    <PurchaseProcess2 key="process-part2" />,
+    <ResponsiveImage key="background-image"  />,
     ...randomThree_fiveStarReviews?.map((review: any) =>
       <ProductReviewsSlide review={review} />
     ),
@@ -109,9 +96,9 @@ export default async function Page({ searchParams }: Props) {
           </div>
 
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 pt-6 dark:border-gray-800 md:pt-24">
-            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
+            <p className="text-xl font-bold tracking-tight sm:text-2xl">
               {products?.length} result{products?.length === 1 ? "" : "s"}
-            </h1>
+            </p>
             {/* Product Sort */}
             <ProductSort />
           </div>

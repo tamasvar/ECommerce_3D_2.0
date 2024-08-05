@@ -1,12 +1,15 @@
-
 //products/slug
 import { groq } from "next-sanity";
 import sanityClient from "@/sanity/lib/client";
-import { SanityProduct, Review } from "@/config/inventory";
+import { SanityProduct, Reviews } from "@/config/inventory";
 import UserReview from "@/components/UserReview";
 import { ProductInfo } from "@/components/product-info";
 import { ProductGallery } from "@/components/product-gallery";
-
+import { Metadata } from "next";
+import { urlForImage } from "@/sanity/lib/image";
+import { siteConfig } from "@/config/site";
+import { notFound } from "next/navigation";
+export const revalidate = 1000;
 interface Props {
   params: {
     slug: string;
@@ -14,8 +17,48 @@ interface Props {
 }
 
 // Add this line to specify revalidation
-export const revalidate = 60;
 
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const productQuery = groq`*[_type == "product" && slug.current == "${params.slug}"][0] {
+    name,
+    specdescription,
+    images,
+    price,
+    currency,
+    size,
+    style,
+    rating,
+    rating_quantity,
+    sku,
+  }`;
+
+  const product = await sanityClient.fetch<SanityProduct>(productQuery);
+  
+  if (!product?.name) {
+    return notFound(); // Next.js 404 
+  }
+  const metaTitle = product.name ? `${product.name} - Sultry3dPrints` : "Sultry3dPrints";
+  const metaDescription = product.specdescription;
+  const metaKeywords = metaTitle+","+siteConfig.keywords;
+ 
+  return {
+    title: metaTitle,
+    description: metaDescription.substring(0, 200),
+    keywords:metaKeywords,
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription.substring(0, 200),
+      images: urlForImage(product.images[0]).url(),
+      url: `https://www.sultry3dprints.com/product/${params.slug}`,
+    },
+    twitter: {
+      title: metaTitle,
+      description: metaDescription.substring(0, 200),
+      images: urlForImage(product.images[0]).url(),
+      
+    },
+  };
+};
 export default async function Page({ params }: Props) {
   const productQuery = groq`*[_type == "product" && slug.current == "${params.slug}"][0] {
     _id,
@@ -56,7 +99,7 @@ export default async function Page({ params }: Props) {
   }`;
 
   const product = await sanityClient.fetch<SanityProduct>(productQuery);
-  const reviews = await sanityClient.fetch<Review[]>(reviewsQuery);
+  const reviews = await sanityClient.fetch<Reviews[]>(reviewsQuery);
 
   return (
     <main className="mx-auto max-w-5xl sm:px-6 sm:pt-16 lg:px-8">

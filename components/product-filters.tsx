@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
 
-const filters = [
+export const filters = [
   {
     id: "style",
     name: "Style",
@@ -24,8 +24,70 @@ const filters = [
     id: "universes",
     name: "Universe",
     options: [
-      { value: "eldenring", label: "Elden Ring" },
-      { value: "mastersoftheuniverse", label: "Masters of the Universe" },
+    { value: "addamsfamily", label: "The Addams Family" },
+    { value: "animalcrossing", label: "Animal Crossing" },
+    { value: "assassinscreed", label: "Assassin's Creed" },
+    { value: "baldursgate3", label: "Baldur's Gate 3" },
+    { value: "battlechasers", label: "Battle Chasers" },
+    { value: "bighero6", label: "Big Hero 6" },
+    { value: "bleach", label: "Bleach" },
+    { value: "borderlands", label: "Borderlands" },
+    { value: "cyberpunk", label: "CyberPunk" },
+    { value: "darkstalkers", label: "Darkstalkers" },
+    { value: "dc", label: "DC" },
+    { value: "digimon", label: "Digimon" },
+    { value: "eldenring", label: "Elden Ring" },
+    { value: "evangelion", label: "Evangelion" },
+    { value: "finalfantasy", label: "Final Fantasy" },
+    { value: "fireforce", label: "Fire Force" },
+    { value: "fivenightsatfreddy", label: "Five Nights at Freddy's" },
+    { value: "fostershome", label: "Foster's Home" },
+    { value: "frozen", label: "Frozen" },
+    { value: "harrypotter", label: "Harry Potter" },
+    { value: "helluvaboss", label: "Helluva Boss" },
+    { value: "hoteltransylvania", label: "Hotel Transylvania" },
+    { value: "kimpossible", label: "Kim Possible" },
+    { value: "killlakill", label: "Kill la Kill" },
+    { value: "leagueoflegends", label: "League of Legends" },
+    { value: "marvel", label: "Marvel" },
+    { value: "mastersoftheuniverse", label: "Masters of the Universe" },
+    { value: "metroid", label: "Metroid" },
+    { value: "mistressofthedark", label: "Mistress of the Dark" },
+    { value: "monstermusume", label: "Monster Musume" },
+    { value: "mushokutensei", label: "Mushoku Tensei" },
+    { value: "nier", label: "NieR: Automata" },
+    { value: "onepiece", label: "One Piece" },
+    { value: "onepunchman", label: "One Punch Man" },
+    { value: "original", label: "Original" },
+    { value: "overwatch", label: "Overwatch" },
+    { value: "pokemon", label: "Pokémon" },
+    { value: "residentevil", label: "Resident Evil" },
+    { value: "roadtoeldorado", label: "The Road to Eldorado" },
+    { value: "sailormoon", label: "Sailor Moon" },
+    { value: "scoobydoo", label: "Scooby-Doo" },
+    { value: "scp", label: "SCP" },
+    { value: "sonicthehedgehog", label: "Sonic the Hedgehog" },
+    { value: "spyxfamily", label: "Spy x Family" },
+    { value: "starfox", label: "Star Fox" },
+    { value: "starwars", label: "Star Wars" },
+    { value: "streetfighter", label: "Street Fighter" },
+    { value: "supermario", label: "Super Mario" },
+    { value: "thelegendofzelda", label: "The Legend of Zelda" },
+    { value: "thelordoftherings", label: "The Lord of The Rings" },
+    { value: "thewitcher", label: "The Witcher" },
+    { value: "tombraider", label: "Tomb Raider" },
+    { value: "toystory", label: "Toy Story" },
+    { value: "undertaleuniverse", label: "Undertale Universe" },
+    { value: "warhammer40k", label: "Warhammer 40k" },
+    { value: "worldofwarcraft", label: "World of Warcraft" },
+    { value: "xenawarriorprincess", label: "Xena: Warrior Princess" }
+
+
+
+
+
+
+
     ],
   },
   {
@@ -124,6 +186,7 @@ const filters = [
       { value: "skyler3dstudios", label: "Skyler3DStudios" },
       { value: "stepanovsculpts", label: "Stepanovsculpts" },
       { value: "stlproject", label: "Stlproject" },
+      { value: "stellarblade", label: "Stellar Blade" },
       { value: "sunraycollectibles", label: "Sunray Collectibles" },
       { value: "sunusumanart", label: "Sunusuman Art" },
       { value: "surelis3dart", label: "Surelis3D Art" },
@@ -164,8 +227,7 @@ export function ProductFilters() {
 
   return (
     <form className="sticky top-20">
-      <h3 className="sr-only">Universe</h3>
-
+      <p className="sr-only">Universe</p>
       {filters.map((section, i) => {
         const searchTerm = searchTerms[section.id] || ""
         const filteredOptions = section.options.filter((option) =>

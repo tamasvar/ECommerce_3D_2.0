@@ -1,7 +1,8 @@
+//apis
 import axios from 'axios';
 import { CreateReviewDto, Review } from './../models/review';
 
-import { SanityProduct } from '@/config/inventory';
+import { SanityProduct,Reviews } from '@/config/inventory';
 
 import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
@@ -9,6 +10,25 @@ import { Order, CreateOrderDto, couponUpdateData } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
 import { randomUUID } from 'crypto';
+
+export async function getProducts(filter: string, order: string): Promise<SanityProduct[]> {
+  const query = queries.getProductsQuery(filter, order);
+  const result = await sanityClient.fetch<SanityProduct[]>(query, {} );
+  return result;
+}
+
+export async function getAllReviews(): Promise<Reviews[]> {
+  const query = queries.getAllReviewsQuery;
+  const result = await sanityClient.fetch<Reviews[]>(query, {}, { cache: 'no-cache' });
+  return result;
+}
+
+export async function getReviewRatings(): Promise<Reviews[]> {
+  const query = queries.getReviewRatingsQuery;
+  const result = await sanityClient.fetch<Reviews[]>(query, {}, { cache: 'no-cache' });
+  return result;
+}
+
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<SanityProduct>(

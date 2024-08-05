@@ -6,23 +6,25 @@ import { urlForImage } from "@/sanity/lib/image"
 import { XCircle } from "lucide-react"
 import { formatCurrencyString } from "use-shopping-cart"
 import StarRatings from 'react-star-ratings';
-import { SanityProduct, Review } from "@/config/inventory"
+import { SanityProduct, Reviews } from "@/config/inventory"
 import { shimmer, toBase64 } from "@/lib/image"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+
+
 interface Props {
   products: SanityProduct[];
-  review: Review[];
+  review: Reviews[];
 }
 
 export function ProductGrid({ products, review }: Props) {
-  const [loadedProducts, setLoadedProducts] = useState(15);
+  const [loadedProducts, setLoadedProducts] = useState(6);
   const [loading, setLoading] = useState(false);
   const loadMore = () => {
     if (!loading) {
       setLoading(true);
       setTimeout(() => {
-        setLoadedProducts((prevLoaded) => prevLoaded + 15);
+        setLoadedProducts((prevLoaded) => prevLoaded + 3);
         setLoading(false);
       }, 1000); // Szimulált betöltési idő
     }
@@ -54,7 +56,7 @@ export function ProductGrid({ products, review }: Props) {
   }, [loadedProducts, loading]);
 
   // Create a map of product IDs to their reviews
-  const productReviewsMap: { [key: string]: Review[] } = {};
+  const productReviewsMap: { [key: string]: Reviews[] } = {};
   review.forEach(review => {
     const productId = review.product._ref;
     if (!productReviewsMap[productId]) {
@@ -87,10 +89,75 @@ export function ProductGrid({ products, review }: Props) {
 
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-3 lg:col-span-3 lg:gap-x-8">
+      
       {allProducts?.map((product, index) => {
         const { averageRating, totalReviews } = calculateRatingAndReviews(product._id);
+
+        const structuredData = {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": product.name,
+          "image": urlForImage(product.images[0]).url(),
+          "description": product.specdescription.substring(0, 200),
+          "sku": product.sku.substring(0, 50),
+          "brand": {
+            "@type": "Brand",
+            "name": "Sultry3dPrints"
+          },
+          "positiveNotes": {
+                  "@type": "ItemList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "3D Printed Figurines"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "Unpainted 3d Models"
+                    }
+                  ]
+                },
+                "negativeNotes": {
+                  "@type": "ItemList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "No child protection"
+                    },
+                  ]
+                },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": averageRating.toString(),
+            "reviewCount": totalReviews.toString()
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": `https://www.sultry3dprints.com/product/${product.slug}`,
+            "priceCurrency": product.currency,
+            "price": (product.size[0].price)/100,
+            "priceValidUntil": "2030-11-20",
+            "availability": "https://schema.org/PreOrder"
+          },
+          "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "HU",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 15,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        }
+        };
+      
         return (
-          <Link key={product._id + index} href={`/products/${product.slug}`} className="group text-sm">
+          <Link key={product._id + index} href={`/products/${product.slug}`} title={`View details for ${product.name}`} className="group text-sm">
+            <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+               />
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-100 group-hover:opacity-75 dark:border-gray-800">
               <Image
                 placeholder="blur"
@@ -100,8 +167,10 @@ export function ProductGrid({ products, review }: Props) {
                 width={225}
                 height={280}
                 className="size-full object-cover object-center"
+                loading="lazy"
                 unoptimized
                 style={{ aspectRatio: '1 / 1' }}
+                
               />
             </div>
             <h3 className="mt-4 font-medium">{product.name}</h3>

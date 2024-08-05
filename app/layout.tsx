@@ -8,11 +8,14 @@ import { Providers } from "@/components/providers"
 import { SiteBlob } from "@/components/site-blob"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/SiteHeader"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "@/styles/globals.css"
 
 export const metadata: Metadata = {
-  title: siteConfig.name, //itt adtam meg a címet a fejlécnek
+  title: siteConfig.name, 
   description: siteConfig.description,
+  keywords:siteConfig.keywords,
   icons: {
     icon: '/favicon.ico'
   }
@@ -26,7 +29,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <head />
+        <head> 
+        <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(w,d,s,r,n){w.TrustpilotObject=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments)};
+                a=d.createElement(s);a.async=1;a.src=r;a.type='text/java'+s;f=d.getElementsByTagName(s)[0];
+                f.parentNode.insertBefore(a,f)})(window,document,'script', 'https://invitejs.trustpilot.com/tp.min.js', 'tp');
+                tp('register', 'lKsbfE18OxcaydQq');
+              `,
+            }}
+          />
+          </head>
         <body
           className={cn(
             "min-h-screen bg-background font-sans antialiased",
@@ -45,6 +59,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <SiteFooter />
             </div>
           </Providers>
+          <Analytics/>
+          <SpeedInsights/>
         </body>
       </html>
     </>
