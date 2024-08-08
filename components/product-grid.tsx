@@ -24,7 +24,10 @@ export function ProductGrid({ products, review }: Props) {
     if (!loading) {
       setLoading(true);
       setTimeout(() => {
-        setLoadedProducts((prevLoaded) => prevLoaded + 3);
+        setLoadedProducts(prevCount => {
+          const newCount = prevCount + 3;
+          return newCount >= products.length ? products.length : newCount; // Ensure you don't exceed the total number
+        });
         setLoading(false);
       }, 1000); // Szimulált betöltési idő
     }
