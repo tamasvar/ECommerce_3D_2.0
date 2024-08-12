@@ -38,13 +38,16 @@ export default function ReviewImageModal({ src }: ReviewImageModalProps) {
           >
             &times;
           </span>
-          <img
-            id="modal-img"
-            src={src}
-            className="max-h-full max-w-full"
-            alt="Review"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="max-h-full max-w-full relative">
+            <Image
+              objectFit='cover'
+              objectPosition='center'
+              layout='fill'
+              src={src}
+              alt="Review"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
     </>

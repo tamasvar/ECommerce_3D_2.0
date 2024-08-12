@@ -19,7 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { ProductFilters } from "@/components/product-filters"
+import ProductFilters from "@/components/product-filters"
 
 const sortOptions = [
   { name: "Newest", value: "/?date=desc" },
@@ -27,8 +27,8 @@ const sortOptions = [
   { name: "Price, high to low", value: "/?price=desc" },
 ]
 
-export function ProductSort() {
-  const router=useRouter()
+export default function ProductSort() {
+  const router = useRouter()
   const searchPrams = useSearchParams()
   const defaultSearchQuery = searchPrams.get('search') ?? ""
   return (
@@ -38,7 +38,7 @@ export function ProductSort() {
           <SelectValue placeholder="Sort By" />
         </SelectTrigger>
         <SelectContent>
-          {sortOptions.map(option=>(
+          {sortOptions.map(option => (
             <SelectItem key={option.name} value={option.value}>
               {option.name}
             </SelectItem>
@@ -48,21 +48,21 @@ export function ProductSort() {
       <Sheet>
         <SheetContent className="w-[300px]">
           <SheetHeader>
-          <SheetTitle>Filters</SheetTitle>
-          <SheetDescription>
+            <SheetTitle>Filters</SheetTitle>
+            <SheetDescription>
               Narrow your product search using the options below.
             </SheetDescription>
-          <form className="items-center lg:inline-flex">
-          <Input
-            id="search"
-            name="search"
-            type="search"
-            autoComplete="off"
-            placeholder="Search products..."
-            className="h-9 lg:w-[300px]"
-            defaultValue={defaultSearchQuery}
-          />
-        </form>
+            <form className="items-center lg:inline-flex">
+              <Input
+                id="search"
+                name="search"
+                type="search"
+                autoComplete="off"
+                placeholder="Search products..."
+                className="h-9 lg:w-[300px]"
+                defaultValue={defaultSearchQuery}
+              />
+            </form>
           </SheetHeader>
           <ProductFilters />
         </SheetContent>

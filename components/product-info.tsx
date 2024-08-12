@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import StarRating from "@/components/StarRating"; // Import your StarRating component
 import { urlForImage } from "@/sanity/lib/image";
 import { filters } from "./product-filters"; // Import filters
+import Script from "next/script";
 
 
 interface Props {
@@ -30,7 +31,7 @@ export function ProductInfo({ product, reviews }: Props) {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(initialStyle);
   const [selectedSize, setSelectedSize] = useState<string | null>(initialSize);
   const [price, setPrice] = useState<number | null>(null);
-  
+
   useEffect(() => {
     if (selectedSize && selectedStyle) {
       const selectedSizeData = sizes.find((size) => size.name === selectedSize);
@@ -40,7 +41,7 @@ export function ProductInfo({ product, reviews }: Props) {
       }
     }
   }, [selectedSize, selectedStyle, sizes, product]);
-  
+
   function addToCart() {
     if (!price || !selectedSize || !selectedStyle) {
       // Handle error if the price or size could not be set
@@ -94,30 +95,30 @@ export function ProductInfo({ product, reviews }: Props) {
       "name": "Sultry3dPrints"
     },
     "positiveNotes": {
-            "@type": "ItemList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "3D Printed Figurines"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Unpainted 3d Models"
-              }
-            ]
-          },
-          "negativeNotes": {
-            "@type": "ItemList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "No child protection"
-              },
-            ]
-          },
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "3D Printed Figurines"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Unpainted 3d Models"
+        }
+      ]
+    },
+    "negativeNotes": {
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "No child protection"
+        },
+      ]
+    },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": averageRating.toString(),
@@ -127,18 +128,18 @@ export function ProductInfo({ product, reviews }: Props) {
       "@type": "Offer",
       "url": `https://www.sultry3dprints.com/product/${product.slug}`,
       "priceCurrency": product.currency,
-      "price": (product.price)/100,
+      "price": (product.price) / 100,
       "priceValidUntil": "2030-11-20",
       "availability": "https://schema.org/PreOrder"
     },
     "hasMerchantReturnPolicy": {
-          "@type": "MerchantReturnPolicy",
-          "applicableCountry": "HU",
-          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-          "merchantReturnDays": 15,
-          "returnMethod": "https://schema.org/ReturnByMail",
-          "returnFees": "https://schema.org/FreeReturn"
-        }
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "HU",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 15,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
+    }
   };
 
   const findLabel = (category: string, value: string) => {
@@ -149,7 +150,7 @@ export function ProductInfo({ product, reviews }: Props) {
 
   return (
     <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-      <script
+      <Script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
@@ -180,14 +181,14 @@ export function ProductInfo({ product, reviews }: Props) {
           ))}
         </div>
         <div className="mt-6">
-        <h2 className="sr-only">Product information</h2>
-        <p className="text-3xl tracking-tight">
-          {formatCurrencyString({
-            value: price !== null ? price : product.price,
-            currency: product.currency,
-          })}
-        </p>
-      </div>
+          <h2 className="sr-only">Product information</h2>
+          <p className="text-3xl tracking-tight">
+            {formatCurrencyString({
+              value: price !== null ? price : product.price,
+              currency: product.currency,
+            })}
+          </p>
+        </div>
       </div>
       <div className="mt-3">
         <p>

@@ -40,9 +40,9 @@ const UserReview: FC<{ review: any }> = ({ review }) => {
           <p className="mt-2 text-sm">
             {isExpanded ? review?.text : truncateText(review?.text, 100)}
             {review?.text.length > 100 && (
-              <button 
-                onClick={handleReadMore} 
-                className="ml-2 text-blue-500 hover:underline"
+              <button
+                onClick={handleReadMore}
+                className="ml-2 text-blue-800 hover:underline"
               >
                 {isExpanded ? 'Read less' : 'Read more'}
               </button>

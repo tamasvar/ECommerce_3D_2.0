@@ -7,7 +7,7 @@ export function MainNav() {
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="flex items-center space-x-1">
-      <Image
+        <Image
           src="/logo.webp"
           alt="Sulrty3dPrints Logo"
           unoptimized

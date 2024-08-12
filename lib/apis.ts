@@ -2,18 +2,17 @@
 import axios from 'axios';
 import { CreateReviewDto, Review } from './../models/review';
 
-import { SanityProduct,Reviews } from '@/config/inventory';
+import { SanityProduct, Reviews } from '@/config/inventory';
 
 import sanityClient from '@/sanity/lib/client';
 import * as queries from './sanityQueries';
 import { Order, CreateOrderDto, couponUpdateData } from '@/models/order';
 import { UpdateReviewDto } from '@/models/review';
 import { handleAddCouponsAvailedUser } from './utils';
-import { randomUUID } from 'crypto';
 
 export async function getProducts(filter: string, order: string): Promise<SanityProduct[]> {
   const query = queries.getProductsQuery(filter, order);
-  const result = await sanityClient.fetch<SanityProduct[]>(query, {} );
+  const result = await sanityClient.fetch<SanityProduct[]>(query, {});
   return result;
 }
 
@@ -28,7 +27,6 @@ export async function getReviewRatings(): Promise<Reviews[]> {
   const result = await sanityClient.fetch<Reviews[]>(query, {}, { cache: 'no-cache' });
   return result;
 }
-
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<SanityProduct>(
@@ -103,7 +101,7 @@ export const createOrder = async ({
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
-  
+
   return res.data;
 };
 
@@ -112,32 +110,32 @@ export const updateCouponStripe = async ({
   orderId,
   orderDate,
   couponId,
-  
+
 }: couponUpdateData) => {
   const mutation = {
     mutations: [
       {
         patch: {
           id: couponId,
-            set: {
-                _key: orderId,
-                orderId: orderId,
-                user: { _type: 'reference', _ref: userId }, 
-                orderDate, 
-            }
+          set: {
+            _key: orderId,
+            orderId: orderId,
+            user: { _type: 'reference', _ref: userId },
+            orderDate,
+          }
         },
       },
     ],
   };
- 
 
-  const {data} = await axios.post(
+
+  const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2023-08-16/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
     { headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_STUDIO_TOKEN}` } }
   );
 
-  
+
   return data;
 };
 
