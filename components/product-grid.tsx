@@ -11,10 +11,8 @@ import { SanityProduct, Reviews } from "@/config/inventory";
 import { shimmer, toBase64 } from "@/lib/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import Script from "next/script";
 
-// Memoize the ProductGrid component
-const ProductGrid = memo(({ products, review }: { products: SanityProduct[], review: Reviews[] }) => {
+const ProductGrid = ({ products, review }: { products: SanityProduct[], review: Reviews[] }) => {
   const [loadedProducts, setLoadedProducts] = useState(6);
   const [loading, setLoading] = useState(false);
 
@@ -147,7 +145,7 @@ const ProductGrid = memo(({ products, review }: { products: SanityProduct[], rev
 
         return (
           <Link key={product._id} href={`/products/${product.slug}`} title={`View details for ${product.name}`} className="group text-sm">
-            <Script
+            <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
@@ -199,6 +197,6 @@ const ProductGrid = memo(({ products, review }: { products: SanityProduct[], rev
       )}
     </div>
   );
-});
+};
 
 export default ProductGrid;

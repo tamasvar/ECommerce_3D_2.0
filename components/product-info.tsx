@@ -150,7 +150,7 @@ export function ProductInfo({ product, reviews }: Props) {
 
   return (
     <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-      <Script
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />

@@ -1,14 +1,14 @@
 import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
-// import bgImage from '@/public/logo.webp';
+import bgImage from '@/public/logo.webp';
 
 const PurchaseProcess2 = () => {
   return (
     <div
       className="relative px-4 text-center"
       style={{
-        // backgroundImage: `url(${bgImage.src})`,
-        // backgroundSize: 'cover',
-        // backgroundPosition: 'center',
+        backgroundImage: `url(${bgImage.src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         padding: '20px',
         borderRadius: '10px',
       }}
