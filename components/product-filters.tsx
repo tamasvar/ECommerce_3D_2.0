@@ -12,6 +12,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 export const filters = [
   {
+    id: "category",
+    name: "Category",
+    options: [
+      { value: "statue", label: "Statue" },
+      { value: "sticker", label: "Sticker" },
+    ],
+  },
+  {
     id: "style",
     name: "Style",
     options: [
@@ -159,6 +167,7 @@ export const filters = [
       { value: "mysticflare", label: "Mystic Flare" },
       { value: "nachocg", label: "NACHOCG" },
       { value: "nandosonny", label: "Nandosonny" },
+      { value: "naruto", label: "Naruto" },
       { value: "nationrodera3dstudios", label: "Nationrodera3DStudios" },
       { value: "nekofigurines", label: "Neko Figurines" },
       { value: "nerikson", label: "Nerikson" },

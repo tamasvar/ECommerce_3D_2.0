@@ -66,6 +66,13 @@ export const product = {
       of: [{ type: 'string' }],
     }),
     defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'array',
+      of: [{ type: 'string' }],
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'sku',
       title: 'SKU',
       type: 'string',
@@ -103,6 +110,7 @@ export const product = {
         },
       ],
     }),
+    
     defineField({
       name: 'isFeatured',
       title: 'Is Featured',

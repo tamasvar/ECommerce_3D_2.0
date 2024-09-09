@@ -32,14 +32,41 @@ export const countryShippingCosts = {
   SI: 2000,   // Slovenia
   CH: 2000,
 
-  // Add more countries with their respective shipping costs
-  // For other countries, use a default value of 20
-  // Example:
-  // EE: 20,  // Estonia
-  // LT: 20,  // Lithuania
-  // ...
 };
+export const countryShippingCostsSticker = {
+  US: 1500,   // United States
+  CY: 1500,   // Cyprus
+  DK: 1500,   // Denmark
+  FI: 1500,   // Finland
+  IE: 1500,   // Ireland
+  IT: 1500,   // Italy
+  LU: 1500,   // Luxembourg
+  MT: 1500,   // Malta
+  SE: 1500,   // Sweden
+  NL: 1500,   // The Netherlands
+  GB: 1500,   // United Kingdom
+  NO: 1500,
+  DE: 1500,   // Germany
+  FR: 1500,   // France
+  ES: 1500,   // Spain
+  PT: 1500,   // Portugal
+  BE: 1500,   // Belgium
+  AT: 1500,   // Austria
+  BG: 1500,   // Bulgaria
+  HR: 1500,   // Croatia
+  CZ: 1500,   // Czech Republic
+  EE: 1500,   // Estonia
+  GR: 1500,   // Greece
+  HU: 1500,   // Hungary
+  LV: 1500,   // Latvia
+  LT: 1500,   // Lithuania
+  PL: 1500,   // Poland
+  RO: 1500,   // Romania
+  SK: 1500,   // Slovakia
+  SI: 1500,   // Slovenia
+  CH: 1500,
 
+};
 export const countries = [
   { value: '', label: 'Select country', disabled: true },
   { value: 'US', label: 'United States' },

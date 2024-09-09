@@ -18,6 +18,7 @@ interface InventoryProduct {
   sku: string
   price:number
   sizes:string
+  category:string[]
   isFeatured: boolean,
 }
 

@@ -26,7 +26,7 @@ export function ProductInfo({ product, reviews }: Props) {
 
   const initialSize = sizes.length > 0 ? sizes[0].name : null;
   const initialStyle = styles.length > 0 ? styles[0] : null;
-
+  
   const [selectedStyle, setSelectedStyle] = useState<string | null>(initialStyle);
   const [selectedSize, setSelectedSize] = useState<string | null>(initialSize);
   const [price, setPrice] = useState<number | null>(null);
@@ -81,7 +81,7 @@ export function ProductInfo({ product, reviews }: Props) {
   const totalRating = reviews?.reduce((acc, review) => acc + review.userRating, 0) || 0;
   const numberOfRatings = reviews?.length || 0;
   const averageRating = numberOfRatings > 0 ? totalRating / numberOfRatings : 0;
-
+  
   const structuredData = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -127,7 +127,7 @@ export function ProductInfo({ product, reviews }: Props) {
       "@type": "Offer",
       "url": `https://www.sultry3dprints.com/product/${product.slug}`,
       "priceCurrency": product.currency,
-      "price": (product.price)/100,
+      "price": (product.size[0].price)/100,
       "priceValidUntil": "2030-11-20",
       "availability": "https://schema.org/PreOrder"
     },
@@ -229,18 +229,21 @@ export function ProductInfo({ product, reviews }: Props) {
           </div>
         </div>
       </div>
-      <div className="mt-6">
-        <div className="mt-2 flex items-center text-base">
-          <p className="mr-4 text-base">Arts:</p>
-          <div className={isSmallScreen ? 'flex flex-wrap' : 'flex space-x-2'}>
-            {product.arts.map((art, index) => (
-              <Link key={index} href={`/?arts=${art}`} title={`${findLabel("arts", art)}`}>
-                <h3 className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{findLabel("arts", art)}</h3>
-              </Link>
-            ))}
+      
+      {product.arts && product.arts[0].trim() !== "" && (
+        <div className="mt-6">
+          <div className="mt-2 flex items-center text-base">
+            <p className="mr-4 text-base">Arts:</p>
+            <div className={isSmallScreen ? 'flex flex-wrap' : 'flex space-x-2'}>
+              {product.arts.map((art, index) => (
+                <Link key={index} href={`/?arts=${art}`} title={`${findLabel("arts", art)}`}>
+                  <h3 className={isSmallScreen ? 'mb-2 mr-2' : 'mr-4'}>{findLabel("arts", art)}</h3>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <form className="mt-6">
         <div className="mt-4 flex">
           <Button

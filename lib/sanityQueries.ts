@@ -14,6 +14,7 @@ export const getProductsQuery = (filter: string, order: string) => groq`${filter
     rating_quantity,
     description,
     specdescription,
+    category,
     isFeatured,
     "slug": slug.current
   }`;
@@ -130,5 +131,6 @@ export const getCouponsQuery = groq`*[_type == "coupon" && code == $code][0]{
     usersAvailed,
     discount,
     expirationDate,
+    priceLimit,
     type,
     }`

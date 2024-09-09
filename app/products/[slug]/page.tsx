@@ -25,6 +25,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
     images,
     price,
     currency,
+    category,
     size,
     style,
     rating,
@@ -37,10 +38,29 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
   if (!product?.name) {
     return notFound(); // Next.js 404 
   }
-  const metaTitle = product.name ? `${product.name} - Sultry3dPrints` : "Sultry3dPrints";
-  const metaDescription = product.specdescription;
-  const metaKeywords = metaTitle+","+siteConfig.keywords;
+  // Split the product name at the "|" and take the part before it
+  const productName = product.name.split("|")[0].trim();
+
+  // Join the styles to create a comma-separated string
+  const styles = product.style?.join(", ") || "";
+
+ // Declare metaTitle and metaKeywords variables
+ let metaTitle = "";
+ let metaKeywords = "";
+
+  // Customize meta title and keywords based on category
+  if (product.category[0] === "statue") {
+    metaTitle = `${productName} - Adult Resin Model Kit Miniature Unpainted 3D Print ${styles}`;
+    metaKeywords = `${metaTitle},${siteConfig.keywords}`;
+  } else if (product.category[0] === "sticker") {
+    metaTitle = `${productName} High Quality Weather Resistant Vinyl Sticker ${styles}`;
+    metaKeywords = `${productName}, Sticker, Vinyl, Stickers, ${styles}`;
+  }
  
+  const imageUrl=urlForImage(product.images[0]).url();
+  
+  const metaDescription = product.specdescription;
+ // const metaKeywords = `${metaTitle},${siteConfig.keywords}`;
   return {
     title: metaTitle,
     description: metaDescription.substring(0, 200),
@@ -48,7 +68,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
     openGraph: {
       title: metaTitle,
       description: metaDescription.substring(0, 200),
-      images: urlForImage(product.images[0]).url(),
+      images: imageUrl,
       url: `https://www.sultry3dprints.com/product/${params.slug}`,
     },
     twitter: {
@@ -75,6 +95,7 @@ export default async function Page({ params }: Props) {
     specdescription,
     description,
     universes,
+    category,
     arts,
     rating,
     rating_quantity,

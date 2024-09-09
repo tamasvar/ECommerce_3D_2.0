@@ -23,6 +23,7 @@ interface Props {
     price?: string
     arts?: string
     universes?: string
+    category?:string
     style?: string
     search?: string
   }
@@ -40,7 +41,6 @@ export const generateMetadata = async ({ searchParams }: Props): Promise<Metadat
     openGraph: {
       description,
       images: '/assets/bg1.webp',
-      url: 'https://www.sultry3dprints.com/'
     },
     twitter: {
       description,
@@ -50,7 +50,7 @@ export const generateMetadata = async ({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { date, price, arts, style, universes, search } = searchParams
+  const { date, price, arts, style, universes,category, search } = searchParams
   const priceOrder = price ? ` | order(size[0].price ${price})` : ""
   const dateOrder = date ? ` | order(_createdAt ${date})` : ""
   const order = `${priceOrder}${dateOrder}`
@@ -59,9 +59,10 @@ export default async function Page({ searchParams }: Props) {
   const artsFilter = arts ? `&& "${arts}" in arts` : ""
   const styleFilter = style ? `&& "${style}" in style` : ""
   const universeFilter = universes ? `&& "${universes}" in universes` : ""
+  const categoryFilter = category ? `&& "${category}" in category` : ""
   const searchFilter = search ? `&& name match "${search}"` : ""
 
-  const filter = `*[${productFilter}${artsFilter}${universeFilter}${searchFilter}${styleFilter} && !(_id in path("drafts.**"))]`
+  const filter = `*[${productFilter}${artsFilter}${universeFilter}${categoryFilter}${searchFilter}${styleFilter} && !(_id in path("drafts.**"))]`
 
   const products = await getProducts(filter, order);
   const reviews = await getAllReviews();
@@ -85,6 +86,15 @@ export default async function Page({ searchParams }: Props) {
       <div>
         <main className="mx-auto max-w-6xl px-6">
           <div className="pb-2 pt-6 md:pb-6 md:pt-24">
+         
+          <div key="gleam-iframe" className="flex items-center justify-center p-4">
+              <iframe 
+                src="https://gleam.io/CQfGn/50-gift-card" 
+                className="h-64 w-full max-w-full rounded-lg"
+                style={{ minHeight: '300px' }}
+              >
+              </iframe>
+            </div>
             <Carousel
               slides={slides}
               className="!md:px-6 flex items-center rounded-lg !px-0 !pb-8"

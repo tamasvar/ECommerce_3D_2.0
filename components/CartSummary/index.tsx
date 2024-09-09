@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { CreateOrderDto } from "@/models/order";
 import { Button } from "@/components/ui/button";
-import { countryShippingCosts, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
+import { countryShippingCosts,countryShippingCostsSticker, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import UserAddressForm from "./UserAddressForm";
@@ -40,7 +40,9 @@ export function CartSummary() {
     totalPrice = 0,
     redirectToCheckout,
     formattedTotalPrice,
+
   } = useShoppingCart();
+
 
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -81,10 +83,19 @@ export function CartSummary() {
     handleAddShippingAddress(formData);
     setFormattedAddress(getAddressString(formData));
   }
-  const additionalItemCost = 200; 
-  // Calculate shipping amount based on the selected country
-  const shippingAmount = formData?.country ?
-    (countryShippingCosts[formData?.country as keyof typeof countryShippingCosts] || 0) : 0;
+  console.log(cartItems)
+  // Check if the cart contains any "statue" items
+  const containsStatue = cartItems.some((item) => item.category[0] === "statue");
+
+  // Set additional item cost based on the presence of "statue" items
+  const additionalItemCost = containsStatue ? 0 : 0;
+
+  // Calculate shipping amount based on the presence of "statue" items
+  const shippingAmount = formData?.country
+    ? (containsStatue
+      ? countryShippingCosts[formData?.country as keyof typeof countryShippingCosts]
+      : countryShippingCostsSticker[formData?.country as keyof typeof countryShippingCostsSticker])
+    : 0;
 
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * additionalItemCost, currency: "EUR" }) || '';
 
@@ -99,7 +110,7 @@ export function CartSummary() {
   // order amount with shipping charges
   const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" }) 
 
-  
+ 
 
   units = cartItems?.map((p) => {
     const cartItemPrice = p.value / 100;
@@ -110,18 +121,20 @@ export function CartSummary() {
         discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
         break;
       case 'fixed':
-        discountValue = (appliedCoupon?.discount || 0) / cartItems.length;
+        discountValue = ((appliedCoupon?.discount || 0) / cartItems.length) / 100;
         break;
     }
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
+
     return {
       reference_id: p?.id,
       amount: {
         currency_code: "EUR",
         value: totalAmount.toFixed(2), // Ensure correct formatting
       },
+      description: p.name+" "+p.product_data?.style+" "+p.product_data?.size,
       shipping: {
         name: {
           full_name: shippingDataSaved?.name
@@ -271,9 +284,6 @@ export function CartSummary() {
           couponId: couponSaved?._id
         };
 
-        console.log('discountCents', discountCents);
-
-        console.log('orderData', orderData);
 
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);
@@ -312,19 +322,29 @@ export function CartSummary() {
         const currentDate = new Date();
         const expirationDate = new Date(coupon.expirationDate);
 
+        // Convert formattedTotalPrice to an integer
+        const totalPriceNumber = (formattedTotalPrice
+        ? parseInt(formattedTotalPrice.replace(/[^\d]/g, ''), 10)
+        : 0)/100;
+
         if (expirationDate < currentDate) {
-          toast.error('Coupon code has expired!');
+          toast.error(`The coupon code has expired! It was valid until ${expirationDate}.`);
           setCouponCode("");
           setDiscount(0);
           return;
         }
         if (coupon?.useLimit <= coupon?.usersAvailed?.length) {
-          toast.error('Coupon has reached use limit');
+          toast.error(`The coupon has reached its usage limit: It could only be used ${coupon?.useLimit} times.`);
           setCouponCode("");
           setDiscount(0);
           return;
         }
-
+        if ( totalPriceNumber <= coupon?.priceLimit) {
+          toast.error(`The coupon can only be applied for orders above €${coupon?.priceLimit} . Your current subtotal is €${totalPriceNumber}.`);
+          setCouponCode("");
+          setDiscount(0);
+          return;
+        }
         setAppliedCoupon(coupon);
         couponSaved = coupon;
 
@@ -339,6 +359,7 @@ export function CartSummary() {
             break;
           case 'fixed': {
             const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
+          
             if (isEligible) {
               discountCents = +coupon.discount;
               setDiscount(+coupon.discount);

@@ -18,13 +18,16 @@ interface Props {
 }
 
 export function ProductGrid({ products, review }: Props) {
-  const [loadedProducts, setLoadedProducts] = useState(6);
+  const [loadedProducts, setLoadedProducts] = useState(9);
   const [loading, setLoading] = useState(false);
   const loadMore = () => {
     if (!loading) {
       setLoading(true);
       setTimeout(() => {
-        setLoadedProducts((prevLoaded) => prevLoaded + 3);
+        setLoadedProducts(prevCount => {
+          const newCount = prevCount + 3;
+          return newCount >= products.length ? products.length : newCount; // Ensure you don't exceed the total number
+        });
         setLoading(false);
       }, 1000); // Szimulált betöltési idő
     }
@@ -92,7 +95,6 @@ export function ProductGrid({ products, review }: Props) {
       
       {allProducts?.map((product, index) => {
         const { averageRating, totalReviews } = calculateRatingAndReviews(product._id);
-
         const structuredData = {
           "@context": "https://schema.org/",
           "@type": "Product",

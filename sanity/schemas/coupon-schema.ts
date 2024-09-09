@@ -44,6 +44,11 @@ export const coupon = defineType({
       type: 'number',
       validation: Rule => Rule.required().min(1),
     }),
+    defineField({
+      name: 'priceLimit',
+      title: 'Price Limit',
+      type: 'number',
+    }),
     {
       name: 'usersAvailed',
       title: 'Users who availed this coupon',

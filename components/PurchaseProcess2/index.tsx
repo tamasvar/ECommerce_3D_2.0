@@ -28,7 +28,7 @@ const PurchaseProcess2 = () => {
           For custom requests, you can order painted models or request size modifications, which may affect the price. Contact us for custom orders:
         </p>
         <p className="text-lg font-bold text-red-600">
-          <a href="mailto:info@sultry3dprints.com" style={{ fontWeight: 'bold' }}>info@sultry3dprints.com</a>
+          <a href="mailto:sultry3dprints@gmail.com" style={{ fontWeight: 'bold' }}>sultry3dprints@gmail.com</a>
         </p>
         <p className="text-lg text-black dark:text-white">
           If you have any questions or need assistance, feel free to send us a direct message:
@@ -43,7 +43,7 @@ const PurchaseProcess2 = () => {
           <a href="https://www.instagram.com/Sultry3DPrints" target="_blank" rel="noopener noreferrer">
             <FaInstagram className="text-2xl text-red-600" />
           </a>
-          <a href="https://www.tiktok.com/@Sultry3DPrints" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.tiktok.com/@Sultry3DPrints0" target="_blank" rel="noopener noreferrer">
             <FaTiktok className="text-2xl text-red-600" />
           </a>
         </div>
