@@ -23,35 +23,6 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user }) {
-      console.log('Sign in callback - user:', user);
-      // Ellenőrizzük, hogy új felhasználóról van-e szó
-      const userExists = await sanityClient.fetch(
-        `*[_type == "user" && email == $email][0]`,
-        { email: user.email }
-      );
-      console.log('User exists:', userExists);
-      if (!userExists) {
-        // Új felhasználó esetén e-mail küldés
-        try {
-          // Itt az API route URL a helyi környezettől függően módosulhat
-          const response = await fetch('/api/email/welcome', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: user.email }),
-          });
-          console.log(response);
-          if (!response.ok) {
-            throw new Error('Failed to send email');
-          }
-        } catch (error) {
-          console.error('Failed to send email:', error);
-        }
-      }
-      return true;
-    },
     async session({ session, token }) {
       const userEmail = token.email;
       const userIdObj = await sanityClient.fetch<{ _id: string }>(
@@ -60,6 +31,25 @@ export const authOptions: NextAuthOptions = {
         }`,
         { email: userEmail }
       );
+      if (!userIdObj) {
+        // Új felhasználó esetén e-mail küldés
+        try {
+          // Itt az API route URL a helyi környezettől függően módosulhat
+          const response = await fetch('/api/email/welcome', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userEmail }),
+          });
+         
+          if (!response.ok) {
+            throw new Error('Failed to send email');
+          }
+        } catch (error) {
+          console.error('Failed to send email:', error);
+        }
+      }
       return {
         ...session,
         user: {
