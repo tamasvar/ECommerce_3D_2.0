@@ -33,13 +33,18 @@ export const authOptions: NextAuthOptions = {
       if (!userExists) {
         // Új felhasználó esetén e-mail küldés
         try {
-          await fetch('/api/email/welcome', {
+          // Itt az API route URL a helyi környezettől függően módosulhat
+          const response = await fetch('/api/email/welcome', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: user.email }),
           });
+
+          if (!response.ok) {
+            throw new Error('Failed to send email');
+          }
         } catch (error) {
           console.error('Failed to send email:', error);
         }
