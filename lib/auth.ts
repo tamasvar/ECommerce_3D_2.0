@@ -31,10 +31,11 @@ export const authOptions: NextAuthOptions = {
         }`,
         { email: userEmail }
       );
-      if (!userIdObj) {
+      
+      // Ellenőrizzük, hogy Google-t használtak-e a bejelentkezéshez
+      if (token.provider === 'google' && userIdObj) {
         // Új felhasználó esetén e-mail küldés
         try {
-          // Itt az API route URL a helyi környezettől függően módosulhat
           const response = await fetch('/api/email/welcome', {
             method: 'POST',
             headers: {
@@ -42,7 +43,7 @@ export const authOptions: NextAuthOptions = {
             },
             body: JSON.stringify({ email: userEmail }),
           });
-         
+
           if (!response.ok) {
             throw new Error('Failed to send email');
           }
@@ -50,11 +51,12 @@ export const authOptions: NextAuthOptions = {
           console.error('Failed to send email:', error);
         }
       }
+      
       return {
         ...session,
         user: {
           ...session.user,
-          id: userIdObj._id,
+          id: userIdObj?._id,
         },
       };
     },
