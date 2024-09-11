@@ -73,7 +73,6 @@ export async function POST(request: Request) {
                 .services {
                 display: flex;
                 justify-content: space-between;
-                padding: 20px;
                 background-color: #f9f9f9;
                 }
                 .service-item {
