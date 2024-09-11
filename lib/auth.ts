@@ -2,7 +2,8 @@ import { NextAuthOptions } from 'next-auth';
 import { SanityAdapter, SanityCredentials } from 'next-auth-sanity';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
-import sanityClient from '@/sanity/lib/client';
+
+import  sanityClient  from '@/sanity/lib/client';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -23,7 +24,7 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, token }) {
+    session: async ({ session, token }) => {
       const userEmail = token.email;
       const userIdObj = await sanityClient.fetch<{ _id: string }>(
         `*[_type == "user" && email == $email][0] {
@@ -31,34 +32,13 @@ export const authOptions: NextAuthOptions = {
         }`,
         { email: userEmail }
       );
-      
-      // Ellenőrizzük, hogy Google-t használtak-e a bejelentkezéshez
-      if (token.provider === 'google' && userIdObj) {
-        // Új felhasználó esetén e-mail küldés
-        try {
-          const response = await fetch('/api/email/welcome', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: userEmail }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to send email');
-          }
-        } catch (error) {
-          console.error('Failed to send email:', error);
-        }
-      }
-      
       return {
         ...session,
         user: {
           ...session.user,
-          id: userIdObj?._id,
+          id: userIdObj._id,
         },
       };
     },
-  },
+  }, 
 };
