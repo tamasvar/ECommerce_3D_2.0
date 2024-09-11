@@ -24,12 +24,13 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user }) {
+      console.log('Sign in callback - user:', user);
       // Ellenőrizzük, hogy új felhasználóról van-e szó
       const userExists = await sanityClient.fetch(
         `*[_type == "user" && email == $email][0]`,
         { email: user.email }
       );
-
+      console.log('User exists:', userExists);
       if (!userExists) {
         // Új felhasználó esetén e-mail küldés
         try {
@@ -41,7 +42,7 @@ export const authOptions: NextAuthOptions = {
             },
             body: JSON.stringify({ email: user.email }),
           });
-
+          console.log(response);
           if (!response.ok) {
             throw new Error('Failed to send email');
           }
