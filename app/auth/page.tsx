@@ -7,6 +7,10 @@ import { signUp } from 'next-auth-sanity/client';
 import { signIn, useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { getEmailQuery } from "@/lib/sanityQueries";
+import sanityClient from '@/sanity/lib/client';
+
+
 
 const defaultFormData = {
   email: '',
@@ -17,15 +21,20 @@ const defaultFormData = {
 
 const Auth = () => {
   const [formData, setFormData] = useState(defaultFormData);
+const [isSubmitting, setIsSubmitting] = useState(false);
 
   const inputStyles =
     'border border-gray-300 sm:text-lg text-black dark:text-white rounded-lg block w-full p-4 focus:outline-none';
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+    const newValue = name === 'email' ? value.toLowerCase() : value;
+    setFormData({ ...formData, [name]: newValue });
   };
-
+  const fetchUserByEmailAndImage = async (email: string) => {
+    const params = { email };
+    return await sanityClient.fetch(getEmailQuery, params);
+  };
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -45,17 +54,37 @@ const Auth = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+      setIsSubmitting(true);
+      const userExists = await fetchUserByEmailAndImage(formData.email);
 
+      if (userExists) {
+        toast.error('User with this email already exists.');
+        setIsSubmitting(false);
+        return;
+      }
     try {
       const user = await signUp(formData);
       if (user) {
+        const response = await fetch('/api/email/welcome', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to send email');
+      }
         toast.success('Success. Please sign in');
+        router.push('/api/auth/signin'); 
       }
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     } finally {
       setFormData(defaultFormData);
+      setIsSubmitting(false);
     }
   };
 
@@ -112,9 +141,12 @@ const Auth = () => {
 
           <button
             type='submit'
-            className='w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-lg font-medium text-white shadow-md transition duration-300 hover:bg-blue-700 hover:shadow-lg focus:outline-none'
+            disabled={isSubmitting} // A gomb letiltása
+            className={`w-full rounded-lg px-5 py-2.5 text-center text-lg font-medium text-white shadow-md transition duration-300 ${
+              isSubmitting ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'
+            }`}
           >
-            Sign Up
+            {isSubmitting ? 'Submitting...' : 'Sign Up'}
           </button>
         </form>
 

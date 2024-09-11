@@ -134,3 +134,8 @@ export const getCouponsQuery = groq`*[_type == "coupon" && code == $code][0]{
     priceLimit,
     type,
     }`
+    export const getEmailQuery = groq`*[_type == "user" && email == $email][0]{
+      _id,
+      email,
+    }`
+    

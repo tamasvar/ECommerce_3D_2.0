@@ -134,7 +134,7 @@ export function CartSummary() {
         currency_code: "EUR",
         value: totalAmount.toFixed(2), // Ensure correct formatting
       },
-      description: p.name+" "+p.product_data?.style+" "+p.product_data?.size,
+      description: p.name+" "+p.product_data?.size+" "+p.product_data?.style,
       shipping: {
         name: {
           full_name: shippingDataSaved?.name
