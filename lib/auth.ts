@@ -31,10 +31,11 @@ export const authOptions: NextAuthOptions = {
         `*[_type == "user" && email == $email][0]`,
         { email: userEmail }
       );
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (!existingUser) {
         // User does not exist, send a welcome email
         try {
-          await fetch('/api/email/welcome', {
+          await fetch(`${apiUrl}/api/email/welcome`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email }),
