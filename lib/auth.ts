@@ -25,32 +25,40 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   
   callbacks: {
-    // JWT callback, itt küldünk e-mailt, amikor a felhasználó hitelesített
-    jwt: async ({ token, account, profile }) => {
-      if (account && profile && profile.email) {
-        try {
-          // Email elküldése az API endpointnak
+    signIn: async ({ user }) => {
+      try {
+        // Ellenőrizzük, hogy létezik-e már a felhasználó
+        const existingUser = await sanityClient.fetch<{ _id: string }>(
+          `*[_type == "user" && email == $email][0] {
+            _id
+          }`,
+          { email: user.email }
+        );
+
+        // Ha nem létezik a felhasználó (új regisztráció)
+        if (!existingUser) {
+          // Email küldés a regisztrált felhasználónak
           const response = await fetch('/api/email/welcome', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: profile.email }), // Email elküldése az API-nak
+            body: JSON.stringify({ email: user.email }), // Küldjük az új felhasználó email címét
           });
 
           if (!response.ok) {
-            throw new Error('Failed to send email');
+            throw new Error('Failed to send welcome email');
           }
 
-          console.log('Welcome email sent to:', profile.email);
-        } catch (error) {
-          console.error('Error sending welcome email:', error);
+          console.log('Welcome email sent to:', user.email);
         }
 
-        // Az email hozzáadása a tokenhez
-        token.email = profile.email;
+        // Folytatódik a bejelentkezési folyamat
+        return true;
+      } catch (error) {
+        console.error('Error during signIn process:', error);
+        return false;
       }
-      return token;
     },
 
     // Session callback, ahol a felhasználói adatokat hozzáadjuk a session-höz

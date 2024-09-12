@@ -86,15 +86,6 @@ export default async function Page({ searchParams }: Props) {
       <div>
         <main className="mx-auto max-w-6xl px-6">
           <div className="pb-2 pt-6 md:pb-6 md:pt-24">
-         
-          <div key="gleam-iframe" className="flex items-center justify-center p-4">
-              <iframe 
-                src="https://gleam.io/CQfGn/50-gift-card" 
-                className="h-64 w-full max-w-full rounded-lg"
-                style={{ minHeight: '300px' }}
-              >
-              </iframe>
-            </div>
             <Carousel
               slides={slides}
               className="!md:px-6 flex items-center rounded-lg !px-0 !pb-8"
