@@ -23,8 +23,37 @@ export const authOptions: NextAuthOptions = {
   adapter: SanityAdapter(sanityClient),
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
+  
   callbacks: {
-    // A session callback marad ugyanaz
+    // JWT callback, itt küldünk e-mailt, amikor a felhasználó hitelesített
+    jwt: async ({ token, account, profile }) => {
+      if (account && profile && profile.email) {
+        try {
+          // Email elküldése az API endpointnak
+          const response = await fetch('/api/email/welcome', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: profile.email }), // Email elküldése az API-nak
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to send email');
+          }
+
+          console.log('Welcome email sent to:', profile.email);
+        } catch (error) {
+          console.error('Error sending welcome email:', error);
+        }
+
+        // Az email hozzáadása a tokenhez
+        token.email = profile.email;
+      }
+      return token;
+    },
+
+    // Session callback, ahol a felhasználói adatokat hozzáadjuk a session-höz
     session: async ({ session, token }) => {
       const userEmail = token.email;
       const userIdObj = await sanityClient.fetch<{ _id: string }>(
@@ -33,6 +62,8 @@ export const authOptions: NextAuthOptions = {
         }`,
         { email: userEmail }
       );
+
+      // Visszatérítjük a session-t az ID-val
       return {
         ...session,
         user: {
@@ -40,31 +71,6 @@ export const authOptions: NextAuthOptions = {
           id: userIdObj._id,
         },
       };
-    },
-
-    // A signIn callback, amely e-mailt küld a felhasználónak
-    signIn: async ({ user, account, profile }) => {
-      try {
-        // Ellenőrizd, hogy a profile rendelkezik e-mail címmel
-        if (profile?.email) {
-          // E-mail küldés a bejelentkezés után
-          const response = await fetch('/api/email/welcome', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: profile.email }), // Használjuk a profile.email értéket
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to send email');
-          }
-        }
-        return true; // Sikeres bejelentkezés
-      } catch (error) {
-        console.error('Error sending email:', error);
-        return false; // Bejelentkezés meghiúsul, ha hiba történik
-      }
     },
   },
 };
