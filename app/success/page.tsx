@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { authOptions } from "@/app/auth/auth";
+import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { stripe } from "@/lib/stripe";
 import { CheckoutSession } from "@/components/checkout-session";

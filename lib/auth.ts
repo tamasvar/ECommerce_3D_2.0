@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
       if (!existingUser) {
         // User does not exist, send a welcome email
         try {
-          await fetch('/api/email/welcome', {
+          await fetch(`${apiUrl}/api/email/welcome`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email }),
