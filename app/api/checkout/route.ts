@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 // @ts-ignore
-import { authOptions } from '@/lib/auth';
+import { authOptions } from '@/app/auth/auth';
 import { getServerSession } from 'next-auth';
 import { stripe } from "@/lib/stripe"
 
