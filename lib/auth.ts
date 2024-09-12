@@ -23,9 +23,31 @@ export const authOptions: NextAuthOptions = {
   adapter: SanityAdapter(sanityClient),
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
-  
+
   callbacks: {
-    session: async ({ session, token }) => {
+    async signIn({ user }) {
+      const userEmail = user.email;
+      const existingUser = await sanityClient.fetch(
+        `*[_type == "user" && email == $email][0]`,
+        { email: userEmail }
+      );
+      if (!existingUser) {
+        // User does not exist, send a welcome email
+        try {
+          await fetch('/api/email/welcome', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email }),
+          });
+        } catch (error) {
+          console.error('Error sending welcome email:', error);
+        }
+      }
+
+      return true; // Continue with the sign-in process
+    },
+
+    async session({ session, token }) {
       const userEmail = token.email;
       const userIdObj = await sanityClient.fetch<{ _id: string }>(
         `*[_type == "user" && email == $email][0] {
@@ -33,7 +55,6 @@ export const authOptions: NextAuthOptions = {
         }`,
         { email: userEmail }
       );
-
       // Visszatérítjük a session-t az ID-val
       return {
         ...session,
