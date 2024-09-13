@@ -197,7 +197,8 @@ export function CartSummary() {
         toast.error("Please add shipping address");
         return;
       }
-      window.location.reload();
+      
+      await fetchUserData();
       return (actions.order
         .create({
           intent: "CAPTURE",
