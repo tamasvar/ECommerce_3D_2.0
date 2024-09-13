@@ -193,11 +193,16 @@ export function CartSummary() {
         return;
       };
 
+      if (!formattedAddress) {
+        setFormData(userData?.shippingAddress);
+        setFormattedAddress(getAddressString(userData?.shippingAddress));
+      }
+
       if (!hasShippingAddress) {
         toast.error("Please add shipping address");
         return;
       }
-
+     
       return (actions.order
         .create({
           intent: "CAPTURE",
@@ -543,6 +548,7 @@ export function CartSummary() {
               layout: 'horizontal', // Ensure buttons are displayed in horizontal layout
               tagline: false, // Remove tagline if needed
             }}
+            
             createOrder={createPaypalOrder}
             onApprove={onPaypalOrderApprove}
           />
