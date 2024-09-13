@@ -193,16 +193,11 @@ export function CartSummary() {
         return;
       };
 
-      if (!formattedAddress) {
-        setFormData(userData?.shippingAddress);
-        setFormattedAddress(getAddressString(userData?.shippingAddress));
-      }
-
       if (!hasShippingAddress) {
         toast.error("Please add shipping address");
         return;
       }
-     
+      window.location.reload();
       return (actions.order
         .create({
           intent: "CAPTURE",
@@ -406,6 +401,7 @@ export function CartSummary() {
 
   useEffect(() => {
     validateForm();
+
   }, [formData]);
 
   const fetchCouponByCode = async (code: string) => {
