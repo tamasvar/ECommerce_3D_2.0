@@ -29,6 +29,8 @@ let discountCents: number = 0;
 let hasShippingAddress: boolean = false;
 let shippingDataSaved: any = {};
 let couponSaved: any;
+let shippingAmount: number = 0;
+let formattedShippingAddress: string = '';
 
 export function CartSummary() {
   const { data: session } = useSession();
@@ -82,6 +84,7 @@ export function CartSummary() {
   const handleSaveAddress = () => {
     handleAddShippingAddress(formData);
     setFormattedAddress(getAddressString(formData));
+    formattedShippingAddress = getAddressString(formData);
   }
   console.log(cartItems)
   // Check if the cart contains any "statue" items
@@ -91,7 +94,7 @@ export function CartSummary() {
   const additionalItemCost = containsStatue ? 0 : 0;
 
   // Calculate shipping amount based on the presence of "statue" items
-  const shippingAmount = formData?.country
+  shippingAmount = formData?.country
     ? (containsStatue
       ? countryShippingCosts[formData?.country as keyof typeof countryShippingCosts]
       : countryShippingCostsSticker[formData?.country as keyof typeof countryShippingCostsSticker])
@@ -284,7 +287,7 @@ export function CartSummary() {
           orderdate: date,
           totalPrice: totalPriceAmount,
           couponId: couponSaved?._id,
-          formattedAddress: formattedAddress,
+          formattedAddress: formattedShippingAddress,
         };
 
 
@@ -399,7 +402,7 @@ export function CartSummary() {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
     }
-  }, [userData,cartDetails]);
+  }, [userData]);
 
   useEffect(() => {
     validateForm();
