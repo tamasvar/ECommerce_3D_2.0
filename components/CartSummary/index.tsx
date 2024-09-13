@@ -280,6 +280,8 @@ export function CartSummary() {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
         console.log(formattedAddress)
+        console.log(formattedShippingAddress)
+
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
@@ -401,12 +403,13 @@ export function CartSummary() {
     if (userData?.shippingAddress) {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
+      
     }
   }, [userData]);
 
   useEffect(() => {
     validateForm();
-
+    handleSaveAddress();
   }, [formData]);
 
   const fetchCouponByCode = async (code: string) => {
