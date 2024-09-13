@@ -36,6 +36,7 @@ export async function POST(req: Request) {
       if (session.metadata) {
         const userId = session.metadata['userId'];
         const couponId = session.metadata['couponId'];
+        const formattedAddress = session.metadata['formattedAddress'];
         const orderId = session.id;
         const products = [];
         const orderDate = new Date(session.created * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
@@ -72,6 +73,7 @@ export async function POST(req: Request) {
         console.log('Total Price:', totalPrice);
         console.log('All Products:', products);
         console.log('couponId:', couponId);
+        console.log('couponId:', formattedAddress);
 
         // Create order data object
         const orderData: CreateOrderDto = {
@@ -80,7 +82,7 @@ export async function POST(req: Request) {
           products: products,
           orderdate: orderDate,
           totalPrice: totalPrice!,
-          formattedAddress: ''
+          formattedAddress: formattedAddress,
         };
 
         console.log('orderData in webhook', orderData);

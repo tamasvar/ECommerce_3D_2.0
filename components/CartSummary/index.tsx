@@ -127,7 +127,7 @@ export function CartSummary() {
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-
+      console.log("totalAmount:",totalAmount)
     return {
       reference_id: p?.id,
       amount: {
@@ -166,7 +166,8 @@ export function CartSummary() {
           selectedCountry: formData?.country,
           discount: Math.round(discount / cartCount),
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
-          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
+          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type },
+          formattedAddress: formattedAddress,
         })
       });
 
@@ -196,7 +197,9 @@ export function CartSummary() {
         toast.error("Please add shipping address");
         return;
       }
-
+      console.log("formattedAddress:",formattedAddress)
+      console.log("shippingAmount:",shippingAmount)
+      
       return (actions.order
         .create({
           intent: "CAPTURE",
@@ -273,15 +276,15 @@ export function CartSummary() {
         } else {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
-
+        console.log(formattedAddress)
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
           products,
           orderdate: date,
           totalPrice: totalPriceAmount,
-          // formattedAddress: formattedAddress,
-          couponId: couponSaved?._id
+          couponId: couponSaved?._id,
+          formattedAddress: formattedAddress,
         };
 
 
@@ -396,10 +399,11 @@ export function CartSummary() {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
     }
-  }, [userData]);
+  }, [userData,cartDetails]);
 
   useEffect(() => {
     validateForm();
+
   }, [formData]);
 
   const fetchCouponByCode = async (code: string) => {
@@ -542,6 +546,7 @@ export function CartSummary() {
               layout: 'horizontal', // Ensure buttons are displayed in horizontal layout
               tagline: false, // Remove tagline if needed
             }}
+            
             createOrder={createPaypalOrder}
             onApprove={onPaypalOrderApprove}
           />

@@ -1,5 +1,3 @@
-//booking
-
 export type Order = {
   _id: string;
   id: string;
@@ -16,6 +14,7 @@ export type Order = {
   status: 'shipment' | 'process' | 'delivered';
   trackingNumber?: string;
   totalPrice: number;
+  formattedAddress?: string;
 }
 export type CreateOrderDto = {
   id: string;
