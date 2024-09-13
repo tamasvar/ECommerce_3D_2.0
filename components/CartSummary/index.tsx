@@ -127,7 +127,7 @@ export function CartSummary() {
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-
+      console.log(totalAmount)
     return {
       reference_id: p?.id,
       amount: {
@@ -197,8 +197,9 @@ export function CartSummary() {
         toast.error("Please add shipping address");
         return;
       }
+      console.log(formattedAddress)
+      console.log(shippingAmount)
       
-      await fetchUserData();
       return (actions.order
         .create({
           intent: "CAPTURE",
