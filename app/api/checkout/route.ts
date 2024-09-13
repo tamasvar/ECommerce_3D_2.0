@@ -25,7 +25,7 @@ export async function POST(request: Request) {
                             name: item.name,
                             size: item.product_data?.size,
                             style: item.product_data?.style,
-                            formattedAddress: formattedAddress,
+                            
                         }
                     },
                 },
@@ -48,6 +48,7 @@ export async function POST(request: Request) {
         });
         metadataObject['userId'] = userId;
         metadataObject['couponId'] = coupon?.id;
+        metadataObject['formattedAddress'] = formattedAddress;
     } else {
         const metadata = line_items.map(item => item.price_data.product_data.metadata);
         metadata.forEach((item, index) => {
