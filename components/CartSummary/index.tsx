@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { CreateOrderDto } from "@/models/order";
 import { Button } from "@/components/ui/button";
-import { countryShippingCosts,countryShippingCostsSticker, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
+import { countryShippingCosts, countryShippingCostsSticker, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import UserAddressForm from "./UserAddressForm";
@@ -29,6 +29,8 @@ let discountCents: number = 0;
 let hasShippingAddress: boolean = false;
 let shippingDataSaved: any = {};
 let couponSaved: any;
+let shippingAmount: number = 0;
+let formattedShippingAddress: string = '';
 
 export function CartSummary() {
   const { data: session } = useSession();
@@ -82,8 +84,9 @@ export function CartSummary() {
   const handleSaveAddress = () => {
     handleAddShippingAddress(formData);
     setFormattedAddress(getAddressString(formData));
+    formattedShippingAddress = getAddressString(formData);
   }
-  console.log(cartItems)
+
   // Check if the cart contains any "statue" items
   const containsStatue = cartItems.some((item) => item.category[0] === "statue");
 
@@ -91,7 +94,7 @@ export function CartSummary() {
   const additionalItemCost = containsStatue ? 0 : 0;
 
   // Calculate shipping amount based on the presence of "statue" items
-  const shippingAmount = formData?.country
+  shippingAmount = formData?.country
     ? (containsStatue
       ? countryShippingCosts[formData?.country as keyof typeof countryShippingCosts]
       : countryShippingCostsSticker[formData?.country as keyof typeof countryShippingCostsSticker])
@@ -100,17 +103,15 @@ export function CartSummary() {
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * additionalItemCost, currency: "EUR" }) || '';
 
   const shippingEstimateValue = parseFloat(shippingEstimate.replace(/[^\d.,-]/g, '').replace(',', '.'));
-  
+
   // Számold ki az egy tételre jutó költséget és kedvezményt
   const perItemShippingCost = shippingEstimateValue / cartCount;
- 
+
 
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
 
   // order amount with shipping charges
-  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" }) 
-
- 
+  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" })
 
   units = cartItems?.map((p) => {
     const cartItemPrice = p.value / 100;
@@ -127,14 +128,13 @@ export function CartSummary() {
 
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-      console.log("totalAmount:",totalAmount)
     return {
       reference_id: p?.id,
       amount: {
         currency_code: "EUR",
         value: totalAmount.toFixed(2), // Ensure correct formatting
       },
-      description: p.name+" "+p.product_data?.size+" "+p.product_data?.style,
+      description: p.name + " " + p.product_data?.size + " " + p.product_data?.style,
       shipping: {
         name: {
           full_name: shippingDataSaved?.name
@@ -171,8 +171,6 @@ export function CartSummary() {
         })
       });
 
-      console.log('response', response);
-
       const data = await response.json();
       const result = await redirectToCheckout(data.id);
 
@@ -197,9 +195,7 @@ export function CartSummary() {
         toast.error("Please add shipping address");
         return;
       }
-      console.log("formattedAddress:",formattedAddress)
-      console.log("shippingAmount:",shippingAmount)
-      
+
       return (actions.order
         .create({
           intent: "CAPTURE",
@@ -276,7 +272,6 @@ export function CartSummary() {
         } else {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
-        console.log(formattedAddress)
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
@@ -284,7 +279,7 @@ export function CartSummary() {
           orderdate: date,
           totalPrice: totalPriceAmount,
           couponId: couponSaved?._id,
-          formattedAddress: formattedAddress,
+          formattedAddress: formattedShippingAddress,
         };
 
 
@@ -327,8 +322,8 @@ export function CartSummary() {
 
         // Convert formattedTotalPrice to an integer
         const totalPriceNumber = (formattedTotalPrice
-        ? parseInt(formattedTotalPrice.replace(/[^\d]/g, ''), 10)
-        : 0)/100;
+          ? parseInt(formattedTotalPrice.replace(/[^\d]/g, ''), 10)
+          : 0) / 100;
 
         if (expirationDate < currentDate) {
           toast.error(`The coupon code has expired! It was valid until ${expirationDate}.`);
@@ -342,7 +337,7 @@ export function CartSummary() {
           setDiscount(0);
           return;
         }
-        if ( totalPriceNumber <= coupon?.priceLimit) {
+        if (totalPriceNumber <= coupon?.priceLimit) {
           toast.error(`The coupon can only be applied for orders above €${coupon?.priceLimit} . Your current subtotal is €${totalPriceNumber}.`);
           setCouponCode("");
           setDiscount(0);
@@ -362,7 +357,7 @@ export function CartSummary() {
             break;
           case 'fixed': {
             const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
-          
+
             if (isEligible) {
               discountCents = +coupon.discount;
               setDiscount(+coupon.discount);
@@ -398,8 +393,9 @@ export function CartSummary() {
     if (userData?.shippingAddress) {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
+      formattedShippingAddress = getAddressString(userData?.shippingAddress);
     }
-  }, [userData,cartDetails]);
+  }, [userData, cartDetails]);
 
   useEffect(() => {
     validateForm();
@@ -520,12 +516,12 @@ export function CartSummary() {
         <Button type="button" onClick={onCheckout} className="w-full" disabled={isDisabled}>
           {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
           {isLoading ? (
-        "Loading..."
-      ) : (
-        <>
-          Pay with<Image src='/assets/Stripelogo.png' unoptimized alt="Stripe Logo" width={60} height={20} className="inline h-7" />
-        </>
-      )}
+            "Loading..."
+          ) : (
+            <>
+              Pay with<Image src='/assets/Stripelogo.png' unoptimized alt="Stripe Logo" width={60} height={20} className="inline h-7" />
+            </>
+          )}
         </Button>
       </div>
       <div className="mt-6">
@@ -546,7 +542,7 @@ export function CartSummary() {
               layout: 'horizontal', // Ensure buttons are displayed in horizontal layout
               tagline: false, // Remove tagline if needed
             }}
-            
+
             createOrder={createPaypalOrder}
             onApprove={onPaypalOrderApprove}
           />
