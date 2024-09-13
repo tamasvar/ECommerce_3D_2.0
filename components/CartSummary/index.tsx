@@ -399,7 +399,7 @@ export function CartSummary() {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
     }
-  }, [userData]);
+  }, [userData,cartDetails]);
 
   useEffect(() => {
     validateForm();
