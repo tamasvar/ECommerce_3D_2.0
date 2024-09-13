@@ -274,15 +274,15 @@ export function CartSummary() {
         } else {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
-
+        console.log(formattedAddress)
         const orderData: CreateOrderDto = {
           id: orderId,
           user: sessionSave?.user?.id ?? "",
           products,
           orderdate: date,
           totalPrice: totalPriceAmount,
+          couponId: couponSaved?._id,
           formattedAddress: formattedAddress,
-          couponId: couponSaved?._id
         };
 
 
