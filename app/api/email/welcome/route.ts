@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-left: 150px;
+      margin-left: 200px;
     }
     .service-item img {
       max-width: 50%;

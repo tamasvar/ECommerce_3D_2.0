@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { stripe } from "@/lib/stripe"
 
 export async function POST(request: Request) {
-    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, coupon } = await request.json();
+    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, coupon,formattedAddress } = await request.json();
 
     const line_items = [];
     let totalQuantity = 0;
@@ -24,7 +24,8 @@ export async function POST(request: Request) {
                             id: item.id,
                             name: item.name,
                             size: item.product_data?.size,
-                            style: item.product_data?.style
+                            style: item.product_data?.style,
+                            formattedAddress: formattedAddress,
                         }
                     },
                 },

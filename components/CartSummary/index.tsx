@@ -166,7 +166,8 @@ export function CartSummary() {
           selectedCountry: formData?.country,
           discount: Math.round(discount / cartCount),
           totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
-          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type }
+          coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type },
+          formattedAddress: formattedAddress,
         })
       });
 
@@ -280,7 +281,7 @@ export function CartSummary() {
           products,
           orderdate: date,
           totalPrice: totalPriceAmount,
-          // formattedAddress: formattedAddress,
+          formattedAddress: formattedAddress,
           couponId: couponSaved?._id
         };
 
