@@ -1,8 +1,9 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 import { createOrder, updateCoupon } from '../../../lib/apis';
-import { CreateOrderDto } from '../../../models/order'
+import { CreateOrderDto } from '../../../models/order';
 import { v4 as uuidv4 } from 'uuid';
+
 const checkout_session_completed = 'checkout.session.completed';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -38,6 +39,8 @@ export async function POST(req: Request) {
         const couponId = session.metadata['couponId'];
         const formattedAddress = session.metadata['formattedAddress'];
         const orderId = session.id;
+        const customerEmail = session.customer_email;
+        const shippingCost = session.shipping_cost;
         const products = [];
         const orderDate = new Date(session.created * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
         const totalPrice = session.amount_total; // Stripe amount is in cents
@@ -60,7 +63,7 @@ export async function POST(req: Request) {
                 style: parsedProductMetadata.style,
                 size: parsedProductMetadata.size,
               };
-              console.log(product)
+              console.log(product);
               products.push(product);
             } catch (error: unknown) {
               console.error('Error parsing product metadata:', (error as Error).message);
@@ -73,7 +76,7 @@ export async function POST(req: Request) {
         console.log('Total Price:', totalPrice);
         console.log('All Products:', products);
         console.log('couponId:', couponId);
-        console.log('couponId:', formattedAddress);
+        console.log('formattedAddress:', formattedAddress);
 
         // Create order data object
         const orderData: CreateOrderDto = {
@@ -95,22 +98,51 @@ export async function POST(req: Request) {
           console.error('Error creating order:', error);
           return new NextResponse('Error creating order', { status: 500 });
         }
-          // Update coupon data
-          if (couponId) {
-            try {
-              const couponUpdateData = {
-                userId: userId,
-                orderId: orderId,
-                orderDate: orderDate,
-                couponId: couponId,
-              };
-              await updateCoupon(couponUpdateData);
-              console.log('Coupon successfully updated.');
-            } catch (error: any) {
-              console.error('Error updating coupon:', error?.message);
-              return new NextResponse('Error updating coupon', { status: 500 });
-            }
+
+        // Update coupon data
+        if (couponId) {
+          try {
+            const couponUpdateData = {
+              userId: userId,
+              orderId: orderId,
+              orderDate: orderDate,
+              couponId: couponId,
+            };
+            await updateCoupon(couponUpdateData);
+            console.log('Coupon successfully updated.');
+          } catch (error: any) {
+            console.error('Error updating coupon:', error?.message);
+            return new NextResponse('Error updating coupon', { status: 500 });
           }
+        }
+
+        // Send order confirmation email
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          const response = await fetch(`${apiUrl}/api/email/order`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: customerEmail,
+              shippingCost: shippingCost,
+              products: products,
+              totalPrice: totalPrice,
+              orderDate: orderDate,
+              formattedAddress: formattedAddress,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to send email');
+          }
+          console.log('Order confirmation email sent successfully.');
+        } catch (error: any) {
+          console.error('Error sending order confirmation email:', error.message);
+          return new NextResponse('Error sending email', { status: 500 });
+        }
+
         return new NextResponse('Order successful', {
           status: 200,
           statusText: 'Order Successful',

@@ -200,9 +200,7 @@ export function CartSummary() {
         toast.error("Please add shipping address");
         return;
       }
-      console.log("formattedAddress:",formattedAddress)
-      console.log("shippingAmount:",shippingAmount)
-      console.log("formattedShippingAddress",formattedShippingAddress)
+
       return (actions.order
         .create({
           intent: "CAPTURE",
@@ -279,8 +277,6 @@ export function CartSummary() {
         } else {
           totalPriceAmount = totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost)
         }
-        console.log("formattedAddress",formattedAddress)
-        console.log("formattedShippingAddress",formattedShippingAddress)
 
         const orderData: CreateOrderDto = {
           id: orderId,
