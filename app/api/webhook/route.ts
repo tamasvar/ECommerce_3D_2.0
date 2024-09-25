@@ -39,8 +39,8 @@ export async function POST(req: Request) {
         const couponId = session.metadata['couponId'];
         const formattedAddress = session.metadata['formattedAddress'];
         const orderId = session.id;
-        const customerEmail = session.customer_email;
-        const shippingCost = session.shipping_cost;
+        const customerEmail = session.customer_details?.email;
+        const customerAddress=session.customer_details?.address;
         const products = [];
         const orderDate = new Date(session.created * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
         const totalPrice = session.amount_total; // Stripe amount is in cents
@@ -115,7 +115,10 @@ export async function POST(req: Request) {
             return new NextResponse('Error updating coupon', { status: 500 });
           }
         }
-
+          console.log('email:', customerEmail);
+          console.log('Total Price:', totalPrice);
+          console.log('All Products:', products);
+          
         // Send order confirmation email
         try {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -126,14 +129,13 @@ export async function POST(req: Request) {
             },
             body: JSON.stringify({
               email: customerEmail,
-              shippingCost: shippingCost,
               products: products,
               totalPrice: totalPrice,
               orderDate: orderDate,
-              formattedAddress: formattedAddress,
+              formattedAddress: customerAddress,
             }),
           });
-
+          
           if (!response.ok) {
             throw new Error('Failed to send email');
           }

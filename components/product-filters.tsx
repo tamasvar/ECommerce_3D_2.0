@@ -88,7 +88,8 @@ export const filters = [
     { value: "undertaleuniverse", label: "Undertale Universe" },
     { value: "warhammer40k", label: "Warhammer 40k" },
     { value: "worldofwarcraft", label: "World of Warcraft" },
-    { value: "xenawarriorprincess", label: "Xena: Warrior Princess" }
+    { value: "xenawarriorprincess", label: "Xena: Warrior Princess" },
+    { value: "jojosbizarreadventure ", label: "JoJo's Bizarre Adventure" },
 
 
 

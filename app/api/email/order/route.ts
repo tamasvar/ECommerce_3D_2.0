@@ -4,8 +4,18 @@ import nodemailer from 'nodemailer';
 export async function POST(request: Request) {
   try {
     // Extract email, products, shipping cost, etc., from request body
-    const { email, products, shippingCost, totalPrice, orderDate, formattedAddress } = await request.json();
+    const { email, products, totalPrice, orderDate, formattedAddress } = await request.json();
 
+    const formattedAddresss = formattedAddress 
+      ? `<br>
+        <p><tilted>Address Line 1: ${formattedAddress.line1 || formattedAddress.lineAddress1 || 'N/A'}</p>
+        <p><tilted>Address Line 2: ${formattedAddress.line2 || 'N/A'}</p>
+        <p><tilted>City: ${formattedAddress.city || 'N/A'}</p>
+        <p><tilted>State: ${formattedAddress.state || 'N/A'}</p>
+        <p><tilted>Postal Code: ${formattedAddress.postal_code || formattedAddress.zip ||'N/A'}</p>
+        <p><tilted>Country: ${formattedAddress.country || 'N/A'}</p>
+      `
+      :'No address provided';
     // Create a transporter for sending the email
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -21,12 +31,9 @@ export async function POST(request: Request) {
       .map((product: any) => {
         return `
         <tr>
-          <td><img src="${product.product.image || 'https://via.placeholder.com/100'}" alt="${product.product.name}" style="max-width: 100px; border-radius: 5px;"></td>
           <td>${product.product.name}</td>
           <td>${product.style || 'N/A'}</td>
           <td>${product.size || 'N/A'}</td>
-          <td style="text-align: right;">$${(product.price / 100).toFixed(2)}</td>
-        </tr>
       `;
       })
       .join('');
@@ -123,18 +130,16 @@ export async function POST(request: Request) {
           <div class="order-info">
             <h2>Customer Information</h2>
             <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Address:</strong> ${formattedAddress}</p>
+            <p><strong>Address:</strong> ${formattedAddresss}</p>
             <p><strong>Order Date:</strong> ${orderDate}</p>
           </div>
 
           <table>
             <thead>
               <tr>
-                <th>Product Image</th>
                 <th>Product Name</th>
                 <th>Style</th>
                 <th>Size</th>
-                <th style="text-align: right;">Price</th>
               </tr>
             </thead>
             <tbody>
@@ -142,12 +147,9 @@ export async function POST(request: Request) {
             </tbody>
           </table>
 
-          <div class="shipping">
-            <p><strong>Shipping:</strong> $${(shippingCost / 100).toFixed(2)}</p>
-          </div>
 
           <div class="order-info total">
-            <p><strong>Total: $${(totalPrice / 100).toFixed(2)}</strong></p>
+            <p><strong>Total: €${(totalPrice / 100).toFixed(2)}</strong></p>
           </div>
 
           <div class="footer">

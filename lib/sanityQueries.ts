@@ -129,6 +129,7 @@ export const getCouponsQuery = groq`*[_type == "coupon" && code == $code][0]{
     useLimit,
     isValid,
     usersAvailed,
+    allowedProductType,
     discount,
     expirationDate,
     priceLimit,

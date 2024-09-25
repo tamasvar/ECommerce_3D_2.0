@@ -16,7 +16,7 @@ export async function POST(request: Request) {
             const lineItem = {
                 price_data: {
                     currency: item.currency,
-                    unit_amount: (coupon?.type === 'free_shipping') ? (item.price) : (item.price - discount), // Convert price to cents
+                    unit_amount: (coupon?.type === 'free_shipping') ? (item.price) : ((item.price+shippingAmount) - discount), // Convert price to cents
                     product_data: {
                         name: item.name,
                         description: `${item.description}\n${item.product_data?.size}\n${item.product_data?.style}`,
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     line_items.push({
         price_data: {
             currency: "eur",
-            unit_amount: (coupon?.type === 'free_shipping') ? 0 : shippingCost,
+            unit_amount: 0 ,
             product_data: {
                 name: "Shipping",
                 description: "Shipping Cost",

@@ -21,6 +21,16 @@ export const coupon = defineType({
       },
     }),
     defineField({
+      name: 'allowedProductType',
+      title: 'Allowed Product Type',
+      type: 'string',
+      description: 'Specifies which product types the coupon applies to (e.g., "sticker")',
+      options: {
+        list: ['sticker', 'statue'],
+      },
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'code',
       title: 'Coupon Code',
       type: 'string',

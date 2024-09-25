@@ -237,6 +237,11 @@ export default async function Sitemap() {
       "jotaro-kujo-statue-or-jojo-s-bizarre-fan-art-by-hawo",
       "ranni-statue-or-elden-ring-fan-art-by-jigglystix",
       "ranni-statue-or-elden-ring-fan-art-by-stlproject",
+      "hyena-statue-or-the-lion-king-fan-art-by-anyone-nsfw",
+      "sylvanas-windrunner-statue-or-world-of-warcraft-fan-art-by-ca3dart",
+      "sylvanas-statue-or-world-of-warcraft-fan-art-by-oxo3d",
+      "dolutor-eptir-v9-miniature-or-original-fan-art-by-madsminis",
+
 
 
 
@@ -251,6 +256,26 @@ export default async function Sitemap() {
       "blackcat-sticker-or-marvel-vinyl-sticker",
       "bea-sticker-or-pokemon-vinyl-sticker",
       "mai-shiranui-sticker-or-fatal-fury-vinyl-sticker",
+      "mal0-pinup-sticker-or-scp-vinyl-sticker",
+      "mal0-selfi-sticker-or-scp-vinyl-sticker",
+      "mal0-cowgirl-sticker-or-scp-vinyl-sticker",
+      "mal0-valentine-sticker-or-scp-vinyl-sticker",
+      "aoba-q-madou-all-characters-futa-sticker-or-anime-stickers-ecchi-cartoon",
+      "futabu-sera-futa-sticker-or-anime-stickers-ecchi-cartoon",
+      "futabu-mao-asakura-futa-sticker-or-anime-stickers-ecchi-cartoon",
+      "futabu-aya-itou-futa-sticker-or-anime-stickers-ecchi-cartoon",
+      "futabu-aya-itou-v2-futa-sticker-or-anime-stickers-ecchi-cartoon",
+      "nino-nakano-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-bust-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-bust-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
+      "foo-fighters-bust-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
+      "foo-fighters-dat-ass-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
+      "mal0-zipped-sticker-or-scp-vinyl-sticker",
+      "bunny-girl-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-hindquarters-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
+      "jolyne-kujo-hindquarters-v1-nsfw-sticker-or-anime-stickers-ecchi-cartoon",
 
 
     ];

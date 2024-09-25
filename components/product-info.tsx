@@ -47,7 +47,7 @@ export function ProductInfo({ product, reviews }: Props) {
       return;
     }
 
-    const itemKey = `${product._id}_${selectedSize}_${selectedStyle}`;
+    const itemKey = `${product._id}_${selectedSize}_${selectedStyle}_${new Date().getTime()}`;
     const item = {
       ...product,
       product_data: {

@@ -21,6 +21,8 @@ import sanityClient from "@/sanity/lib/client";
 import { getCouponsQuery } from "@/lib/sanityQueries";
 import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
+import LoadingOverlay from "../LoadingOverlay";
+
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 let sessionSave: any = {};
@@ -45,12 +47,12 @@ export function CartSummary() {
 
   } = useShoppingCart();
 
-
+console.log(session)
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<any>();
-
+  const [isProcessingOrder, setProcessingOrder] = useState(false);
   const [isValid, setValid] = useState(false);
 
   const validateForm = () => {
@@ -127,15 +129,20 @@ export function CartSummary() {
         discountValue = ((appliedCoupon?.discount || 0) / cartItems.length) / 100;
         break;
     }
-
+      console.log("cartItemPrice:",cartItemPrice)
+      console.log("discountValue:",discountValue)
+      console.log("perItemShippingCost:",perItemShippingCost)
+      console.log("p?.quantity:",p?.quantity)
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-      console.log("totalAmount:",totalAmount)
+      console.log("totalAmount0:",totalAmount)
+      
+    let newtotalAmount = totalAmount <= 0 ? 0.01 : totalAmount;
     return {
       reference_id: p?.id,
       amount: {
         currency_code: "EUR",
-        value: totalAmount.toFixed(2), // Ensure correct formatting
+        value: newtotalAmount.toFixed(2), // Ensure correct formatting
       },
       description: p.name+" "+p.product_data?.size+" "+p.product_data?.style,
       shipping: {
@@ -238,6 +245,7 @@ export function CartSummary() {
   };
 
   const onPaypalOrderApprove = async (_: any, actions: any) => {
+    setProcessingOrder(true);
     return actions?.order?.capture()?.then(async function (order: any) {
       if (order?.status === "COMPLETED") {
         paypalCheckout({
@@ -245,6 +253,7 @@ export function CartSummary() {
           orderDate: order?.create_time || '',
         })
       } else {
+        setProcessingOrder(false); // Hide loading overlay in case of error
         toast.error("Something went wrong");
       }
     });
@@ -291,13 +300,32 @@ export function CartSummary() {
 
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);
+            const response = await fetch('/api/email/order', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: sessionSave?.user?.email,
+                products: products,
+                totalPrice: totalPriceAmount,
+                orderDate: date,
+                formattedAddress: shippingDataSaved,
+              }),
+          });
 
+          if (!response.ok) {
+              throw new Error('Failed to send email');
+          }
         router.push(`/success?totalAmount=${totalPriceAmount}&itemsCount=${products?.length}`);
-
         handleReset();
+        
       }
     } catch (error) {
       toast.error("Something went wrong!");
+    }
+    finally {
+      setProcessingOrder(false); // Hide loading overlay after the process
     }
   };
 
@@ -349,6 +377,17 @@ export function CartSummary() {
           setDiscount(0);
           return;
         }
+        // Allowed product type check
+      if (coupon?.allowedProductType === 'sticker') {
+        // Ensure that all items in the cart are stickers
+        const isOnlyStickers = cartItems.every((item) => item.category[0] === 'sticker');
+        if (!isOnlyStickers) {
+          toast.error('This coupon is only valid for sticker products.');
+          setCouponCode("");
+          setDiscount(0);
+          return;
+        }
+      }
         setAppliedCoupon(coupon);
         couponSaved = coupon;
 
@@ -383,6 +422,7 @@ export function CartSummary() {
     } catch (error) {
       toast.error('An error occurred while applying the coupon.');
     }
+  
   };
 
   const openModal = () => {
@@ -569,6 +609,7 @@ export function CartSummary() {
           />
         </Modal>
       }
+      {isProcessingOrder && <LoadingOverlay />}
     </section>
   );
 }
