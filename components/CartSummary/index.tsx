@@ -172,8 +172,10 @@ export function CartSummary() {
           cartDetails,
           shippingAmount,
           selectedCountry: formData?.country,
-          discount: Math.round(discount / cartCount),
-          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
+          discount,
+          totalPrice,
+          cartCount,
+          totalFormattedPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
           coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type },
           formattedAddress: formattedAddress,
         })
@@ -369,8 +371,8 @@ export function CartSummary() {
           setDiscount(0);
           return;
         }
-        if (totalPriceNumber <= coupon?.priceLimit) {
-          toast.error(`The coupon can only be applied for orders above €${coupon?.priceLimit} . Your current subtotal is €${totalPriceNumber}.`);
+        if (totalPriceNumber <= (+coupon?.discount / 100)) {
+          toast.error(`The coupon can only be applied for orders above €${coupon?.discount / 100} . Your current subtotal is €${totalPriceNumber}.`);
           setCouponCode("");
           setDiscount(0);
           return;

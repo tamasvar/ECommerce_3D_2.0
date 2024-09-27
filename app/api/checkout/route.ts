@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { stripe } from "@/lib/stripe"
 
 export async function POST(request: Request) {
-    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, coupon,formattedAddress } = await request.json();
+    const { cartDetails, shippingAmount, selectedCountry, discount, totalPrice, totalFormattedPrice, cartCount, coupon, formattedAddress } = await request.json();
 
     const line_items = [];
     let totalQuantity = 0;
@@ -13,10 +13,14 @@ export async function POST(request: Request) {
     for (const key in cartDetails) {
         if (cartDetails.hasOwnProperty(key)) {
             const item = cartDetails[key];
+
+            const discountAmount = ((item.price / totalPrice) * discount);
+
             const lineItem = {
                 price_data: {
                     currency: item.currency,
-                    unit_amount: (coupon?.type === 'free_shipping') ? (item.price) : ((item.price+shippingAmount) - discount), // Convert price to cents
+                    unit_amount: Math.round((coupon?.type === 'free_shipping') ? (item.price) :
+                        ((item.price + (shippingAmount / cartCount)) - discountAmount)), // Convert price to cents
                     product_data: {
                         name: item.name,
                         description: `${item.description}\n${item.product_data?.size}\n${item.product_data?.style}`,
@@ -25,7 +29,6 @@ export async function POST(request: Request) {
                             name: item.name,
                             size: item.product_data?.size,
                             style: item.product_data?.style,
-                            
                         }
                     },
                 },
@@ -67,7 +70,7 @@ export async function POST(request: Request) {
     line_items.push({
         price_data: {
             currency: "eur",
-            unit_amount: 0 ,
+            unit_amount: 0,
             product_data: {
                 name: "Shipping",
                 description: "Shipping Cost",
@@ -89,7 +92,7 @@ export async function POST(request: Request) {
         phone_number_collection: {
             enabled: true,
         },
-        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalPrice}&itemsCount=${totalQuantity}`,
+        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&totalAmount=${totalFormattedPrice}&itemsCount=${totalQuantity}`,
 
         cancel_url: `${origin}/cart`,
         metadata: metadataObject,
