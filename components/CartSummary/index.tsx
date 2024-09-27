@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { CreateOrderDto } from "@/models/order";
 import { Button } from "@/components/ui/button";
-import { countryShippingCosts,countryShippingCostsSticker, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
+import { countryShippingCosts, countryShippingCostsSticker, europeanCountriesWithStates, FormData, formDataInitialState } from "./data";
 import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import UserAddressForm from "./UserAddressForm";
@@ -47,7 +47,7 @@ export function CartSummary() {
 
   } = useShoppingCart();
 
-console.log(session)
+  console.log(session)
   const [isLoading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -105,17 +105,15 @@ console.log(session)
   const shippingEstimate: string = cartCount && formatCurrencyString({ value: shippingAmount + (cartCount - 1) * additionalItemCost, currency: "EUR" }) || '';
 
   const shippingEstimateValue = parseFloat(shippingEstimate.replace(/[^\d.,-]/g, '').replace(',', '.'));
-  
+
   // Számold ki az egy tételre jutó költséget és kedvezményt
   const perItemShippingCost = shippingEstimateValue / cartCount;
- 
+
 
   const discountAmount = formatCurrencyString({ value: discount, currency: "EUR" });
 
   // order amount with shipping charges
-  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" }) 
-
- 
+  const orderTotal = formatCurrencyString({ value: totalPrice - discount + shippingAmount + ((cartCount - 1) * additionalItemCost), currency: "EUR" })
 
   units = cartItems?.map((p) => {
     const cartItemPrice = p.value / 100;
@@ -126,17 +124,17 @@ console.log(session)
         discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
         break;
       case 'fixed':
-        discountValue = ((appliedCoupon?.discount || 0) / cartItems.length) / 100;
+        discountValue = (cartItemPrice / (totalPrice / 100)) * (appliedCoupon?.discount || 0) / 100;
         break;
     }
-      console.log("cartItemPrice:",cartItemPrice)
-      console.log("discountValue:",discountValue)
-      console.log("perItemShippingCost:",perItemShippingCost)
-      console.log("p?.quantity:",p?.quantity)
+    console.log("cartItemPrice:", cartItemPrice)
+    console.log("discountValue:", discountValue)
+    console.log("perItemShippingCost:", perItemShippingCost)
+    console.log("p?.quantity:", p?.quantity)
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
-      console.log("totalAmount0:",totalAmount)
-      
+    console.log("totalAmount0:", totalAmount)
+
     let newtotalAmount = totalAmount <= 0 ? 0.01 : totalAmount;
     return {
       reference_id: p?.id,
@@ -144,7 +142,7 @@ console.log(session)
         currency_code: "EUR",
         value: newtotalAmount.toFixed(2), // Ensure correct formatting
       },
-      description: p.name+" "+p.product_data?.size+" "+p.product_data?.style,
+      description: p.name + " " + p.product_data?.size + " " + p.product_data?.style,
       shipping: {
         name: {
           full_name: shippingDataSaved?.name
@@ -174,8 +172,10 @@ console.log(session)
           cartDetails,
           shippingAmount,
           selectedCountry: formData?.country,
-          discount: Math.round(discount / cartCount),
-          totalPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
+          discount,
+          totalPrice,
+          cartCount,
+          totalFormattedPrice: totalPrice - discountCents + shippingAmount + ((cartCount - 1) * additionalItemCost),
           coupon: { id: appliedCoupon?._id, type: appliedCoupon?.type },
           formattedAddress: formattedAddress,
         })
@@ -300,26 +300,26 @@ console.log(session)
 
         // Call createOrder function to save order in Sanity
         await createOrder(orderData);
-            const response = await fetch('/api/email/order', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email: sessionSave?.user?.email,
-                products: products,
-                totalPrice: totalPriceAmount,
-                orderDate: date,
-                formattedAddress: shippingDataSaved,
-              }),
-          });
+        const response = await fetch('/api/email/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: sessionSave?.user?.email,
+            products: products,
+            totalPrice: totalPriceAmount,
+            orderDate: date,
+            formattedAddress: shippingDataSaved,
+          }),
+        });
 
-          if (!response.ok) {
-              throw new Error('Failed to send email');
-          }
+        if (!response.ok) {
+          throw new Error('Failed to send email');
+        }
         router.push(`/success?totalAmount=${totalPriceAmount}&itemsCount=${products?.length}`);
         handleReset();
-        
+
       }
     } catch (error) {
       toast.error("Something went wrong!");
@@ -356,8 +356,8 @@ console.log(session)
 
         // Convert formattedTotalPrice to an integer
         const totalPriceNumber = (formattedTotalPrice
-        ? parseInt(formattedTotalPrice.replace(/[^\d]/g, ''), 10)
-        : 0)/100;
+          ? parseInt(formattedTotalPrice.replace(/[^\d]/g, ''), 10)
+          : 0) / 100;
 
         if (expirationDate < currentDate) {
           toast.error(`The coupon code has expired! It was valid until ${expirationDate}.`);
@@ -371,23 +371,23 @@ console.log(session)
           setDiscount(0);
           return;
         }
-        if ( totalPriceNumber <= coupon?.priceLimit) {
-          toast.error(`The coupon can only be applied for orders above €${coupon?.priceLimit} . Your current subtotal is €${totalPriceNumber}.`);
+        if (totalPriceNumber <= (+coupon?.discount / 100)) {
+          toast.error(`The coupon can only be applied for orders above €${coupon?.discount / 100} . Your current subtotal is €${totalPriceNumber}.`);
           setCouponCode("");
           setDiscount(0);
           return;
         }
         // Allowed product type check
-      if (coupon?.allowedProductType === 'sticker') {
-        // Ensure that all items in the cart are stickers
-        const isOnlyStickers = cartItems.every((item) => item.category[0] === 'sticker');
-        if (!isOnlyStickers) {
-          toast.error('This coupon is only valid for sticker products.');
-          setCouponCode("");
-          setDiscount(0);
-          return;
+        if (coupon?.allowedProductType === 'sticker') {
+          // Ensure that all items in the cart are stickers
+          const isOnlyStickers = cartItems.every((item) => item.category[0] === 'sticker');
+          if (!isOnlyStickers) {
+            toast.error('This coupon is only valid for sticker products.');
+            setCouponCode("");
+            setDiscount(0);
+            return;
+          }
         }
-      }
         setAppliedCoupon(coupon);
         couponSaved = coupon;
 
@@ -402,7 +402,7 @@ console.log(session)
             break;
           case 'fixed': {
             const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
-          
+
             if (isEligible) {
               discountCents = +coupon.discount;
               setDiscount(+coupon.discount);
@@ -422,7 +422,7 @@ console.log(session)
     } catch (error) {
       toast.error('An error occurred while applying the coupon.');
     }
-  
+
   };
 
   const openModal = () => {
@@ -439,7 +439,7 @@ console.log(session)
     if (userData?.shippingAddress) {
       setFormData(userData?.shippingAddress);
       setFormattedAddress(getAddressString(userData?.shippingAddress));
-      
+
     }
   }, [userData]);
 
@@ -562,12 +562,12 @@ console.log(session)
         <Button type="button" onClick={onCheckout} className="w-full" disabled={isDisabled}>
           {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
           {isLoading ? (
-        "Loading..."
-      ) : (
-        <>
-          Pay with<Image src='/assets/Stripelogo.png' unoptimized alt="Stripe Logo" width={60} height={20} className="inline h-7" />
-        </>
-      )}
+            "Loading..."
+          ) : (
+            <>
+              Pay with<Image src='/assets/Stripelogo.png' unoptimized alt="Stripe Logo" width={60} height={20} className="inline h-7" />
+            </>
+          )}
         </Button>
       </div>
       <div className="mt-6">
@@ -588,7 +588,7 @@ console.log(session)
               layout: 'horizontal', // Ensure buttons are displayed in horizontal layout
               tagline: false, // Remove tagline if needed
             }}
-            
+
             createOrder={createPaypalOrder}
             onApprove={onPaypalOrderApprove}
           />
