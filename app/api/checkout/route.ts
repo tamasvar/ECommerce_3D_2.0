@@ -13,26 +13,30 @@ export async function POST(request: Request) {
     for (const key in cartDetails) {
         if (cartDetails.hasOwnProperty(key)) {
             const item = cartDetails[key];
+            const name = item.description?.split('_')[0];
+            const size = item.description?.split('_')[1];
+            const style = item.description?.split('_')[2];
+            
             const lineItem = {
                 price_data: {
-                    currency: item.currency,
-                    unit_amount: (coupon?.type === 'free_shipping') ? (item.price) : ((item.price+shippingAmount) - discount), // Convert price to cents
+                    currency: item.amount.currency_code,
+                    unit_amount: item.amount.value*100, // Convert price to cents
                     product_data: {
-                        name: item.name,
-                        description: `${item.description}\n${item.product_data?.size}\n${item.product_data?.style}`,
+                        name: name,
+                        description: item.description,
                         metadata: { // Add metadata here
-                            id: item.id,
-                            name: item.name,
-                            size: item.product_data?.size,
-                            style: item.product_data?.style,
+                            id: item.reference_id,
+                            name: name,
+                            size: size,
+                            style: style,
                             
                         }
                     },
                 },
-                quantity: item.quantity,
+                quantity: 1,
             };
 
-            totalQuantity += item.quantity;
+            totalQuantity += 1;
             line_items.push(lineItem);
         }
     }
@@ -67,7 +71,7 @@ export async function POST(request: Request) {
     line_items.push({
         price_data: {
             currency: "eur",
-            unit_amount: 0 ,
+            unit_amount: 0,
             product_data: {
                 name: "Shipping",
                 description: "Shipping Cost",

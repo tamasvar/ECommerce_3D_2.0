@@ -37,10 +37,13 @@ export async function POST(req: Request) {
       if (session.metadata) {
         const userId = session.metadata['userId'];
         const couponId = session.metadata['couponId'];
-        const formattedAddress = session.metadata['formattedAddress'];
-        const orderId = session.id;
+        const customerName = session.customer_details?.name;
         const customerEmail = session.customer_details?.email;
+        const customerPhone = session.customer_details?.phone;
         const customerAddress=session.customer_details?.address;
+        const formattedAddress = customerName+"\n"+customerPhone+"\n"+customerAddress?.line1 + 
+        (customerAddress?.line2 ? "\n" + customerAddress.line2 : "")+"\n"+customerAddress?.city+","+customerAddress?.state+" "+customerAddress?.postal_code+"\n"+customerAddress?.country+"\n"+customerEmail;
+        const orderId = session.id;
         const products = [];
         const orderDate = new Date(session.created * 1000).toISOString().split('T')[0]; // Convert UNIX timestamp to "YYYY-MM-DD" format
         const totalPrice = session.amount_total; // Stripe amount is in cents

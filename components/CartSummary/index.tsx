@@ -86,7 +86,7 @@ console.log(session)
   const handleSaveAddress = () => {
     handleAddShippingAddress(formData);
     setFormattedAddress(getAddressString(formData));
-    formattedShippingAddress = getAddressString(formData);
+    formattedShippingAddress = getAddressString(formData)+"\n"+sessionSave?.user?.email;
   }
   console.log(cartItems)
   // Check if the cart contains any "statue" items
@@ -126,13 +126,10 @@ console.log(session)
         discountValue = cartItemPrice * (+(appliedCoupon?.discount?.slice(0, -1)) / 100 || 0);
         break;
       case 'fixed':
-        discountValue = ((appliedCoupon?.discount || 0) / cartItems.length) / 100;
+        discountValue = (cartItemPrice / (totalPrice / 100)) * (appliedCoupon?.discount || 0) / 100;
         break;
     }
-      console.log("cartItemPrice:",cartItemPrice)
-      console.log("discountValue:",discountValue)
-      console.log("perItemShippingCost:",perItemShippingCost)
-      console.log("p?.quantity:",p?.quantity)
+       
     const totalAmount = appliedCoupon?.type === 'free_shipping' ? cartItemPrice :
       (cartItemPrice - discountValue + perItemShippingCost * p?.quantity);
       console.log("totalAmount0:",totalAmount)
@@ -144,7 +141,7 @@ console.log(session)
         currency_code: "EUR",
         value: newtotalAmount.toFixed(2), // Ensure correct formatting
       },
-      description: p.name+" "+p.product_data?.size+" "+p.product_data?.style,
+      description: p.name+"_"+p.product_data?.size+"_"+p.product_data?.style,
       shipping: {
         name: {
           full_name: shippingDataSaved?.name
@@ -160,7 +157,7 @@ console.log(session)
       },
     };
   });
-
+  console.log("units:",units)
   async function onCheckout() {
     if (!formData?.country) {
       toast.error("Please Select shipping country to proceed order")
@@ -171,7 +168,7 @@ console.log(session)
       const response = await fetch('/api/checkout', {
         method: "POST",
         body: JSON.stringify({
-          cartDetails,
+          cartDetails:units,
           shippingAmount,
           selectedCountry: formData?.country,
           discount: Math.round(discount / cartCount),
@@ -182,7 +179,6 @@ console.log(session)
       });
 
       console.log('response', response);
-
       const data = await response.json();
       const result = await redirectToCheckout(data.id);
 
@@ -401,8 +397,8 @@ console.log(session)
             handleDiscount(+coupon?.discount?.slice(0, -1));
             break;
           case 'fixed': {
-            const isEligible = Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
-          
+            const isEligible = true;
+            //Number(orderTotal.replace(/[^\d.-]/g, '')) < +coupon.discount;
             if (isEligible) {
               discountCents = +coupon.discount;
               setDiscount(+coupon.discount);
