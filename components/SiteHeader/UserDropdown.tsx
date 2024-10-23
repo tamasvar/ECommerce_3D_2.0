@@ -21,6 +21,11 @@ const UserDropdown = ({ session }: any) => {
     setIsOpen(false);
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem('session');
+    signOut({ callbackUrl: '/' })
+  }
+
   return (
     <div onClick={toggleDropdown} className='relative cursor-pointer'>
       {session?.user?.image ? (
@@ -63,7 +68,7 @@ const UserDropdown = ({ session }: any) => {
             </button>
             <button
               className='flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-600'
-              onClick={() => signOut({ callbackUrl: '/' })}
+              onClick={handleSignOut}
             >
               <FaSignOutAlt className='text-xl' />
               <span>
