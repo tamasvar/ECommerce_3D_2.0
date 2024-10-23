@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useSession } from 'next-auth/react';
 import UserDropdown from "./UserDropdown";
+import { getSession } from "@/utils";
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,7 +20,8 @@ export function SiteHeader() {
   const searchPrams = useSearchParams();
   const { cartCount, clearCart } = useShoppingCart();
   const defaultSearchQuery = searchPrams.get('search') ?? "";
-  const { data: session } = useSession();
+
+  const session = getSession();
 
   if (pathname.startsWith("/studio")) return null;
 
