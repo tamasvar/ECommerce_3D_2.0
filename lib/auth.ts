@@ -44,7 +44,6 @@ export const authOptions: NextAuthOptions = {
           console.error('Error sending welcome email:', error);
         }
       }
-
       return true; // Continue with the sign-in process
     },
 
@@ -61,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: userIdObj._id,
+          id: userIdObj?._id || null,
         },
       };
     },

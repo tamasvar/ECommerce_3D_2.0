@@ -12,20 +12,21 @@ interface Props {
 }
 
 export function Providers({ children }: Props) {
-  return <NextAuthProvider>
-    <CartProvider
-  currency="EUR"
-  shouldPersist
-  cartMode="checkout-session"
-  stripe={process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!}
-  >
-    
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-     <Toast/> 
-     <Toaster/>
-      {children}
-      <TailwindIndicator/>
-    </ThemeProvider>
-     </CartProvider>
-     </NextAuthProvider>
+  return (
+    <NextAuthProvider>
+      <CartProvider
+        currency="EUR"
+        shouldPersist
+        cartMode="checkout-session"
+        stripe={process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Toast />
+          <Toaster />
+          {children}
+          <TailwindIndicator />
+        </ThemeProvider>
+      </CartProvider>
+    </NextAuthProvider>
+  )
 }
